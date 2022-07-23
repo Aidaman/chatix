@@ -1,0 +1,50 @@
+<div class="message-wrapper"
+     *ngIf="theme | async as theme"
+     [ngClass]="{'own': message.creator?.id === me && !message.isSystemMessage,
+                                         'foreign' : message.creator?.id !== me && !message.isSystemMessage,
+                                         'system' : message.isSystemMessage,
+                                         'dark': theme === 'dark', 'light': theme === 'light'}">
+
+  <ng-container *ngIf="message.isSystemMessage; else notSystemMessage">
+        <span class="sys-message"
+              (click)="message.room === '' ? messageRequest(true) : false"
+              snInViewport>
+            <i>{{message.content}}</i>
+        </span>
+  </ng-container>
+
+  <ng-template #notSystemMessage>
+    <div class="message-container">
+      <div class="avatar" *ngIf="message.creator?.id !== me">
+        <img [src]="message.creator?.avatar">
+      </div>
+      <div class="message-content">
+                <span class="message-user">
+                    <ng-container *ngIf="message.creator === null; else userExist">
+                        <span class="online">Deleted</span>
+                    </ng-container>
+                    <ng-template #userExist>
+<!--                        <span class="online" *ngIf="users[message.creator._id].online && message.creator._id === me">Online</span>-->
+                        <span [ngClass]="{'premium': message.creator?.isPremium}">
+                            {{message.creator?.name | premiumNickname: !!message.creator?.isPremium}}
+                        </span>
+                      <!--                        <span class="online" *ngIf="users[message.creator._id].online && message.creator._id !== me">Online</span>-->
+                        <span class="online" *ngIf="message.creator?.isOnline">Online</span>
+                    </ng-template>
+                </span>
+
+        <div class="message-text" snInViewport>
+          <p>{{message.content}}</p>
+          <mat-icon
+            *ngIf="message.creator?.id === me">{{message.read.length > 0 ? 'done_all' : 'done'}}</mat-icon>
+        </div>
+        <small class="message-date">
+          <span>{{message.createdAt | date: 'HH:mm' : ''}}</span>
+        </small>
+      </div>
+      <div class="avatar" *ngIf="message.creator?.id === me">
+        <img [src]="message.creator?.avatar" alt="A">
+      </div>
+    </div>
+  </ng-template>
+</div>

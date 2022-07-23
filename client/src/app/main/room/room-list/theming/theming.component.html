@@ -1,0 +1,11 @@
+<div class="theme-chooser">
+    <mat-icon class="theme-icon">wb_sunny</mat-icon>
+    <mat-slide-toggle
+        *ngIf="theme | async as theme"
+        class="example-margin"
+        [checked]="theme === 'dark'"
+        (change)="toggleTheme()"
+    >
+    </mat-slide-toggle>
+    <mat-icon class="theme-icon">brightness_3</mat-icon>
+</div>

@@ -1,0 +1,23 @@
+<div class="contact-list-wrapper" [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
+  <div class="list-title">
+    <p>Participants</p>
+  </div>
+  <ng-container *ngIf="!isDisplayed">
+    <div id="contextmenu-control">
+      <div id="contextmenutarget">
+        <mat-list class="contact-list">
+          <mat-list-item *ngFor="let item of list">
+            <mat-icon *ngIf="item.isOnline">brightness_1</mat-icon>
+            <div class="avatar">
+              <img [src]="item.avatar" alt="">
+            </div>
+            <div class="list-item">
+              <span class="contact-list-item">{{item.name}}</span>
+              <mat-divider></mat-divider>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </ng-container>
+</div>

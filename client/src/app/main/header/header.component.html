@@ -1,0 +1,13 @@
+<div class="nav-wrapper" *ngIf="theme | async as theme"
+     [ngClass]="{'center': !user, 'dark': theme === 'dark', 'light': theme === 'light'}">
+  <!--    <span class="brand-logo">CHATOS-LAVANDOS</span>-->
+  <div class="nav-links" *ngIf="user | async as user">
+    <div class="c-white">
+      <div class="avatar"><img [src]="user.avatar" alt=""></div>
+      {{user.name}}
+    </div>
+    <div class="nav-link" (click)="logOut()">
+      <span>Log out</span>
+    </div>
+  </div>
+</div>

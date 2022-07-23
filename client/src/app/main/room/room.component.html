@@ -1,0 +1,87 @@
+<ng-container *ngIf="room$ | async as room">
+  <div class="room-wrapper"
+       *ngIf="theme | async as theme"
+       [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
+    <div class="chat-menu">
+      <div class="room-info">
+        <button mat-button (click)="toggleMatDrawer()">
+          <mat-icon>
+            <!--    [matBadge]="overallUnreadMessages.toString()"
+                  matBadgePosition="above before"
+                  [matBadgeHidden]="overallUnreadMessages === 0"    -->
+            vertical_split
+          </mat-icon>
+        </button>
+        <div class="room-title">
+          <mat-icon>meeting_room</mat-icon>
+          <div class="room-title-text">
+            {{room.title}}
+            <small>{{room.users.length}} participants</small>
+          </div>
+          <button mat-button (click)="openSettings(room)">
+            <mat-icon>people_alt</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <mat-list *ngIf="checkIsCommon(room)" class="menu-items">
+        <mat-list-item matRipple (click)="openInviteParticipantsDialog(room)">
+          <!--     (click)="inviteUsers()"     -->
+          <mat-icon>person_add</mat-icon>
+        </mat-list-item>
+        <mat-divider vertical></mat-divider>
+
+        <mat-list-item matRipple (click)="exitRoom(room)">
+          <mat-icon>exit_to_app</mat-icon>
+        </mat-list-item>
+
+        <mat-divider vertical *ngIf="room.creator?.id === me"></mat-divider>
+
+        <mat-list-item matRipple
+                       *ngIf="isCreatedByMe(room)"
+                       (click)="openSettings(room)">
+          <mat-icon>settings</mat-icon>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <!--    <perfect-scrollbar [config]="config" (psScrollY)="onScroll($event)">-->
+    <div id="contextmenu-control">
+      <div id="messagecontextmenutarget">
+        <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
+          <mat-list-item *ngFor="let message of messages" [ngClass]="{
+                        'own': message.creator?.id === me && !message.isSystemMessage,
+                        'foreign' : message.creator?.id !== me && !message.isSystemMessage,
+                        'system' : message.isSystemMessage}">
+            <div class="message-item">
+              <app-message-item [message]="message"
+                                (viewChange)="onViewportChange($event, room, messages)"
+                                (contextmenu)="onMessageRightClick(message)">
+              </app-message-item>
+              <!--    (loadRequest)="messageRequest($event)"  -->
+            </div>
+          </mat-list-item>
+
+          <app-custom-context-menu></app-custom-context-menu>
+
+        </mat-list>
+      </div>
+    </div>
+    <!--    </perfect-scrollbar>-->
+    <div class="input-area">
+      <div class="input-message" dir="auto">
+<!--        (message$ | async)?.length / 64 ?? 1-->
+        <textarea class="composer_rich_textarea"
+                  [rows]="message | calculateRowsPipe"
+                  [(ngModel)]="message"
+                  (keydown.enter)="sendMessage($event, room)"></textarea>
+      </div>
+
+      <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary"
+              aria-label="Example icon button with a delete icon">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+
+</ng-container>

@@ -1,0 +1,529 @@
+$screen-sm-min: 320px;
+$screen-md-min: 768px;
+$screen-lg-min: 992px;
+$screen-xl-min: 1200px;
+
+@mixin sm {
+  @media (min-width: #{$screen-sm-min}) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: #{$screen-md-min}) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: #{$screen-lg-min}) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: #{$screen-xl-min}) {
+    @content;
+  }
+}
+
+.room-wrapper {
+  display: flex;
+  //display: grid;
+  //grid-template-rows: 4% 85% auto;
+
+  flex-direction: column;
+  //max-height: 93vh;
+  //min-height: 93vh;
+  height: 93vh;
+  overflow: hidden;
+
+  mat-icon {
+    width: auto;
+    height: auto;
+  }
+
+  button {
+    transition: 0.3s;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    border-radius: 50px;
+  }
+
+  ::ng-deep .mat-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .custom-menu {
+
+  }
+
+  .chat-menu {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    min-height: 48px;
+
+    @include sm {
+      padding: 0;
+    }
+
+    @include md {
+    }
+
+    .menu-btn {
+      position: absolute;
+      top: 0;
+      right: 5px;
+    }
+
+    .room-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      ::ng-deep .mat-badge-content {
+        font-family: 'Quicksand', sans-serif;
+        font-size: 16px;
+        font-weight: 300;
+      }
+
+      .room-title {
+        mat-icon {
+          font-size: 28px;
+        }
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: 'Montserrat Alternates', sans-serif;
+        font-weight: 400;
+
+        @include sm {
+          font-size: 18px;
+        }
+        @include md {
+          font-size: 24px;
+          margin-left: 20px;
+        }
+
+        .room-title-text {
+          margin: 0 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          text-overflow: ellipsis;
+
+          small {
+            font-size: 12px;
+            font-weight: 500;
+          }
+        }
+
+      }
+    }
+
+    .menu-items {
+      flex-direction: row;
+      justify-content: flex-start;
+
+      mat-list-item {
+        cursor: pointer;
+        transition: 0.3s;
+      }
+    }
+  }
+
+  .input-area {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    height: auto;
+    padding: 10px;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    .input-message {
+      transition: 0.5s;
+      display: flex;
+      height: auto;
+      font-size: 19px;
+      box-sizing: border-box;
+
+      width: 90%;
+      padding-right: 7px;
+      border-radius: 30px;
+    }
+
+    .input-send{
+      background: #333;
+
+      &:hover{
+        background: #555;
+      }
+    }
+
+    .composer_rich_textarea {
+      border: none;
+      outline: none;
+      margin: 0;
+      line-height: 20px;
+      height: auto;
+      min-height: 40px;
+      max-height: 250px;
+      box-sizing: border-box;
+      font-family: 'Quicksand', "Noto Color Emoji", "Helvetica Neue", sans-serif;
+      width: 100%;
+      padding: 10px 25px 10px 20px;
+
+      border-radius: 30px;
+    }
+
+    *{
+      transition: 0.5s;
+    }
+  }
+}
+
+.mt-lst {
+  height: 100%;
+  .message-item {
+    max-width: 90% !important;
+  }
+
+  ::ng-deep .mat-list-item {
+    height: auto;
+  }
+
+  .system {
+    ::ng-deep .mat-list-item-content {
+      display: flex;
+      flex-direction: column !important;
+      align-items: center;
+      margin: 8px 20px 8px 20px;
+    }
+  }
+
+  .own {
+    ::ng-deep .mat-list-item-content {
+      display: flex;
+      flex-direction: column !important;
+      align-items: flex-end;
+      margin: 8px 20px 8px 20px;
+      padding: 0;
+    }
+  }
+
+  .foreign {
+    ::ng-deep .mat-list-item-content {
+      display: flex;
+      flex-direction: column !important;
+      align-items: flex-start;
+      margin: 8px 20px 8px 20px;
+      padding: 0;
+    }
+  }
+}
+
+.light {
+  .chat-menu {
+    transition: 0.3s;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+
+    ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+      background-color: #3071c2;
+    }
+
+    ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+      background-color: #2a529c;
+    }
+
+    .custom-menu-btn {
+      mat-icon {
+        color: black;
+      }
+    }
+
+    .theme-icon {
+      transition: 0.3s;
+      user-select: none;
+      font-size: 30px;
+      color: black;
+    }
+
+    .room-info {
+
+      ::ng-deep .mat-badge-content {
+        transition: 0.3s;
+        background: #3071c2;
+        color: white;
+      }
+
+      .room-title {
+        transition: 0.3s;
+        color: black;
+
+        button {
+          color: black;
+        }
+      }
+    }
+
+    background: rgba(0, 0, 0, 0.38);
+    //background: linear-gradient(90deg, rgba(0, 0, 0, 0.38), transparent);
+    .menu-items {
+      background: transparent;
+
+      mat-divider {
+        background-color: rgba(85, 85, 85, 0.57) !important;
+      }
+
+      mat-list-item {
+        user-select: none;
+        color: black;
+
+        mat-icon {
+          transition: 0.3s;
+          color: #000000;
+        }
+
+        &:hover {
+          transition: 0.3s;
+          filter: drop-shadow(0 3px 10px #000000);
+          color: white;
+
+          mat-icon {
+            transition: 0.3s;
+            color: #ffffff;
+          }
+        }
+      }
+    }
+  }
+
+  .input-area {
+    border-top: 2px solid rgba(0, 0, 0, 0.22);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.31);
+    //background: rgba(0, 0, 0, 0.08);
+    .input-message {
+      background-color: rgb(247, 255, 252);
+
+      &:focus {
+        transition: 0.5s;
+        box-shadow: 0 0 15px rgb(0, 0, 0);
+      }
+    }
+
+    .wrap-btn {
+      user-select: none;
+      transition: 0.3s;
+      background: transparent;
+
+      .send-btn {
+        transition: .3s;
+
+        &:hover {
+          transition: .3s;
+          filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0)) invert(100%);
+        }
+      }
+
+      .smile-btn {
+        transition: .3s;
+
+        &:hover {
+          transition: .3s;
+          filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0)) invert(100%);
+        }
+      }
+
+      &:hover {
+        transition: .3s;
+        background: rgba(0, 0, 0, 0.53);
+      }
+    }
+  }
+}
+
+
+.dark {
+  .chat-menu {
+    transition: 0.3s;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+
+    .custom-menu-btn {
+      mat-icon {
+        color: #f3a311;
+      }
+    }
+
+    .room-info {
+
+      ::ng-deep .mat-badge-content {
+        background: #f44336;
+        color: white;
+      }
+
+      .room-title {
+        transition: 0.3s;
+        color: white;
+      }
+
+      button {
+        color: white;
+      }
+    }
+
+    background: rgba(0, 0, 0, 0.51);
+    //background: linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent);
+    .menu-items {
+      mat-divider {
+        background-color: rgba(255, 255, 255, 0.27) !important;
+      }
+
+      mat-list-item {
+        color: white;
+
+        mat-icon {
+          transition: 0.3s;
+          color: #f3a311;
+        }
+
+        &:hover {
+          transition: 0.3s;
+          filter: drop-shadow(0 3px 10px white);
+        }
+      }
+    }
+  }
+
+  .input-area {
+    background: rgba(0, 0, 0, 0.18);
+    //background: linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent);
+    .input-message {
+      background-color: rgb(247, 255, 252);
+
+      &:focus {
+        transition: 0.5s;
+        box-shadow: 0 0 15px rgb(255, 255, 255);
+      }
+    }
+
+    .wrap-btn {
+      transition: 0.3s;
+      background: transparent;
+
+      .send-btn {
+        transition: .3s;
+        filter: invert(100%);
+
+        &:hover {
+          transition: .3s;
+          filter: drop-shadow(0 5px 10px black);
+          cursor: pointer;
+        }
+      }
+
+      .smile-btn {
+        transition: .3s;
+        filter: invert(100%);
+
+        &:hover {
+          transition: .3s;
+          filter: drop-shadow(0 5px 10px black);
+
+        }
+
+      }
+
+      &:hover {
+        transition: .3s;
+        background: rgba(255, 255, 255, 0.53);
+
+      }
+    }
+  }
+}
+
+//@font-face {
+//    font-family: "FontAwesome";
+//    font-weight: normal;
+//    font-style: normal;
+//    //src: url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+//    //src: url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.eot?#iefix&v=4.3.0") format("embedded-opentype"),
+//    //url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff2?v=4.3.0") format("woff2"),
+//    //url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff?v=4.3.0") format("woff"),
+//    //url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.ttf?v=4.3.0") format("truetype"),
+//    //url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular") format("svg");
+//}
+
+.e-cm-icons {
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  text-transform: none;
+}
+
+#contextmenutarget {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#contextmenu-control {
+  width: 100%;
+  max-height: 100%;
+  height: 93vh;;
+  overflow-y: scroll;
+}
+
+@media only screen and (max-width: 500px) {
+  #contextmenu-control {
+    width: auto;
+  }
+
+  #contextmenutarget {
+    //line-height: 19;
+    font-size: 12px;
+  }
+}
+
+/* custom code end*/
+.e-menu-item .e-ban::before {
+  content: '\f1f8';
+}
+
+.e-menu-item .e-edit::before {
+  content: '\f044';
+}
+
+.e-contextmenu-wrapper {
+  height: 0;
+  width: 0;
+}
+
+.e-contextmenu-wrapper ul.e-contextmenu {
+  width: 210px;
+}
+
+.e-bigger .e-contextmenu-wrapper ul.e-contextmenu {
+  width: 186px;
+}

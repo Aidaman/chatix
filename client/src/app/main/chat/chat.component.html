@@ -1,0 +1,14 @@
+<div class="chat-wrapper" *ngIf="theme | async as theme"
+     [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
+<!--  <ng-container *ngIf="listOfRooms">-->
+    <mat-drawer-container autosize class="sidenav-wrapper">
+      <mat-drawer class="sidenav-content"
+                  [opened]="opened | async ">
+        <app-room-list  [rooms]="(rooms$ | async) | updateRooms"
+                        [unread]="unreadInRooms">
+        </app-room-list>
+      </mat-drawer>
+      <app-room></app-room>
+    </mat-drawer-container>
+<!--  </ng-container>-->
+</div>
