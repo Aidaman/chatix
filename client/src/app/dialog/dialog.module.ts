@@ -9,7 +9,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatDividerModule} from "@angular/material/divider";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatDialogModule, MatDialogRef} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
@@ -23,22 +23,23 @@ import {MatListModule} from "@angular/material/list";
     DialogInvitingRoomComponent,
     DialogRoomSettingsComponent,
   ],
-  imports: [
-    CommonModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatSlideToggleModule,
-    MatDividerModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatInputModule,
-    MatRippleModule,
-    MatListModule,
-    MatIconModule,
+    imports: [
+        CommonModule,
+        MatAutocompleteModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatSlideToggleModule,
+        MatDividerModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatInputModule,
+        MatRippleModule,
+        MatListModule,
+        MatIconModule,
+        FormsModule,
 
-  ],
+    ],
   providers: [
     {
       provide: MatDialogRef,

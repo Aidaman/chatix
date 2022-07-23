@@ -20,7 +20,7 @@ import {Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {userAuthAction} from "../../store/user/user.actions";
 import {allRoomsSelector, isAllRoomsHasValue} from "../../store/room-chat/room-chat.selectors";
-import {chatGetAvailableRooms, roomGetMessagesAction} from "../../store/room-chat/room-chat.actions";
+import {chatGetAvailableRooms, roomGetMessagesAction, roomSwitchAction} from "../../store/room-chat/room-chat.actions";
 
 @Component({
   selector: 'app-chat',
@@ -38,22 +38,12 @@ export class ChatComponent implements OnInit, OnDestroy {
   public overallUnreadMessages: number = 0;
 
   public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
-    switchMap((value)=> {
+    switchMap((value) => {
       if (!value) {
         this.store.dispatch(chatGetAvailableRooms());
       }
       return this.store.select(allRoomsSelector);
     }),
-  );
-
-  /*  I will collect all observables from init here */
-  private newMessage$: Observable<boolean> = this.socketService.listenNewMessage().pipe(
-    map((data) => {
-      console.log('this is data from socketService "newMessage" listener', data);
-      this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset:50}))
-      return true
-    }),
-    takeUntil(this.chatService.termination$),
   );
 
   private invitation$: Observable<boolean> = this.socketService.listenInvitation().pipe(
@@ -62,70 +52,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       if (!data) return false;
 
       return this.openInvitation(data);
-    }),
-    takeUntil(this.chatService.termination$),
-  )
-
-  private newRoom$: Observable<void> = this.socketService.listenNewRoom().pipe(
-    map((data: any) => {
-      console.log('these data is from socketService "new room-chat" listener', data)
-      this.socketService.emit('getAllRooms', {});
-      this.store.dispatch(chatGetAvailableRooms());
-    }),
-    takeUntil(this.chatService.termination$),
-  )
-
-  private userLeft$: Observable<boolean> = this.socketService.listenUserLeft().pipe(
-    map((data: any) => {
-      if (!data) return false;
-
-      this.leaveRoom(data.roomId);
-      return true
-    }),
-    takeUntil(this.chatService.termination$),
-  )
-
-  private roomDelted$: Observable<boolean> = this.socketService.listenRoomDeleted().pipe(
-    map((data: any) => {
-      console.log("(Room Deleted) this is the incoming data: ", data)
-      if (!data) return false;
-      this.store.dispatch(chatGetAvailableRooms());
-      // this.router.navigate(['chat', 'common']);
-      return true
-    }),
-    takeUntil(this.chatService.termination$),
-  )
-
-  private roomRenamed$: Observable<boolean> = this.socketService.listenRoomRenamed().pipe(
-    map((data: any) => {
-      if (!data) return false;
-
-      this.listOfRooms.next(this.listOfRooms.value.map(room => {
-        if (room._id === data.id) room.title = data.title;
-        return room;
-      }));
-
-      return true
-    }),
-    takeUntil(this.chatService.termination$),
-  )
-
-  private privacyChanged$: Observable<boolean> = this.socketService.listenPrivacyChanged().pipe(
-    map((data: any) => {
-      if (!data) return false;
-
-      this.listOfRooms.next(this.listOfRooms.value.map(room => {
-        if (room._id === data.id) room.isPublic = data.isPublic;
-        return room;
-      }));
-      return true;
-    }),
-    takeUntil(this.chatService.termination$),
-  )
-
-  private getAllrooms$: Observable<any> = this.socketService.listenGetAllRooms().pipe(
-    map((data)=>{
-      console.log("GetAllRooms data", data);
     }),
     takeUntil(this.chatService.termination$),
   )
@@ -144,13 +70,14 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.store.dispatch(userAuthAction());
-    this.store.dispatch(chatGetAvailableRooms());
-    // this.getAllrooms$.subscribe();
 
     this.socketService.emit('getAllRooms', {});
-    this.newMessage$.subscribe();
-    this.newRoom$.subscribe();
-    this.roomDelted$.subscribe();
+    this.store.dispatch(chatGetAvailableRooms());
+
+    this.socketService.listenRoomDeleted().subscribe()
+    this.socketService.listenNewMessage().subscribe();
+    this.socketService.listenNewRoom().subscribe();
+    this.socketService.listenRoomDeleted().subscribe();
   }
 
   ngOnDestroy(): void {
@@ -166,32 +93,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
   }
 
-  public leaveRoom(roomId: string): void {
-    let rooms = this.listOfRooms.value.filter(room => room._id !== roomId);
-    rooms = this.listOfRooms.value.map((room, index) => ({...room, index}));
-    this.selectedRoom = this.listOfRooms.value[0];
-
-    //instead of Input
-    this.roomService.currentRoom.next(this.listOfRooms.value[0]);
-  }
-
   public openSideNav(): void {
     this.roomService.sideMenuOpened.next(!this.roomService.sideMenuOpened.value);
-  }
-
-  public async createRoom(): Promise<void> {
-    const dialogRef = this.dialog.open(DialogAddingRoomComponent, {
-      width: '500px',
-      height: '650px',
-      hasBackdrop: true
-    });
-    const aSub = await dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(result);
-        this.socketService.emit('createRoom', result);
-      }
-      aSub.unsubscribe();
-    });
   }
 
   private openInvitation(data: any): boolean {

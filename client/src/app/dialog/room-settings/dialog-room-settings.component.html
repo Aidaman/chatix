@@ -1,9 +1,10 @@
 <div class="dialog-wrapper"
+     *ngIf="theme | async as theme"
      [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
   <div class="dialog-content-wrapper">
 
     <h1 mat-dialog-title>
-      <span contenteditable="true">{{room.title}}</span>
+      <input type="text" [(ngModel)]="newRoomTitle">
 <!--      <span contenteditable="true">{{room.title}}</span>-->
       <mat-icon matRipple>edit</mat-icon>
     </h1>
@@ -24,7 +25,7 @@
         </div>
         <span>{{user.name}}</span>
       </div>
-      <button type="button" mat-button (click)="deleteParticipant(user.id)">
+      <button type="button" mat-button (click)="deleteParticipant(user)">
         <i class="material-icons">
           delete
         </i>

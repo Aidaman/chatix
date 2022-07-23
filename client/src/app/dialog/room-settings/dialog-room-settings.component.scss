@@ -41,7 +41,11 @@
     text-align: center;
     font-size: 28px;
 
-    span {
+    input {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 28px;
       outline: none;
       text-decoration: none;
       margin-right: 25px;
