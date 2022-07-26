@@ -1,9 +1,8 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {environment} from "../../../environments/environment";
-import {map, Observable, takeUntil} from "rxjs";
+import {map, Observable, Subject, takeUntil} from "rxjs";
 import {LocalStorageService} from "./local-storage.service";
 import * as io from 'socket.io-client';
-import {ChatService} from "./chat.service";
 import {chatGetAvailableRooms, roomGetMessagesAction, roomSwitchAction} from "../../store/room-chat/room-chat.actions";
 import {Store} from "@ngrx/store";
 import {Router} from "@angular/router";
@@ -11,7 +10,7 @@ import {Router} from "@angular/router";
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
+export class SocketService{
   // public webSocketSubject!: WebSocketSubject<any>;
   // public messages$: Subject<any> = new Subject<any>();
   // public readonly uri: string = environment.API_URL_WSS;
@@ -64,8 +63,9 @@ export class SocketService {
   public readonly uri: string = environment.API_URL;
   public isConnected: boolean = false;
 
+  public termination$: Subject<number> = new Subject<number>();
+
   constructor(private localStorageService: LocalStorageService,
-              private chatService: ChatService,
               private router: Router,
               private store: Store) {
   }
@@ -107,7 +107,7 @@ export class SocketService {
         this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset:50}))
         return true
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
     );
   }
 
@@ -118,7 +118,7 @@ export class SocketService {
         this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset:50}))
         return true
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
     );
   }
 
@@ -126,24 +126,30 @@ export class SocketService {
     return this.listen('invitation');
   }
 
+  public listenUserJoined(): Observable<any>{
+    return this.listen('userJoined').pipe(takeUntil(this.termination$),);
+  }
+
   public listenNewRoom(): Observable<any> {
     return this.listen('newRoom').pipe(
       map((data: any) => {
-        console.log('these data is from socketService "new room-chat" listener', data)
+        console.log('these data is from socketService "new room" listener', data)
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
     );
   }
 
   public listenUserLeft(): Observable<any> {
     return this.listen('userLeft').pipe(
       map((value)=> {
+        console.log("user left value", value);
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
+        this.store.dispatch(roomSwitchAction({roomId: "common"}));
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
       );
   }
 
@@ -159,7 +165,7 @@ export class SocketService {
         this.router.navigate(['chat', 'common']);
 
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
     );
   }
 
@@ -169,7 +175,7 @@ export class SocketService {
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
     );
   }
 
@@ -179,7 +185,7 @@ export class SocketService {
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
-      takeUntil(this.chatService.termination$),
+      takeUntil(this.termination$),
     );
   }
 
@@ -189,5 +195,10 @@ export class SocketService {
 
   public listenGetAllRooms(): Observable<any> {
     return this.listen('allRooms');
+  }
+
+  public destroy(): void {
+    this.termination$.next(1);
+    this.termination$.complete();
   }
 }

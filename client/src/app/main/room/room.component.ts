@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ThemingService} from "../../shared/services/theming.service";
 import {RoomService} from "../../shared/services/room.service";
 import {IRoom} from "../../shared/models/IRoom";
-import {BehaviorSubject, map, Observable, Subject, switchMap, takeUntil} from "rxjs";
+import {BehaviorSubject, lastValueFrom, map, Observable, Subject, Subscription, switchMap, takeUntil, tap} from "rxjs";
 import {LocalStorageService} from "../../shared/services/local-storage.service";
 import {IMessage} from "../../shared/models/IMessage";
 import {SocketService} from "../../shared/services/socket.service";
@@ -25,15 +25,15 @@ import {IUser} from "../../shared/models/IUser";
 export class RoomComponent implements OnInit, OnDestroy {
   private lastSelectedMessageId: string = '';
   private isEditing = false;
+  private emojiSubscription!: Subscription;
 
   public theme: BehaviorSubject<string> = this.themingService.theme;
+
   public emoji$: Observable<string> = this.roomService.message.asObservable().pipe(
     map((value) => {
       this.message += value;
-      this.roomService.message.next('');
-      return value;
-    }),
-    takeUntil(this.chatService.termination$),
+      return value
+    })
   );
   public message: string = "";
 
@@ -94,14 +94,14 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.socketService.emit('searchRooms', {});
-    this.emoji$.subscribe();
+    this.emojiSubscription = this.emoji$.subscribe();
 
     this.socketService.listenUserLeft().subscribe();
-    this.socketService.listenRoomRenamed().subscribe();
     this.socketService.listenPrivacyChanged().subscribe();
   }
 
   ngOnDestroy(): void {
+    this.emojiSubscription.unsubscribe();
     // this.messageSubscription.unsubscribe();
   }
 
@@ -119,9 +119,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public sendMessage(event: any, room: IRoom): void {
-    // const msg = this.message.trim();
     const msg = this.message.trim();
-    console.log('room', room);
     if (event.code === 'Enter') event.preventDefault();
     if (msg) {
       if (this.isEditing) {
@@ -131,7 +129,6 @@ export class RoomComponent implements OnInit, OnDestroy {
           roomId: room._id,
         });
       } else {
-        console.log('created message', "room-chat id", room._id);
         this.socketService.emit('createMessage', {
           message: msg,
           room: room._id,
@@ -157,11 +154,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  public openSettings(room: IRoom) {
-    const terminate: Subject<boolean> = new Subject<boolean>();
+  public async openSettings(room: IRoom): Promise<void> {
+    // const terminate: Subject<boolean> = new Subject<boolean>();
 
     const matDialogRef = this.matDialog.open(DialogRoomSettingsComponent, {data: room});
-    matDialogRef.afterClosed().subscribe((value) => {
+    const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
       console.log("room settings closed, this is the resulting value", value)
 
       if (value.delete)
@@ -176,24 +173,35 @@ export class RoomComponent implements OnInit, OnDestroy {
 
         if (value.deletedUsers && value.deletedUsers.length > 0) {
           value.deletedUsers.forEach((user: IUser) => {
-            console.log("(openSetting) deleteParticipants loop", user)
             this.socketService.emit('deleteParticipant', {roomId: room._id, deletedUserId: user._id});
           });
         }
       }
-      // this.store.dispatch();
-    });
+    }))
 
-    terminate.next(true);
-    terminate.complete();
+    await lastValueFrom(afterClosedSource$);
+    // terminate.next(true);
+    // terminate.complete();
   }
 
-  public openInviteParticipantsDialog(room: IRoom) {
-    console.log(room);
-    this.matDialog.open(DialogInvitingRoomComponent, {height: '500px', width: '500px'});
+  public async openInviteParticipantsDialog(room: IRoom): Promise<void> {
+    const matDialogRef = this.matDialog.open(DialogInvitingRoomComponent, {height: '500px', width: '500px', data: room});
+    const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
+      if(!value) return;
+      else  this.socketService.emit('inviteUsers', {roomId: value.roomId, participants: value.participants});
+    }));
+
+    await lastValueFrom(afterClosedSource$);
   }
 
   public exitRoom(room: IRoom) {
     this.socketService.emit('leaveRoom', {roomId: room._id});
+  }
+
+  onInput(e: any) {
+    console.log(e);
+    // this.message += e.data;
+  //  Get selection использовать
+  //  Get position использовать
   }
 }

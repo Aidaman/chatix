@@ -53,7 +53,7 @@ export const roomByIdSelect = (id: string) => createSelector(
       lastAction: new Date(),
       isPublic: false,
       isFavorites: false,
-    }
+    };
     if (chatState.allRooms){
       const room = chatState.allRooms.find((value) => value._id === id);
       return room !== undefined ? room : emptyRoom;

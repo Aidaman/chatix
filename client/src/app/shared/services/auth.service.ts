@@ -8,7 +8,7 @@ import {Store} from "@ngrx/store";
 import {userAuthAction} from "../../store/user/user.actions";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   constructor(private router: Router,

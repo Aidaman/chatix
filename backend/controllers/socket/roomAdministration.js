@@ -54,6 +54,8 @@ module.exports = {
             if(!room){
                 throw new Error('Room not found');
             }
+
+            console.log("(invite user) room: ", room);
             let participants = Array.from(new Set(params.participants.concat(room.users)));
             participants = await User.find({
                 _id:{
@@ -61,6 +63,7 @@ module.exports = {
                 },
                 blacklist:{$ne:socket.decoded_token.id}
             });
+
             const invitor = participants.find(i=> String(i._id) === socket.decoded_token.id);
             participants = participants.filter(user => {
                 let flag = false;
@@ -75,17 +78,22 @@ module.exports = {
                 }
                 return flag;
             });
+            console.log("(invite user) participants: ", participants);
+
             room.creator = invitor;
             for (let user of participants){
                 room.users.push(user._id);
                 io.to(getUserSocketsRoom(user)).emit('invitation', room)
             }
+
             const newParticipantsNames = participants.map(i=>i.name);
             const content = `${invitor.name} invited ${newParticipantsNames.join(', ')}`;
             const contentEncrypted = crypto.AES.encrypt(validator.escape(content), MESSAGE_KEY).toString();
             await Message.create({createdAt: Date.now(), room: params.roomId, isSystemMessage:true,creator: invitor, content: contentEncrypted});
+
             io.to(params.roomId).emit('newMessage', {message:{content,createdAt: Date.now(), isSystemMessage:true,creator: invitor}, room: params.roomId });
             room.lastAction = Date.now();
+
             await room.save()
         }catch (e){
             console.log(e);

@@ -76,19 +76,26 @@ module.exports = {
             const id = socket.decoded_token.id;
             const user = await User.findById(id);
             let room = await Room.findOne({_id: params.roomId, isFavorites: false});
+
+            console.log(params);
+
             if (room && room.users.indexOf(id) !== -1) {
                 room.users.pull(id);
                 room.lastAction = Date.now();
                 room = await room.save();
+
                 io.to(params.roomId).emit('userLeft', {userId: id, roomId: params.roomId});
+
                 user.socketIds.forEach(i => {
                     const socket = io.sockets.connected[i];
                     if (socket) {
                         socket.leave(params.roomId)
                     }
                 });
-                const content = `${user.name} left the room(`;
+
+                const content = `${user.name} left the room ☹`;
                 const contentEncrypted = crypto.AES.encrypt(validator.escape(content), MESSAGE_KEY).toString();
+
                 await Message.create({
                     createdAt: Date.now(),
                     room: params.roomId,
@@ -96,6 +103,7 @@ module.exports = {
                     isSystemMessage: true,
                     creator: user
                 });
+
                 io.to(params.roomId).emit('newMessage', {
                     message: {
                         content,
@@ -117,7 +125,9 @@ module.exports = {
                             socket.leave(params.roomId)
                         }
                     });
+
                     await room.remove();
+                    io.to(params.roomId).emit('roomDeleted',{id:params.roomId});
                 }
             } else throw new Error('Not allowed');
         } catch (e) {

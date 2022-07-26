@@ -20,7 +20,6 @@ export class RoomChatEffect {
   allRooms$ = createEffect(()=> this.actions$.pipe(
     ofType(chatGetAvailableRooms),
     switchMap(()=>this.socketService.listenGetAllRooms().pipe(
-      tap((value) => {console.log(value)}),
       map((data)=> chatGetAvailableRoomsSucces({rooms: data})),
       catchError(()=> of(chatGetAvailableRoomsFailure)),
     )),
@@ -29,7 +28,6 @@ export class RoomChatEffect {
   switchRoom$ = createEffect(()=> this.actions$.pipe(
     ofType(roomSwitchAction),
     switchMap(({roomId}) => this.store.select(roomByIdSelect(roomId)).pipe(
-      // console.log("(Room Chat Effect) switch room event, switchMap Map: value.id and value.title", value._id, value.title);
       //@ts-ignore
       map((value) => roomSwitchSuccessAction({room: value})),
       catchError(()=> of(roomSwitchFailureAction)),

@@ -20,6 +20,7 @@ import {SharedModule} from "../shared/shared.module";
 import {HeaderComponent} from "./header/header.component";
 import {DialogModule} from "../dialog/dialog.module";
 import {MainRoutingModule} from "./main-routing.module";
+import {SocketService} from "../shared/services/socket.service";
 
 @NgModule({
   declarations: [
@@ -46,6 +47,6 @@ import {MainRoutingModule} from "./main-routing.module";
     SharedModule,
 
     MainRoutingModule
-  ]
+  ],
 })
 export class MainModule { }

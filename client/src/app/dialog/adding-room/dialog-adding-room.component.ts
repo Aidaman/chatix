@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MatDialogRef} from "@angular/material/dialog";
 import {SocketService} from "../../shared/services/socket.service";
@@ -16,7 +16,7 @@ import {BehaviorSubject, debounceTime, Subscription} from "rxjs";
   templateUrl: './dialog-adding-room.component.html',
   styleUrls: ['./dialog-adding-room.component.scss'],
 })
-export class DialogAddingRoomComponent implements OnInit {
+export class DialogAddingRoomComponent implements OnInit, OnDestroy {
   private me = this.localStorageService.getUser()['id'] as string;
 
   public newRoomForm: UntypedFormGroup = this.fb.group({
@@ -44,6 +44,11 @@ export class DialogAddingRoomComponent implements OnInit {
     console.log(this.me)
     this.onSearch();
     this.listenSearch();
+  }
+
+  public ngOnDestroy() {
+    this.onSearch().unsubscribe();
+    this.listenSearch().unsubscribe();
   }
 
   public get participants(): UntypedFormArray {

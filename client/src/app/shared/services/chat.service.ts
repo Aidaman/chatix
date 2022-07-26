@@ -10,8 +10,6 @@ import {IRoom} from "../models/IRoom";
   providedIn: 'root'
 })
 export class ChatService {
-  public termination$: Subject<number> = new Subject<number>();
-
   public currentRoomUsers: BehaviorSubject<object[]> = new BehaviorSubject<object[]>([]);
   public showContextMenu: BehaviorSubject<{ event: MouseEvent; options: IOption[] }> = new BehaviorSubject<any>(null);
   public emitOption: BehaviorSubject<string> = new BehaviorSubject<string>('');

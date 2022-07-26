@@ -75,6 +75,11 @@
                   [rows]="message | calculateRowsPipe"
                   [(ngModel)]="message"
                   (keydown.enter)="sendMessage($event, room)"></textarea>
+<!--        <div class="composer_rich_textarea"-->
+<!--                  contenteditable="true"-->
+<!--                  [textContent]="message"-->
+<!--                  (input)="onInput($event)"-->
+<!--                  (keydown.enter)="sendMessage($event, room)"></div>-->
       </div>
 
       <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary"

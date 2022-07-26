@@ -12,7 +12,7 @@ import {ThemingService} from "../../shared/services/theming.service";
 import {
   BehaviorSubject,
   map,
-  Observable, switchMap,
+  Observable, Subject, switchMap,
   takeUntil
 } from "rxjs";
 import {RoomService} from "../../shared/services/room.service";
@@ -53,7 +53,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       return this.openInvitation(data);
     }),
-    takeUntil(this.chatService.termination$),
+    takeUntil(this.socketService.termination$),
   )
 
   constructor(public chatService: ChatService,
@@ -76,13 +76,22 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.socketService.listenRoomDeleted().subscribe()
     this.socketService.listenNewMessage().subscribe();
+    this.socketService.listenInvitation().pipe(
+      map((value) => {
+        console.log("(chat component, invitation listener", value);
+        this.openInvitation(value);
+      })
+    ).subscribe();
+
+    this.socketService.listenRoomRenamed().subscribe();
+
     this.socketService.listenNewRoom().subscribe();
     this.socketService.listenRoomDeleted().subscribe();
+
+    this.socketService.listenUserJoined().subscribe();
   }
 
   ngOnDestroy(): void {
-    this.chatService.termination$.next(1);
-    this.chatService.termination$.complete();
     this.socketService.disconnect();
   }
 
@@ -98,27 +107,26 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   private openInvitation(data: any): boolean {
+    // const terminate: Subject<boolean> = new Subject<boolean>();
     const invitationDialogRef = this.dialog.open(DialogInvitationComponent, {
       width: '450px',
       height: '200px',
       hasBackdrop: true,
       data
     });
-    // const aSub = invitationDialogRef.afterClosed().subscribe(response => {
-    //     if (response) {
-    //         if (response.isAgree) {
-    //             this.socketService.emit('acceptInvitation', {
-    //                 roomId: response.roomId
-    //             });
-    //         } else {
-    //             this.socketService.emit('leaveRoom', {
-    //                 roomId: response.roomId
-    //             });
-    //         }
-    //     } else return false
-    //     aSub.unsubscribe();
-    return true
-    // });
+    const aSub = invitationDialogRef.afterClosed().subscribe(response => {
+      if (response) {
+        if (response.isAgree)
+          this.socketService.emit('acceptInvitation', {roomId: response.roomId});
+        else
+          this.socketService.emit('leaveRoom', {roomId: response.roomId});
+      } else return false
+      return true
+    });
+    // terminate.next(true);
+    // terminate.complete();
+
+    return false;
   }
 }
 

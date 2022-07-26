@@ -1,9 +1,10 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {SocketService} from "../../shared/services/socket.service";
-import {ChatService} from "../../shared/services/chat.service";
 import {IRoom} from "../../shared/models/IRoom";
+import {debounceTime, Subscription} from "rxjs";
+import {SocketService} from "../../shared/services/socket.service";
+import {LocalStorageService} from "../../shared/services/local-storage.service";
 import {IUser} from "../../shared/models/IUser";
 
 @Component({
@@ -11,27 +12,33 @@ import {IUser} from "../../shared/models/IUser";
   templateUrl: './dialog-inviting-room.component.html',
   styleUrls: ['./dialog-inviting-room.component.scss'],
 })
-export class DialogInvitingRoomComponent implements OnInit {
+export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
+  private me = this.localStorageService.getUser()['id'] as string;
+
   public addUsersForm: UntypedFormGroup = this.fb.group({
     participants: this.fb.array([this.fb.group({
       name: ['', [Validators.required]]
     })])
   });
   public selectedInput: number | null = 0;
+
+  public room: IRoom = this.data
   public searchedUsers: any[] = [];
   public userIds: any = [false];
   public theme: string = 'dark';
 
   constructor(public dialogRef: MatDialogRef<DialogInvitingRoomComponent>,
               private fb: UntypedFormBuilder,
+              private localStorageService: LocalStorageService,
               private socketService: SocketService,
-              @Inject(MAT_DIALOG_DATA) public data: IRoom,
-              private chatService: ChatService) {
+              @Inject(MAT_DIALOG_DATA) public data: IRoom) {
   }
 
   public ngOnInit(): void {
     // this.chatService.theme.subscribe(selectedTheme => this.theme = selectedTheme);
+    console.log(this.data);
     this.onSearch();
+    this.listenSearch();
     // this.socketService.listen('searchResult').subscribe(users => {
     //   if (users.length === 1 &&
     //     this.selectedInput !== null &&
@@ -69,15 +76,18 @@ export class DialogInvitingRoomComponent implements OnInit {
     // });
   }
 
+  public ngOnDestroy() {
+    this.onSearch().unsubscribe();
+    this.listenSearch().unsubscribe();
+  }
+
   public get participants(): UntypedFormArray {
     return this.addUsersForm.get('participants') as UntypedFormArray;
   }
 
   public addParticipant(): void {
-    this.participants.push(this.fb.group({
-      name: ['', [Validators.required]]
-    }));
-    this.userIds.push(false);
+    this.participants.push(this.fb.group({name: ['', [Validators.required]]}));
+    this.userIds.push(null);
   }
 
   public deleteParticipant(index: number): void {
@@ -91,31 +101,39 @@ export class DialogInvitingRoomComponent implements OnInit {
   }
 
   public onInvite(): void {
-    this.userIds = this.userIds.filter((userId: string) => {
-      let flag = false;
-      for (let roomUser of this.data.users) {
-        if (userId !== roomUser.id) {
-          flag = true;
-        } else {
-          flag = false;
-          break;
-        }
-      }
-      if (!userId) flag = false;
-      return flag;
-    });
+    this.userIds = this.userIds.filter((userId: string) =>
+      (userId !== this.me)
+      || !(this.data.users.find((user: IUser) =>
+        user._id === userId)));
     this.userIds = Array.from(new Set(this.userIds));
     this.dialogRef.close({roomId: this.data._id, participants: this.userIds,});
   }
 
-  public onSearch(): void {
-    this.addUsersForm.valueChanges.subscribe(changes => {
-      if (this.selectedInput !== null) {
-        if (changes.participants[this.selectedInput].name.length > 2) {
-          // this.socketService.emit('searchUsers', changes.participants[this.selectedInput].name);
+  public listenSearch(): Subscription{
+    return this.socketService.listen('searchResult')
+      .subscribe(users => {
+        if (this.selectedInput !== null
+          && users.length === 1
+          && this.addUsersForm.get('participants')?.value[this.selectedInput].name === users[0].name) {
+          this.userIds[this.selectedInput] = users[0]._id;
+        } else {
+          this.searchedUsers = users.filter((user: any) => user._id !== this.me);
+          if (this.selectedInput !== null)
+            this.userIds[this.selectedInput] = false;
         }
-      }
-    });
+      });
+  }
+
+  //Searching users that can be invited
+  public onSearch(): Subscription {
+    //Взагалі-то це повинно бути змінною, і пропихуватись у темплейт
+    return this.addUsersForm.valueChanges
+      .pipe(debounceTime((300)))
+      .subscribe((changes) => {
+        if (this.selectedInput !== null) {
+          this.socketService.emit('searchUsers', changes.participants[this.selectedInput].name);
+        }
+      })
   }
 
   public pushId(userId: string): void {
@@ -124,18 +142,11 @@ export class DialogInvitingRoomComponent implements OnInit {
   }
 
   public validateInputs(): boolean {
-    this.userIds = this.userIds.filter((userId: string) => {
-      let flag = false;
-      for (let roomUser of this.data.users) {
-        if (userId !== roomUser.id) {
-          flag = true;
-        } else {
-          flag = false;
-          break;
-        }
-      }
-      return flag;
-    });
-    return this.userIds.every((item: string) => !!item);
+    this.userIds = this.userIds.filter((userId: string) =>
+      (userId !== this.me)
+      || !(this.data.users.find((user: IUser) =>
+        user._id === userId)));
+
+    return this.userIds.every((item: string) => !!item) && this.userIds.length > 0;
   }
 }

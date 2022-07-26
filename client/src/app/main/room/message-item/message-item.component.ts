@@ -24,7 +24,6 @@ export class MessageItemComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('It\'s working, this.message');
     }
 
     public messageRequest(scroll?: boolean): void {

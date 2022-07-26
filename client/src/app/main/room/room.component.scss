@@ -225,6 +225,8 @@ $screen-xl-min: 1200px;
       display: flex;
       flex-direction: column !important;
       align-items: flex-end;
+      //align-self: flex-end;
+      //justify-self: flex-end;
       margin: 8px 20px 8px 20px;
       padding: 0;
     }

@@ -23,9 +23,9 @@
         <div class="avatar">
           <img [src]="user.avatar" alt="">
         </div>
-        <span>{{user.name}}</span>
+        <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
       </div>
-      <button type="button" mat-button (click)="deleteParticipant(user)">
+      <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
         <i class="material-icons">
           delete
         </i>
@@ -39,7 +39,7 @@
         </i>
       </button>
       <button mat-button (click)="onUpdate()" class="create-btn">Update</button>
-      <button mat-button (click)="deleteConfirm()" class="create-btn">Delete</button>
+      <button mat-button *ngIf="room.creator?._id === me" (click)="deleteConfirm()" class="create-btn">Delete</button>
       <div class="deleting-area" *ngIf="delete">
         <mat-form-field>
           <input matInput type="text" [placeholder]="'Enter title of room-chat to confirm'" #input>

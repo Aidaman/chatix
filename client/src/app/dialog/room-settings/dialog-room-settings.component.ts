@@ -12,8 +12,7 @@ import {BehaviorSubject} from "rxjs";
   styleUrls: ['./dialog-room-settings.component.scss'],
 })
 export class DialogRoomSettingsComponent implements OnInit {
-  private me: string = this.localStorageService.getUser()['id'] as string;
-
+  public me: string = this.localStorageService.getUser()['id'] as string;
   public participants: IUser[] = this.room.users.filter(user => user._id !== this.me);
   public isRoomPublic: boolean = this.room.isPublic;
   public newRoomTitle: string = this.room.title;

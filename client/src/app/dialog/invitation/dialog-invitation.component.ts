@@ -2,6 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ChatService} from "../../shared/services/chat.service";
 import {IRoom} from "../../shared/models/IRoom";
+import {ThemingService} from "../../shared/services/theming.service";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-invitation',
@@ -9,17 +11,14 @@ import {IRoom} from "../../shared/models/IRoom";
   styleUrls: ['./dialog-invitation.component.scss'],
 })
 export class DialogInvitationComponent implements OnInit {
-  public theme: string = 'dark';
+  public theme: BehaviorSubject<string> = this.themingService.theme;
 
   constructor(public dialogRef: MatDialogRef<DialogInvitationComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IRoom,
-              private chatService: ChatService) {
+              private themingService: ThemingService) {
   }
 
   public ngOnInit(): void {
-    // this.chatService.theme.subscribe(selectedTheme => {
-    //     this.theme = selectedTheme;
-    // });
   }
 
   public onAgree(): void {
