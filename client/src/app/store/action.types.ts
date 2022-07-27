@@ -18,6 +18,10 @@ export enum ActionTypes {
   ROOM_GET_MESSAGES_SUCCESS = '[Room] get messages success',
   ROOM_GET_MESSAGES_FAILURE = '[Room] get messages failure',
 
+  ROOM_GET_AMOUNT_OF_MESSAGES = '[Room] get total of messages',
+  ROOM_GET_AMOUNT_OF_MESSAGES_SUCCESS = '[Room] get total of messages success',
+  ROOM_GET_AMOUNT_OF_MESSAGES_FAILURE = '[Room] get total of messages failure',
+
   ROOM_SEND_MESSAGE = '[Room] send messages',
   ROOM_SEND_MESSAGE_SUCCESS = '[Room] sent message successfully',
   ROOM_SEND_MESSAGE_FAILURE = '[Room] sending message failure',

@@ -8,15 +8,14 @@ import {ChatService} from "../../shared/services/chat.service";
   styleUrls: ['./emojis.component.scss']
 })
 export class EmojisComponent {
-  @Output() closeParticipants: EventEmitter<any> = new EventEmitter<any>();
   public smiles: string[] = Object.values(EMOJI);
 
   constructor(public chatService: ChatService) {
   }
 
   public sendToInput(smile: string): void {
-    this.chatService.message.next(smile);
-    console.log(this.chatService.message.value)
+    this.chatService.emoji.next(smile);
+    console.log(this.chatService.emoji.value)
   }
 
 }

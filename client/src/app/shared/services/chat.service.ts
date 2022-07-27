@@ -5,26 +5,34 @@ import {IMessage} from "../models/IMessage";
 import {IOption} from "../models/IOption";
 import {environment} from "../../../environments/environment";
 import {IRoom} from "../models/IRoom";
+import {LocalStorageService} from "./local-storage.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  public me: string = this.localStorageService.getUser()['id'] as string;
+
   public currentRoomUsers: BehaviorSubject<object[]> = new BehaviorSubject<object[]>([]);
   public showContextMenu: BehaviorSubject<{ event: MouseEvent; options: IOption[] }> = new BehaviorSubject<any>(null);
   public emitOption: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  public message: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  public emoji: BehaviorSubject<string> = new BehaviorSubject<string>('');
   public lastSelectedMessageId: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   public rooms: BehaviorSubject<IRoom[]> = new BehaviorSubject<IRoom[]>([]);
   public currentRoomId: BehaviorSubject<string> = new BehaviorSubject<string>('common');
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private localStorageService: LocalStorageService) {
   }
 
   public getRoomContent(id: string, offset?: number, limit?: number): Observable<IMessage[]> {
     return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
+  }
+
+  public getRoomMessagesamount(id: string): Observable<string> {
+    return this.http.get<string>(`${environment.API_URL}/roomAmountOfMessage/${id}`);
   }
 
   public getBlacklist(): Observable<string[]> {

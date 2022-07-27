@@ -5,7 +5,6 @@ import {IUser} from "../models/IUser";
     providedIn: 'root'
 })
 export class LocalStorageService {
-
     constructor() {}
 
     public setUser(user: string): void {
@@ -33,20 +32,12 @@ export class LocalStorageService {
         localStorage.removeItem('user');
     }
 
-    // public setScrollPosition(roomId, scrollPos): void {
-    //     localStorage.setItem(roomId, scrollPos);
-    // }
-    //
-    // public getScrollPosition(roomId): string {
-    //     return localStorage.getItem(roomId);
-    // }
-
-    public setlastRoomId(id: any): void {
-        localStorage.setItem('lastRoomId', id)
+    public setScrollPosition(roomId: string, scrollPos: number): void {
+        localStorage.setItem(roomId, String(scrollPos));
     }
 
-    public getlastRoomId(): string {
-        return localStorage.getItem('lastRoomId') as string;
+    public getScrollPosition(roomId: string): string {
+        return localStorage.getItem(roomId) as string;
     }
 
 }

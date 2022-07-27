@@ -34,7 +34,8 @@ export const roomSwitchFailureAction = createAction(
 
 export const roomGetMessagesAction = createAction(
   ActionTypes.ROOM_GET_MESSAGES,
-  props<{ roomId: string, offset: number }>(),
+  // props<{ roomId: string, offset: number}>(),
+  props<{ roomId: string, offset: number, limit: number }>(),
 )
 
 export const roomGetMessagesSuccessAction = createAction(
@@ -44,6 +45,20 @@ export const roomGetMessagesSuccessAction = createAction(
 
 export const roomGetMessagesFailureAction = createAction(
   ActionTypes.ROOM_GET_MESSAGES_FAILURE,
+)
+
+export const roomGetAmountOfMessagesAction = createAction(
+  ActionTypes.ROOM_GET_AMOUNT_OF_MESSAGES,
+  props<{ roomId: string }>(),
+)
+
+export const roomGetAmountOfMessagesSuccessAction = createAction(
+  ActionTypes.ROOM_GET_AMOUNT_OF_MESSAGES_SUCCESS,
+  props<{ amount: number }>(),
+)
+
+export const roomGetAmountOfMessagesFailureAction = createAction(
+  ActionTypes.ROOM_GET_AMOUNT_OF_MESSAGES_FAILURE,
 )
 
 export const roomSendMessageAction = createAction(

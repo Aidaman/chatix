@@ -15,6 +15,11 @@ export const messagesSelector = createSelector(
   (roomState: IRoomChatState) => roomState.messages
 );
 
+export const totalMessagesSelector = createSelector(
+  roomChatFeatureSelector,
+  (roomState: IRoomChatState) => roomState.totalMessages
+);
+
 export const hasRoomValueSelector = createSelector(
   roomChatFeatureSelector,
   (roomState: IRoomChatState) => roomState.hasRoomValue

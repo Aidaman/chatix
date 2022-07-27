@@ -9,8 +9,8 @@
       <mat-icon matRipple>edit</mat-icon>
     </h1>
 
-    <mat-slide-toggle [checked]="!room.isPublic" (change)="switchPrivate()">
-      {{!room.isPublic ? 'Private' : 'Public'}}
+    <mat-slide-toggle [checked]="isRoomPublic" (change)="switchPrivate()">
+      {{isRoomPublic ? 'Public' : 'Private'}}
     </mat-slide-toggle>
 
     <mat-divider></mat-divider>

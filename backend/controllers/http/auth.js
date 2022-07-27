@@ -27,6 +27,7 @@ module.exports.checkJWT = (req,res, next)=> {
         return res.status(401).send('Unauthorized');
     }
     token = token.slice(7, token.length);
+
     jwt.verify(token, SECRET_WORD, (err, decoded) => {
         if (err) {
             console.log(err);

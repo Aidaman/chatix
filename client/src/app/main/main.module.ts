@@ -13,14 +13,17 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatListModule} from "@angular/material/list";
 import {MatButtonModule} from "@angular/material/button";
 import {MatRippleModule} from "@angular/material/core";
-import {AppModule} from "../app.module";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
 import {SharedModule} from "../shared/shared.module";
 import {HeaderComponent} from "./header/header.component";
 import {DialogModule} from "../dialog/dialog.module";
 import {MainRoutingModule} from "./main-routing.module";
-import {SocketService} from "../shared/services/socket.service";
+import {PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface, PerfectScrollbarModule} from "ngx-perfect-scrollbar";
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true
+};
 
 @NgModule({
   declarations: [
@@ -45,8 +48,15 @@ import {SocketService} from "../shared/services/socket.service";
     FormsModule,
     DialogModule,
     SharedModule,
+    PerfectScrollbarModule,
 
-    MainRoutingModule
+    MainRoutingModule,
   ],
+  providers: [
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+    }
+  ]
 })
 export class MainModule { }

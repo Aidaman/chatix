@@ -13,12 +13,8 @@ import {MatCardModule} from "@angular/material/card";
 import {TokenInterceptor} from "./shared/interceptors/token.interceptor";
 import {SignInComponent} from './sign-in/sign-in.component';
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from "@angular/material/dialog";
-import {DialogAddingRoomComponent} from './dialog/adding-room/dialog-adding-room.component';
-import {DialogInvitationComponent} from './dialog/invitation/dialog-invitation.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {DialogInvitingRoomComponent} from './dialog/inviting-room/dialog-inviting-room.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
-import {DialogRoomSettingsComponent} from './dialog/room-settings/dialog-room-settings.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {MatBadgeModule} from "@angular/material/badge";
@@ -40,7 +36,6 @@ import {RoomChatEffect} from "./store/room-chat/room-chat.effect";
 @NgModule({
     declarations: [
         AppComponent,
-        ContactListComponent,
         SignInComponent,
     ],
     imports: [
@@ -81,9 +76,9 @@ import {RoomChatEffect} from "./store/room-chat/room-chat.effect";
         { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
         { provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } }
     ],
-    exports: [
-        CustomContextMenuComponent
-    ],
+  exports: [
+    CustomContextMenuComponent,
+  ],
     bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,16 +1,18 @@
 import {IRoom} from "../../shared/models/IRoom";
 import {createReducer, on} from "@ngrx/store";
 import {
-  chatGetAvailableRooms, chatGetAvailableRoomsSucces,
-  roomAddParticipantAction, roomAddParticipantFailureAction, roomAddParticipantSuccessAction,
+  chatGetAvailableRooms,
+  chatGetAvailableRoomsSucces,
+  roomAddParticipantAction,
+  roomAddParticipantFailureAction,
+  roomAddParticipantSuccessAction, roomGetAmountOfMessagesAction,
+  roomGetAmountOfMessagesFailureAction, roomGetAmountOfMessagesSuccessAction,
   roomGetMessagesAction,
   roomGetMessagesFailureAction,
   roomGetMessagesSuccessAction,
   roomRemoveParticipantAction,
   roomRemoveParticipantFailureAction,
   roomRemoveParticipantSuccessAction,
-  // roomGetParticipantsAction,
-  // roomGetParticipantsSuccesAction,
   roomSendMessageAction,
   roomSendMessageFailureAction,
   roomSendMessageSuccessAction,
@@ -24,6 +26,7 @@ export interface IRoomChatState {
   allRooms: IRoom[],
   selectedRoom: IRoom | null,
   messages: IMessage[],
+  totalMessages: number,
   isLoading: boolean,
   hasRoomValue: boolean,
   hasMessagesValue: boolean,
@@ -33,6 +36,7 @@ const initialRoomState: IRoomChatState = {
   allRooms: [],
   selectedRoom: null,
   messages: [],
+  totalMessages: 50,
   isLoading: false,
   hasRoomValue: false,
   hasMessagesValue: false,
@@ -48,6 +52,7 @@ export const roomChatReducer = createReducer(
   on(roomSwitchSuccessAction, (state, action) => ({
     ...state,
     room: action.room,
+    totalMessages: 50,
     isLoading: false,
     hasRoomValue: true,
   })),
@@ -71,6 +76,20 @@ export const roomChatReducer = createReducer(
     ...state,
     isLoading: false,
     hasMessagesValue: false,
+  })),
+
+  on(roomGetAmountOfMessagesAction, (state) => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(roomGetAmountOfMessagesSuccessAction, (state, action) => ({
+    ...state,
+    isLoading: false,
+    totalMessages: action.amount
+  })),
+  on(roomGetAmountOfMessagesFailureAction, (state) => ({
+    ...state,
+    isLoading: false,
   })),
 
   on(roomSendMessageAction, (state) => ({

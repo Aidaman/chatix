@@ -35,51 +35,56 @@
           <mat-icon>exit_to_app</mat-icon>
         </mat-list-item>
 
-        <mat-divider vertical *ngIf="room.creator?.id === me"></mat-divider>
+        <mat-divider vertical *ngIf="isCreatedByMe(room.creator?._id)"></mat-divider>
 
-        <mat-list-item matRipple
-                       *ngIf="isCreatedByMe(room)"
-                       (click)="openSettings(room)">
-          <mat-icon>settings</mat-icon>
-        </mat-list-item>
+<!--        <mat-list-item matRipple-->
+<!--                       *ngIf="isCreatedByMe(room)"-->
+<!--                       (click)="openSettings(room)">-->
+<!--          <mat-icon>settings</mat-icon>-->
+<!--        </mat-list-item>-->
       </mat-list>
     </div>
 
-    <!--    <perfect-scrollbar [config]="config" (psScrollY)="onScroll($event)">-->
-    <div id="contextmenu-control">
-      <div id="messagecontextmenutarget">
-        <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
-          <mat-list-item *ngFor="let message of messages" [ngClass]="{
-                        'own': message.creator?.id === me && !message.isSystemMessage,
-                        'foreign' : message.creator?.id !== me && !message.isSystemMessage,
+<!--        <perfect-scrollbar [config]="config" (psScrollY)="onScroll($event)">-->
+<!--    <perfect-scrollbar #scrollbarComponent-->
+<!--                       [config]="perfectScrollBarConfig"-->
+<!--                       (psScrollY)="onScroll($event, room)">-->
+
+      <div id="contextmenu-control" scroll >
+        <div id="messagecontextmenutarget">
+          <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
+            <mat-list-item *ngFor="let message of messages" [ngClass]="{
+                        'own': isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
+                        'foreign' : isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
                         'system' : message.isSystemMessage}">
-            <div class="message-item">
-              <app-message-item [message]="message"
-                                (viewChange)="onViewportChange($event, room, messages)"
-                                (contextmenu)="onMessageRightClick(message)">
-              </app-message-item>
-              <!--    (loadRequest)="messageRequest($event)"  -->
-            </div>
-          </mat-list-item>
+              <div class="message-item">
+                <app-message-item [message]="message"
+                                  (viewChange)="onViewportChange($event, room, messages)"
+                                  (contextmenu)="onMessageRightClick(message)">
+<!--                                  (contextmenu)="onMessageRightClick(message)">-->
+                </app-message-item>
+                <!--    (loadRequest)="messageRequest($event)"  -->
+              </div>
+            </mat-list-item>
 
-          <app-custom-context-menu></app-custom-context-menu>
-
-        </mat-list>
+<!--            <app-custom-context-menu></app-custom-context-menu>-->
+          </mat-list>
+        </div>
       </div>
-    </div>
-    <!--    </perfect-scrollbar>-->
+<!--    </perfect-scrollbar>-->
+
     <div class="input-area">
       <div class="input-message" dir="auto">
-<!--        (message$ | async)?.length / 64 ?? 1-->
+        <!--        (message$ | async)?.length / 64 ?? 1-->
         <textarea class="composer_rich_textarea"
                   [rows]="message | calculateRowsPipe"
                   [(ngModel)]="message"
                   (keydown.enter)="sendMessage($event, room)"></textarea>
-<!--        <div class="composer_rich_textarea"-->
-<!--                  contenteditable="true"-->
-<!--                  [textContent]="message"-->
-<!--                  (input)="onInput($event)"-->
-<!--                  (keydown.enter)="sendMessage($event, room)"></div>-->
+        <!--        <div class="composer_rich_textarea"-->
+        <!--                  contenteditable="true"-->
+        <!--                  [textContent]="message"-->
+        <!--                  (input)="onInput($event)"-->
+        <!--                  (keydown.enter)="sendMessage($event, room)"></div>-->
       </div>
 
       <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary"

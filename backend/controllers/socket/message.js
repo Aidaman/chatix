@@ -17,7 +17,6 @@ module.exports = {
                 throw new Error('invalid message')
             }
 
-            console.log("Da rum", params.room);
             if (params.room !== 'common') {
                 const room = await Room.findOne({_id:params.room, users:socket.decoded_token.id});
                 if(room) {
@@ -38,18 +37,22 @@ module.exports = {
 
     readMessage: async (io, socket, params) => {
         try {
-            console.log(params.messageId);
             const message = await Message.findById(params.messageId).populate('room');
             if(!message){
                 throw new Error('Message not found');
             }
+            console.log("(read message) message:", message);
+
             const userInRoom = !!message.room.users.find(item => String(item) === String(socket.decoded_token.id));
             if(!userInRoom || String(message.creator) === socket.decoded_token.id){
                 throw new Error('Not allowed to read');
             }
+            console.log("(read message) user in room:", userInRoom);
+
             if(!!message.read.find(i => String(i) === socket.decoded_token.id)){
                 return console.log('message already read');
             }
+
             message.read.push(socket.decoded_token.id);
             await message.save();
             return io.to(String(message.room._id)).emit('messageRead', {id: params.messageId, user: socket.decoded_token.id});
@@ -78,7 +81,6 @@ module.exports = {
     deleteMessage: async (io, socket, params) => {
         try{
             const res = await Message.deleteOne({id: params.messageId, creator: socket.decoded_token.id});
-            console.log(res);
             // console.log('params', io, socket, params);
             // if(!message){
             //     throw new Error('Not allowed');

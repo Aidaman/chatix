@@ -6,14 +6,17 @@ module.exports.addToBlacklist = async (req,res)=>{
         if(!blacklistOwner){
             throw new Error('Your account not found')
         }
+
         const blacklistedUser = await User.findById(req.body.blacklistedId);
         if(!blacklistedUser){
             throw new Error('User not found')
         }
+
         const isInBlacklist = !!blacklistOwner.blacklist.find(i=> String(i) === req.body.blacklistedId);
         if(isInBlacklist){
             throw new Error('User is already in blacklist')
         }
+
         blacklistOwner.blacklist.push(req.body.blacklistedId);
         blacklistOwner = await blacklistOwner.save();
         res.send(blacklistOwner.blacklist);
@@ -29,10 +32,12 @@ module.exports.removeFromBlacklist = async (req,res)=> {
         if (!blacklistOwner) {
             throw new Error('Your account not found')
         }
+
         const isInBlacklist = !!blacklistOwner.blacklist.find(i => String(i) === req.body.blacklistedId);
         if (!isInBlacklist) {
             throw new Error('User is not in blacklist')
         }
+
         blacklistOwner.blacklist.pull(req.body.blacklistedId);
         blacklistOwner = await blacklistOwner.save();
         res.send(blacklistOwner.blacklist);

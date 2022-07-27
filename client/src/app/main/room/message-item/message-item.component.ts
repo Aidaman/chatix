@@ -1,6 +1,5 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IMessage} from "../../../shared/models/IMessage";
-import {LocalStorageService} from "../../../shared/services/local-storage.service";
 import {ChatService} from "../../../shared/services/chat.service";
 import {ThemingService} from "../../../shared/services/theming.service";
 import {BehaviorSubject} from "rxjs";
@@ -15,12 +14,11 @@ export class MessageItemComponent implements OnInit {
     @Input() message!: IMessage;
     @Output() loadRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() viewChange: EventEmitter<object> = new EventEmitter<object>();
-    public me: string = this.localStorageService.getUser()['id'] as string;
     public theme: BehaviorSubject<string> = this.themeService.theme;
+    public me = this.chatService.me;
 
     constructor(private chatService: ChatService,
-                private themeService: ThemingService,
-                private localStorageService: LocalStorageService) {
+                private themeService: ThemingService,) {
     }
 
     ngOnInit(): void {
@@ -31,7 +29,8 @@ export class MessageItemComponent implements OnInit {
     }
 
     public viewportChange(e: any): void {
-        if (this.message.read.indexOf(this.me) === -1 && this.me !== this.message.creator?.id) {
+      console.log("(message item component, viewportChange event)", e);
+        if (this.message.read.indexOf(this.chatService.me) === -1 && this.me !== this.message.creator?.id) {
             this.viewChange.emit({inView: e, id: this.message._id,});
         }
     }

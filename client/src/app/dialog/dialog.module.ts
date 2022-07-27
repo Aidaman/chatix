@@ -15,6 +15,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {MatRippleModule} from "@angular/material/core";
 import {MatListModule} from "@angular/material/list";
+import {ContactListComponent} from "./contact-list/contact-list.component";
 
 @NgModule({
   declarations: [
@@ -22,24 +23,31 @@ import {MatListModule} from "@angular/material/list";
     DialogInvitationComponent,
     DialogInvitingRoomComponent,
     DialogRoomSettingsComponent,
+    ContactListComponent,
   ],
-    imports: [
-        CommonModule,
-        MatAutocompleteModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatSlideToggleModule,
-        MatDividerModule,
-        ReactiveFormsModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatInputModule,
-        MatRippleModule,
-        MatListModule,
-        MatIconModule,
-        FormsModule,
-
-    ],
+  imports: [
+    CommonModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    MatDividerModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatRippleModule,
+    MatListModule,
+    MatIconModule,
+    FormsModule,
+  ],
+  exports: [
+    DialogAddingRoomComponent,
+    DialogInvitationComponent,
+    DialogInvitingRoomComponent,
+    DialogRoomSettingsComponent,
+    ContactListComponent,
+  ],
   providers: [
     {
       provide: MatDialogRef,

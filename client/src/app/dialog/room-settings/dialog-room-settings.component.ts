@@ -1,35 +1,30 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {LocalStorageService} from "../../shared/services/local-storage.service";
+import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {IRoom} from "../../shared/models/IRoom";
 import {IUser} from "../../shared/models/IUser";
 import {ThemingService} from "../../shared/services/theming.service";
 import {BehaviorSubject} from "rxjs";
+import {ChatService} from "../../shared/services/chat.service";
 
 @Component({
   selector: 'app-room-chat-settings',
   templateUrl: './dialog-room-settings.component.html',
   styleUrls: ['./dialog-room-settings.component.scss'],
 })
-export class DialogRoomSettingsComponent implements OnInit {
-  public me: string = this.localStorageService.getUser()['id'] as string;
+export class DialogRoomSettingsComponent{
   public participants: IUser[] = this.room.users.filter(user => user._id !== this.me);
   public isRoomPublic: boolean = this.room.isPublic;
   public newRoomTitle: string = this.room.title;
   public removedUsers: IUser[] = [];
   public delete: boolean = false;
 
+  public me = this.chatService.me
   public theme: BehaviorSubject<string> = this.themeService.theme;
 
   constructor(public dialogRef: MatDialogRef<DialogRoomSettingsComponent>,
+              public chatService: ChatService,
               private themeService: ThemingService,
-              private localStorageService: LocalStorageService,
               @Inject(MAT_DIALOG_DATA) public room: IRoom) {
-  }
-
-  public ngOnInit(): void {
-    console.log('DialogRoomSettingsComponent', this.room);
-    // this.room.users = this.room.users.filter(user => user.id !== this.me);
   }
 
   public onUpdate(): void {

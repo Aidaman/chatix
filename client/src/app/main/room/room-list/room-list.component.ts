@@ -6,13 +6,11 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {RoomService} from "../../../shared/services/room.service";
 import {MatDialog} from "@angular/material/dialog";
 import {DialogAddingRoomComponent} from "../../../dialog/adding-room/dialog-adding-room.component";
-import * as uuid from "uuid"
-import {LocalStorageService} from "../../../shared/services/local-storage.service";
 import {Router} from "@angular/router";
 import {ChatService} from "../../../shared/services/chat.service";
-import {allRoomsSelector, roomSelector} from "../../../store/room-chat/room-chat.selectors";
+import {roomSelector} from "../../../store/room-chat/room-chat.selectors";
 import {Store} from "@ngrx/store";
-import {roomGetMessagesAction, roomSwitchAction} from "../../../store/room-chat/room-chat.actions";
+import {roomSwitchAction} from "../../../store/room-chat/room-chat.actions";
 
 /*
   this component used to show list of rooms$ and allows user to switch current room-chat
@@ -34,18 +32,17 @@ export class RoomListComponent implements OnInit {
   public selectedRoom: Observable<IRoom | null> = this.store.select(roomSelector);
 
   constructor(private socketService: SocketService,
-              private localStorageService: LocalStorageService,
               private roomService: RoomService,
               private router: Router,
+
+              private chatService: ChatService,
+
               private store: Store,
               private matDialog: MatDialog,
               private themingService: ThemingService) {
   }
 
   public ngOnInit(): void {
-    // this.socketService.listen('searchRoomsResult').subscribe(rooms => this.rooms = rooms);
-    // console.log('list o\' rooms$', this.rooms$);
-    console.log("(Room List Component) rooms", this.rooms);
   }
 
   public createRoom(): void {
@@ -53,7 +50,7 @@ export class RoomListComponent implements OnInit {
     newRoomDialogRef.afterClosed().subscribe((value) => {
       const newRoom = {
         ...value,
-        participants: [(this.localStorageService.getUser()['id'] as string), ...value.participants],
+        participants: [this.chatService.me, ...value.participants],
       }
       this.socketService.emit('createRoom', newRoom);
       // this.store.dispatch();
@@ -76,6 +73,7 @@ export class RoomListComponent implements OnInit {
 
   navigateRoom(roomId: string) {
     this.store.dispatch(roomSwitchAction({roomId}));
+    this.socketService.roomId = roomId;
     // this.store.dispatch(roomGetMessagesAction({roomId, offset: 50}));
     this.router.navigate(['/chat', roomId]);
   }

@@ -9,10 +9,12 @@ module.exports = {
             if(!user){
                 throw new Error('Invalid user')
             }
+
             await user.updateOne({isOnline:true});
             user.isOnline = true;
             user.socketIds.push(socket.id);
             user = await user.save();
+
             socket.join(getUserSocketsRoom(user));
             const usersOnline = await User.find({isOnline: true});
             const rooms = await Room.find({users:user._id}).populate([{path:'users'},{path:'creator'}]).sort('-lastAction');
@@ -21,6 +23,7 @@ module.exports = {
                 title: 'Common',
                 users: usersOnline
             });
+
             const roomIds = rooms.map(i=> i._id);
             socket.join(roomIds);
             io.to(socket.id).emit('join',

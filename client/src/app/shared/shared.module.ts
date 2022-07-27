@@ -7,10 +7,12 @@ import {PremiumNicknamePipe} from './pipes/premium-nickname.pipe';
 import {CustomContextMenuComponent} from "./components/custom-context-menu/custom-context-menu.component";
 import {MatIconModule} from "@angular/material/icon";
 import { InputAreacalculationPipe } from './pipes/input-areacalculation.pipe';
+import { ScrollTrackDirective } from './directives/scroll-track.directive';
 
 @NgModule({
   declarations: [
     ContextMenuDirective,
+    ScrollTrackDirective,
     SearchPipe,
     UpdateRoomsPipe,
     PremiumNicknamePipe,
@@ -23,6 +25,7 @@ import { InputAreacalculationPipe } from './pipes/input-areacalculation.pipe';
   ],
   exports: [
     ContextMenuDirective,
+    ScrollTrackDirective,
     SearchPipe,
     UpdateRoomsPipe,
     PremiumNicknamePipe,

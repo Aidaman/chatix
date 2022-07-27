@@ -1,11 +1,13 @@
 const router = require('express').Router();
-const {roomContent} = require('../controllers/http/messages');
+const {roomContent, roomAmountOfMessage} = require('../controllers/http/messages');
 const {addToBlacklist, removeFromBlacklist, getBlacklist} = require('../controllers/http/user');
 const {checkJWT} = require('../controllers/http/auth');
 
 router.use(checkJWT);
 
 router.get('/roomContent/:id', roomContent);
+
+router.get('/roomAmountOfMessage/:id', roomAmountOfMessage);
 
 router.get('/blacklist', getBlacklist);
 

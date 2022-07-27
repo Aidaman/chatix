@@ -77,8 +77,6 @@ module.exports = {
             const user = await User.findById(id);
             let room = await Room.findOne({_id: params.roomId, isFavorites: false});
 
-            console.log(params);
-
             if (room && room.users.indexOf(id) !== -1) {
                 room.users.pull(id);
                 room.lastAction = Date.now();

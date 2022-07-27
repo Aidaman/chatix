@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {environment} from "../../../environments/environment";
-import {map, Observable, Subject, takeUntil} from "rxjs";
+import {map, Observable, Subject, takeUntil, tap} from "rxjs";
 import {LocalStorageService} from "./local-storage.service";
 import * as io from 'socket.io-client';
 import {chatGetAvailableRooms, roomGetMessagesAction, roomSwitchAction} from "../../store/room-chat/room-chat.actions";
@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService{
+export class SocketService {
   // public webSocketSubject!: WebSocketSubject<any>;
   // public messages$: Subject<any> = new Subject<any>();
   // public readonly uri: string = environment.API_URL_WSS;
@@ -62,6 +62,8 @@ export class SocketService{
   public socket: any;
   public readonly uri: string = environment.API_URL;
   public isConnected: boolean = false;
+  public limit: number = 50;
+  public roomId: string = "";
 
   public termination$: Subject<number> = new Subject<number>();
 
@@ -96,37 +98,38 @@ export class SocketService{
     this.socket.disconnect();
   }
 
-  public listenJoin(): Observable<any>{
+  public listenJoin(): Observable<any> {
     return this.listen('join');
   }
 
-  public listenLeaveRoom(): Observable<any>{
+  public listenLeaveRoom(): Observable<any> {
     return this.listen('leaveRoom').pipe(
       map((data) => {
         console.log('this is data from socketService "leaveRoom" listener', data);
-        this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset:50}))
+        this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset: 50, limit: this.limit}))
         return true
       }),
       takeUntil(this.termination$),
     );
   }
 
-  public listenNewMessage(): Observable<any>{
+  public listenNewMessage(): Observable<any> {
     return this.listen('newMessage').pipe(
       map((data) => {
         console.log('this is data from socketService "newMessage" listener', data);
-        this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset:50}))
-        return true
+        if (data.room === this.roomId) {
+          this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset: 0, limit: this.limit}));
+        }
       }),
       takeUntil(this.termination$),
     );
   }
 
-  public listenInvitation(): Observable<any>{
+  public listenInvitation(): Observable<any> {
     return this.listen('invitation');
   }
 
-  public listenUserJoined(): Observable<any>{
+  public listenUserJoined(): Observable<any> {
     return this.listen('userJoined').pipe(takeUntil(this.termination$),);
   }
 
@@ -143,14 +146,14 @@ export class SocketService{
 
   public listenUserLeft(): Observable<any> {
     return this.listen('userLeft').pipe(
-      map((value)=> {
+      map((value) => {
         console.log("user left value", value);
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
         this.store.dispatch(roomSwitchAction({roomId: "common"}));
       }),
       takeUntil(this.termination$),
-      );
+    );
   }
 
   public listenRoomDeleted(): Observable<any> {
@@ -195,6 +198,14 @@ export class SocketService{
 
   public listenGetAllRooms(): Observable<any> {
     return this.listen('allRooms');
+  }
+
+  public listenMessageRead(): Observable<any> {
+    return this.listen('messageRead').pipe(
+      tap((value) => {
+        console.log("(listen Get All Rooms) incoming value: ", value);
+      })
+    );
   }
 
   public destroy(): void {

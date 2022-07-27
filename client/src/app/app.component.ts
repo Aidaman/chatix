@@ -7,7 +7,6 @@ import {Component} from '@angular/core';
 export class AppComponent {}
 
 /*
-    TODO: PARTICIPANTS MODAL WINDOW
     @showContextMenu TODO: refactor context menu
                      TODO: Maybe showContextMenu should be BehaviorSubject<boolean>,
                         and options available in the context menu should be determined by object that clicked?

@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {ChatService} from "../../shared/services/chat.service";
 import {IRoom} from "../../shared/models/IRoom";
 import {ThemingService} from "../../shared/services/theming.service";
 import {BehaviorSubject} from "rxjs";

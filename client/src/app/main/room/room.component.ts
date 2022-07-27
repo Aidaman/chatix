@@ -1,9 +1,8 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import {AfterViewChecked, Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {ThemingService} from "../../shared/services/theming.service";
 import {RoomService} from "../../shared/services/room.service";
 import {IRoom} from "../../shared/models/IRoom";
-import {BehaviorSubject, lastValueFrom, map, Observable, Subject, Subscription, switchMap, takeUntil, tap} from "rxjs";
-import {LocalStorageService} from "../../shared/services/local-storage.service";
+import {BehaviorSubject, lastValueFrom, Observable, Subscription, switchMap, tap} from "rxjs";
 import {IMessage} from "../../shared/models/IMessage";
 import {SocketService} from "../../shared/services/socket.service";
 import {IOption} from "../../shared/models/IOption";
@@ -13,39 +12,42 @@ import {DialogRoomSettingsComponent} from "../../dialog/room-settings/dialog-roo
 import {ActivatedRoute} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {isAllRoomsHasValue, messagesSelector, roomByIdSelect} from "../../store/room-chat/room-chat.selectors";
-import {chatGetAvailableRooms, roomGetMessagesAction, roomSwitchAction} from "../../store/room-chat/room-chat.actions";
+import {
+  chatGetAvailableRooms,
+  roomGetAmountOfMessagesAction,
+  roomGetMessagesAction
+} from "../../store/room-chat/room-chat.actions";
 import {DialogInvitingRoomComponent} from "../../dialog/inviting-room/dialog-inviting-room.component";
 import {IUser} from "../../shared/models/IUser";
+import {ScrollTrackDirective} from "../../shared/directives/scroll-track.directive";
 
 @Component({
   selector: 'app-room',
   templateUrl: 'room.component.html',
   styleUrls: ['room.component.scss'],
 })
-export class RoomComponent implements OnInit, OnDestroy {
+export class RoomComponent implements OnInit, OnDestroy, AfterViewChecked{
+  @ViewChild(ScrollTrackDirective) scrollDir!: ScrollTrackDirective;
+
   private lastSelectedMessageId: string = '';
   private isEditing = false;
   private emojiSubscription!: Subscription;
 
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
-  public emoji$: Observable<string> = this.roomService.message.asObservable().pipe(
-    map((value) => {
-      this.message += value;
-      return value
-    })
-  );
+  public emoji$: Observable<string> = this.roomService.message.asObservable();
   public message: string = "";
 
   public room$: Observable<IRoom> = this.activeRoute.params.pipe(
-    switchMap(({id})=>{
+    switchMap(({id}) => {
       return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
-          console.log("(Room Component) room$, select switchMap", id)
-          if (!value){
+          if (!value) {
             this.store.dispatch(chatGetAvailableRooms());
           }
-          this.store.dispatch(roomGetMessagesAction({roomId: id, offset: 50}))
+          this.socketService.roomId = id;
+          this.socketService.limit = 50;
+          this.store.dispatch(roomGetMessagesAction({roomId: id, offset: 0, limit: this.socketService.limit}));
           return this.store.select(roomByIdSelect(id))
         })
       );
@@ -55,20 +57,18 @@ export class RoomComponent implements OnInit, OnDestroy {
   public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
     switchMap(({id}) => {
       if (id !== 'common') return this.store.select(isAllRoomsHasValue).pipe(
-        switchMap((value)=>{
-          console.log("(Room Component) room$, select switchMap", id)
-          if (!value){
+        switchMap((value) => {
+          if (!value) {
             this.store.dispatch(chatGetAvailableRooms());
           }
+          this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
           return this.store.select(messagesSelector);
         })
       )
       return [];
     })
   );
-  public users: object[] = [];
 
-  public me: string = this.localStorageService.getUser()['id'] as string;
   public menuItems: IOption[] = [
     {
       id: 'edit',
@@ -83,26 +83,34 @@ export class RoomComponent implements OnInit, OnDestroy {
   ];
 
   constructor(private themingService: ThemingService,
-              private localStorageService: LocalStorageService,
               private socketService: SocketService,
               private chatService: ChatService,
               private matDialog: MatDialog,
               private activeRoute: ActivatedRoute,
               private roomService: RoomService,
-              private store: Store,) {
+              private store: Store) {
   }
 
   ngOnInit(): void {
     this.socketService.emit('searchRooms', {});
-    this.emojiSubscription = this.emoji$.subscribe();
+    this.emojiSubscription = this.emoji$.subscribe((value: string)=>{
+      this.message += value;
+    });
 
     this.socketService.listenUserLeft().subscribe();
     this.socketService.listenPrivacyChanged().subscribe();
+    this.socketService.listenMessageRead().subscribe();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.scrollDir.counter < 20){
+      this.scrollDir.reset();
+      this.scrollDir.counter++;
+    }
   }
 
   ngOnDestroy(): void {
     this.emojiSubscription.unsubscribe();
-    // this.messageSubscription.unsubscribe();
   }
 
   public toggleMatDrawer(): void {
@@ -114,33 +122,30 @@ export class RoomComponent implements OnInit, OnDestroy {
     return (room._id !== 'common' || room.isFavorites);
   }
 
-  public isCreatedByMe(room: IRoom): boolean {
-    return room.creator?.id === this.me;
+  public isCreatedByMe(id: string | undefined): boolean {
+    return this.chatService.me === id;
   }
 
   public sendMessage(event: any, room: IRoom): void {
     const msg = this.message.trim();
     if (event.code === 'Enter') event.preventDefault();
-    if (msg) {
-      if (this.isEditing) {
-        this.socketService.emit('updateMessage', {
-          messageId: this.lastSelectedMessageId,
-          newContent: msg,
-          roomId: room._id,
-        });
-      } else {
-        this.socketService.emit('createMessage', {
-          message: msg,
-          room: room._id,
-        });
-      }
+    if (msg && this.isEditing)
+      this.socketService.emit('updateMessage', {
+        messageId: this.lastSelectedMessageId,  newContent: msg,  roomId: room._id,
+      });
+    else if (msg) {
+      this.socketService.emit('createMessage', {message: msg, room: room._id,});
+      this.scrollDir.reset();
     }
+
     this.message = '';
     this.isEditing = false;
+    this.scrollDir.reset();
   }
 
   public onViewportChange(event: any, room: IRoom, messages: IMessage[]) {
     if (room._id !== 'common') {
+      console.log("(on Viewport Change) event, room, messages:", event, room, messages);
       if (event.inView) {
         this.socketService.emit('readMessage', {messageId: event.id});
         this.roomService.calculateUnread(messages);
@@ -149,18 +154,15 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public onMessageRightClick(message: IMessage): void {
-    if (message.creator?.id === this.me) {
+    if (message.creator?.id === this.chatService.me) {
       this.chatService.lastSelectedMessageId.next(message._id);
+
     }
   }
 
   public async openSettings(room: IRoom): Promise<void> {
-    // const terminate: Subject<boolean> = new Subject<boolean>();
-
     const matDialogRef = this.matDialog.open(DialogRoomSettingsComponent, {data: room});
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
-      console.log("room settings closed, this is the resulting value", value)
-
       if (value.delete)
         this.socketService.emit('roomDelete', {roomId: value.roomId});
 
@@ -177,18 +179,17 @@ export class RoomComponent implements OnInit, OnDestroy {
           });
         }
       }
-    }))
+    }));
 
     await lastValueFrom(afterClosedSource$);
-    // terminate.next(true);
-    // terminate.complete();
   }
 
   public async openInviteParticipantsDialog(room: IRoom): Promise<void> {
-    const matDialogRef = this.matDialog.open(DialogInvitingRoomComponent, {height: '500px', width: '500px', data: room});
+    const matDialogRef = this.matDialog.open(DialogInvitingRoomComponent,
+      {height: '500px', width: '500px', data: room});
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
-      if(!value) return;
-      else  this.socketService.emit('inviteUsers', {roomId: value.roomId, participants: value.participants});
+      if (!value) return;
+      else this.socketService.emit('inviteUsers', {roomId: value.roomId, participants: value.participants});
     }));
 
     await lastValueFrom(afterClosedSource$);
@@ -196,12 +197,5 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public exitRoom(room: IRoom) {
     this.socketService.emit('leaveRoom', {roomId: room._id});
-  }
-
-  onInput(e: any) {
-    console.log(e);
-    // this.message += e.data;
-  //  Get selection использовать
-  //  Get position использовать
   }
 }
