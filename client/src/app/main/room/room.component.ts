@@ -34,6 +34,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private emojiSubscription!: Subscription;
   private lastSelectedMessage: IMessage | null = null;
 
+  public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
   public emoji$: Observable<string> = this.roomService.message.asObservable();
@@ -155,7 +156,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.isEditing = false;
   }
 
-  public onViewportChange(event: any, room: IRoom, messages: IMessage[]) {
+  public onViewportChange(event: {inView: boolean, id: string}, room: IRoom, messages: IMessage[]) {
     if (room._id !== 'common') {
       // console.log("(on Viewport Change) event, room, messages:", event, room);
       if (event.inView) {

@@ -204,7 +204,7 @@ export class SocketService {
   public listenMessageRead(): Observable<any> {
     return this.listen('messageRead').pipe(
       tap((value) => {
-        console.log("(listen Get All Rooms) incoming value: ", value);
+        console.log("(listen Message Read) incoming value: ", value);
       }),
       takeUntil(this.termination$)
     );

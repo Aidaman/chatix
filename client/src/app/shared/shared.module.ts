@@ -10,6 +10,7 @@ import { InputAreacalculationPipe } from './pipes/input-areacalculation.pipe';
 import { ScrollTrackDirective } from './directives/scroll-track.directive';
 import {MatDividerModule} from "@angular/material/divider";
 import { InViewPortDirective } from './directives/in-view-port.directive';
+import {FindUserPipe} from "./pipes/find-user-pipe.pipe";
 
 @NgModule({
   declarations: [
@@ -18,8 +19,9 @@ import { InViewPortDirective } from './directives/in-view-port.directive';
     SearchPipe,
     UpdateRoomsPipe,
     PremiumNicknamePipe,
-    CustomContextMenuComponent,
+    FindUserPipe,
     InputAreacalculationPipe,
+    CustomContextMenuComponent,
     InViewPortDirective,
   ],
     imports: [
@@ -36,6 +38,7 @@ import { InViewPortDirective } from './directives/in-view-port.directive';
     CustomContextMenuComponent,
     InputAreacalculationPipe,
     InViewPortDirective,
+    FindUserPipe,
   ],
   providers: [
     { provide: Window, useValue: window }

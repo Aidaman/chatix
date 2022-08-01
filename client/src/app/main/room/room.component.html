@@ -15,7 +15,7 @@
         <div class="room-title">
           <mat-icon>meeting_room</mat-icon>
           <div class="room-title-text">
-            {{room.title}}
+            {{(room.users.length < 3 && !room.isPublic)? (me | findUserPipe: room.users) : room.title}}
             <small>{{room.users.length}} participants</small>
           </div>
           <button mat-button (click)="openSettings(room)">
