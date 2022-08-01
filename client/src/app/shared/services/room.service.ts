@@ -4,21 +4,22 @@ import {IMessage} from "../models/IMessage";
 import {ChatService} from "./chat.service";
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
-export class RoomService{
-    public message: BehaviorSubject<string> = new BehaviorSubject<string>(' ');
-    public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+export class RoomService {
+  public message: BehaviorSubject<string> = new BehaviorSubject<string>(' ');
+  public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-    constructor(private chatService: ChatService){}
+  constructor(private chatService: ChatService) {
+  }
 
-    public calculateUnread(messages: IMessage[]): number {
-        let amountOfUnread = 0;
-        messages.forEach(message => {
-            if (message.read.indexOf(this.chatService.me) === -1 && this.chatService.me !== message.creator?.id)
-                amountOfUnread += 1;
-        });
-        return amountOfUnread;
-        // this.unreadMessages.emit({unread: this.amountOfUnread, roomId: this.currentRoom._id});
-    }
+  //shall I do this thing in the store? 🤔
+  public calculateUnread(messages: IMessage[]): number {
+    let amountOfUnread = 0;
+    messages.forEach(message => {
+      if (message.read.indexOf(this.chatService.me) === -1 && this.chatService.me !== message.creator?.id)
+        amountOfUnread += 1;
+    });
+    return amountOfUnread;
+  }
 }

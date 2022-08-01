@@ -1,7 +1,6 @@
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {IRoomChatState} from "./room-chat.reducer";
 import {IRoom} from "../../shared/models/IRoom";
-import {of} from "rxjs";
 
 export const roomChatFeatureSelector = createFeatureSelector<IRoomChatState>('room and chat');
 
@@ -18,6 +17,11 @@ export const messagesSelector = createSelector(
 export const totalMessagesSelector = createSelector(
   roomChatFeatureSelector,
   (roomState: IRoomChatState) => roomState.totalMessages
+);
+
+export const offsetSelector = createSelector(
+  roomChatFeatureSelector,
+  (roomState: IRoomChatState) => roomState.offset
 );
 
 export const hasRoomValueSelector = createSelector(
@@ -48,20 +52,5 @@ export const allRoomsSelector = createSelector(
 
 export const roomByIdSelect = (id: string) => createSelector(
   roomChatFeatureSelector,
-  (chatState: IRoomChatState) => {
-    const emptyRoom: IRoom = {
-      _id: id,
-      title: 'empty room',
-      users: [],
-      creator: null,
-      index: -1,
-      lastAction: new Date(),
-      isPublic: false,
-      isFavorites: false,
-    };
-    if (chatState.allRooms){
-      const room = chatState.allRooms.find((value) => value._id === id);
-      return room !== undefined ? room : emptyRoom;
-    } else return emptyRoom;
-  },
+  (chatState: IRoomChatState) => chatState.allRooms.find((value) => value._id === id),
 )

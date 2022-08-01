@@ -4,38 +4,10 @@ import {IMessage} from "../../shared/models/IMessage";
 import {IUser} from "../../shared/models/IUser";
 import {IRoom} from "../../shared/models/IRoom";
 
-export const chatGetAvailableRooms = createAction(
-  ActionTypes.CHAT_GET_AVAILABLE_ROOMS,
-  // props<{}>()
-)
-
-export const chatGetAvailableRoomsSucces = createAction(
-  ActionTypes.CHAT_GET_AVAILABLE_ROOMS_SUCCESS,
-  props<{ rooms: IRoom[] }>()
-)
-
-export const chatGetAvailableRoomsFailure = createAction(
-  ActionTypes.CHAT_GET_AVAILABLE_ROOMS_FAILURE,
-)
-
-export const roomSwitchAction = createAction(
-  ActionTypes.ROOM_SWITCH,
-  props<{ roomId: string }>()
-)
-
-export const roomSwitchSuccessAction = createAction(
-  ActionTypes.ROOM_SWITCH_SUCCESS,
-  props<{ room: IRoom }>()
-)
-
-export const roomSwitchFailureAction = createAction(
-  ActionTypes.ROOM_SWITCH_FAILURE,
-)
-
 export const roomGetMessagesAction = createAction(
   ActionTypes.ROOM_GET_MESSAGES,
   // props<{ roomId: string, offset: number}>(),
-  props<{ roomId: string, offset: number, limit: number }>(),
+  props<{ roomId: string }>(),
 )
 
 export const roomGetMessagesSuccessAction = createAction(
@@ -45,6 +17,35 @@ export const roomGetMessagesSuccessAction = createAction(
 
 export const roomGetMessagesFailureAction = createAction(
   ActionTypes.ROOM_GET_MESSAGES_FAILURE,
+)
+
+export const roomGetNewMessageAction = createAction(
+  ActionTypes.ROOM_GET_NEW_MESSAGE,
+  props<{ message: IMessage, roomId: string }>(),
+)
+
+export const roomGetNewMessageSuccessAction = createAction(
+  ActionTypes.ROOM_GET_NEW_MESSAGE_SUCCESS,
+  props<{ roomId: string, message: IMessage }>(),
+)
+
+export const roomGetNewMessageFailureAction = createAction(
+  ActionTypes.ROOM_GET_NEW_MESSAGE_FAILURE,
+)
+
+export const roomLoadMessagesAction = createAction(
+  ActionTypes.ROOM_LOAD_MESSAGES,
+  // props<{ roomId: string, offset: number}>(),
+  props<{ roomId: string }>(),
+)
+
+export const roomLoadMessagesSuccessAction = createAction(
+  ActionTypes.ROOM_LOAD_MESSAGES_SUCCESS,
+  props<{ messages: IMessage[] }>(),
+)
+
+export const roomLoadMessagesFailureAction = createAction(
+  ActionTypes.ROOM_LOAD_MESSAGES_FAILURE,
 )
 
 export const roomGetAmountOfMessagesAction = createAction(
@@ -73,6 +74,34 @@ export const roomSendMessageSuccessAction = createAction(
 
 export const roomSendMessageFailureAction = createAction(
   ActionTypes.ROOM_SEND_MESSAGE_FAILURE,
+)
+
+export const roomUpdateMessageAction = createAction(
+  ActionTypes.ROOM_UPDATE_MESSAGE,
+  props<{ messageId: string }>()
+)
+
+export const roomUpdateMessageSuccessAction = createAction(
+  ActionTypes.ROOM_UPDATE_MESSAGE_SUCCESS,
+  props<{ messageId: string, correction: string }>()
+)
+
+export const roomUpdateMessageFailureAction = createAction(
+  ActionTypes.ROOM_UPDATE_MESSAGE_FAILURE,
+)
+
+export const roomMessageRemoveAction = createAction(
+  ActionTypes.ROOM_REMOVE_MESSAGE,
+  props<{ messageId: string }>()
+)
+
+export const roomMessageRemoveSuccessAction = createAction(
+  ActionTypes.ROOM_REMOVE_MESSAGE_SUCCESS,
+  props<{ messageId: string }>()
+)
+
+export const roomMessageRemoveFailureAction = createAction(
+  ActionTypes.ROOM_REMOVE_MESSAGE_FAILURE,
 )
 
 // export const roomGetParticipantsAction = createAction(
@@ -132,3 +161,43 @@ export const roomAddParticipantFailureAction = createAction(
 //   ActionTypes.ROOM_INVITE_PARTICIPANT_FAILURE,
 // )
 
+export const chatGetAvailableRooms = createAction(
+  ActionTypes.CHAT_GET_AVAILABLE_ROOMS,
+  // props<{}>()
+)
+
+export const chatGetAvailableRoomsSucces = createAction(
+  ActionTypes.CHAT_GET_AVAILABLE_ROOMS_SUCCESS,
+  props<{ rooms: IRoom[] }>()
+)
+
+export const chatGetAvailableRoomsFailure = createAction(
+  ActionTypes.CHAT_GET_AVAILABLE_ROOMS_FAILURE,
+)
+
+export const chatSearchRoomsActions = createAction(
+  ActionTypes.CHAT_SEARCH_ROOMS,
+)
+
+export const chatSearchRoomsSuccesAction = createAction(
+  ActionTypes.CHAT_SEARCH_ROOMS_SUCCESS,
+  props<{ rooms: IRoom[] }>()
+)
+
+export const chatSearchRoomsFailureAction = createAction(
+  ActionTypes.CHAT_SEARCH_ROOMS_FAILURE,
+)
+
+export const roomSwitchAction = createAction(
+  ActionTypes.ROOM_SWITCH,
+  props<{ roomId: string }>()
+)
+
+export const roomSwitchSuccessAction = createAction(
+  ActionTypes.ROOM_SWITCH_SUCCESS,
+  props<{ room: IRoom }>()
+)
+
+export const roomSwitchFailureAction = createAction(
+  ActionTypes.ROOM_SWITCH_FAILURE,
+)

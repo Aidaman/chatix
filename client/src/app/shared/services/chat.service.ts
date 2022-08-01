@@ -14,7 +14,9 @@ export class ChatService {
   public me: string = this.localStorageService.getUser()['id'] as string;
 
   public currentRoomUsers: BehaviorSubject<object[]> = new BehaviorSubject<object[]>([]);
-  public showContextMenu: BehaviorSubject<{ event: MouseEvent; options: IOption[] }> = new BehaviorSubject<any>(null);
+
+  public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public contextMenuCoords: BehaviorSubject<{ top: number, left: number }> = new BehaviorSubject<{ top: number, left: number }>({top: 0, left: 0});
   public emitOption: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   public emoji: BehaviorSubject<string> = new BehaviorSubject<string>('');

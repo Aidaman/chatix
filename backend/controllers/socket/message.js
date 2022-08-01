@@ -28,7 +28,8 @@ module.exports = {
                     throw new Error('Forbidden')
                 }
             }
-            io.to(params.room).emit('newMessage', {message:{content: params.message, createdAt, _id:messId , creator, isSystemMessage:false, read: []}, room: params.room })
+            io.to(params.room).emit('newMessage', {message:
+                    {content: params.message, createdAt, _id:messId , creator, isSystemMessage:false, read: []}, room: params.room })
         }catch(e){
             console.log(e);
             io.to(socket.id).emit('error',{error:{type: e.message}});
@@ -70,6 +71,10 @@ module.exports = {
             }
             const content = crypto.AES.encrypt(validator.escape(params.newContent), MESSAGE_KEY).toString();
             await message.update({content});
+
+            console.log("Update sending: ", {id: params.messageId, room: params.roomId,
+                newContent: params.newContent, createdAt: message.createdAt});
+
             return io.to(params.roomId).emit('messageUpdated', {id: params.messageId, room: params.roomId,
                 newContent: params.newContent, createdAt: message.createdAt});
         } catch (e) {
@@ -80,8 +85,13 @@ module.exports = {
 
     deleteMessage: async (io, socket, params) => {
         try{
-            const res = await Message.deleteOne({id: params.messageId, creator: socket.decoded_token.id});
-            // console.log('params', io, socket, params);
+            // const res = await Message.deleteOne({id: params.messageId, creator: socket.decoded_token.id});
+            await Message.deleteOne({id: params.messageId, creator: socket.decoded_token.id}, (err, obj)=>{
+                console.log("error", err, "object", obj);
+            });
+            // const res = await Message.deleteOne({id: params.messageId});
+            // await Message.deleteOne({id: params.messageId});
+            // console.log(res);
             // if(!message){
             //     throw new Error('Not allowed');
             // }

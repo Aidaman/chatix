@@ -1,15 +1,25 @@
 import {IRoom} from "../../shared/models/IRoom";
-import {createReducer, on} from "@ngrx/store";
+import {createReducer, on, props} from "@ngrx/store";
 import {
   chatGetAvailableRooms,
-  chatGetAvailableRoomsSucces,
+  chatGetAvailableRoomsSucces, chatSearchRoomsActions, chatSearchRoomsFailureAction, chatSearchRoomsSuccesAction,
   roomAddParticipantAction,
   roomAddParticipantFailureAction,
-  roomAddParticipantSuccessAction, roomGetAmountOfMessagesAction,
-  roomGetAmountOfMessagesFailureAction, roomGetAmountOfMessagesSuccessAction,
+  roomAddParticipantSuccessAction,
+  roomGetAmountOfMessagesAction,
+  roomGetAmountOfMessagesFailureAction,
+  roomGetAmountOfMessagesSuccessAction,
   roomGetMessagesAction,
   roomGetMessagesFailureAction,
   roomGetMessagesSuccessAction,
+  roomGetNewMessageAction, roomGetNewMessageFailureAction,
+  // roomGetNewMessageFailureAction,
+  // roomGetNewMessageSuccessAction,
+  roomLoadMessagesAction,
+  roomLoadMessagesFailureAction,
+  roomLoadMessagesSuccessAction, roomMessageRemoveAction,
+  roomMessageRemoveFailureAction,
+  roomMessageRemoveSuccessAction,
   roomRemoveParticipantAction,
   roomRemoveParticipantFailureAction,
   roomRemoveParticipantSuccessAction,
@@ -18,7 +28,7 @@ import {
   roomSendMessageSuccessAction,
   roomSwitchAction,
   roomSwitchFailureAction,
-  roomSwitchSuccessAction
+  roomSwitchSuccessAction, roomUpdateMessageAction, roomUpdateMessageFailureAction, roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
 import {IMessage} from "../../shared/models/IMessage";
 
@@ -27,6 +37,7 @@ export interface IRoomChatState {
   selectedRoom: IRoom | null,
   messages: IMessage[],
   totalMessages: number,
+  offset: number,
   isLoading: boolean,
   hasRoomValue: boolean,
   hasMessagesValue: boolean,
@@ -37,6 +48,7 @@ const initialRoomState: IRoomChatState = {
   selectedRoom: null,
   messages: [],
   totalMessages: 50,
+  offset: 0,
   isLoading: false,
   hasRoomValue: false,
   hasMessagesValue: false,
@@ -51,8 +63,9 @@ export const roomChatReducer = createReducer(
   })),
   on(roomSwitchSuccessAction, (state, action) => ({
     ...state,
-    room: action.room,
-    totalMessages: 50,
+    selectedRoom: action.room,
+    // totalMessages: 50,
+    offset: 0,
     isLoading: false,
     hasRoomValue: true,
   })),
@@ -73,6 +86,42 @@ export const roomChatReducer = createReducer(
     hasMessagesValue: true
   })),
   on(roomGetMessagesFailureAction, (state) => ({
+    ...state,
+    isLoading: false,
+    hasMessagesValue: false,
+  })),
+
+  on(roomGetNewMessageAction, (state) => ({
+    ...state,
+  })),
+  on(roomGetNewMessageAction, (state, action) => {
+    if (!state.selectedRoom || action.roomId === state.selectedRoom?._id){
+      const newMessagesArr = state.messages.slice();
+      newMessagesArr.push(action.message);
+      return ({
+        ...state,
+        messages: newMessagesArr
+      });
+
+    } else return ({...state});
+  }),
+  on(roomGetNewMessageFailureAction, (state) => ({
+    ...state,
+  })),
+
+  on(roomLoadMessagesAction, (state) => ({
+    ...state,
+    isLoading: true,
+    offset: state.offset+50 > state.totalMessages? state.totalMessages : state.offset+50,
+  })),
+  on(roomLoadMessagesSuccessAction, (state, action) => {
+    const newState = {...state, isLoading: false};
+    const newMessagesArr = state.messages.slice();
+    newMessagesArr.unshift(...action.messages);
+
+    return ({...newState, messages: newMessagesArr});
+  }),
+  on(roomLoadMessagesFailureAction, (state) => ({
     ...state,
     isLoading: false,
     hasMessagesValue: false,
@@ -100,6 +149,37 @@ export const roomChatReducer = createReducer(
     messages: action.messages
   })),
   on(roomSendMessageFailureAction, (state) => ({
+    ...state,
+  })),
+
+  on(roomUpdateMessageAction, (state) => ({
+    ...state,
+  })),
+  on(roomUpdateMessageSuccessAction, (state, action) => {
+    const newMessages = state.messages.map((message: IMessage)=>{
+      if (message._id === action.messageId){
+        return {...message, content: action.correction};
+      }
+      return message;
+    });
+
+    return ({...state,  messages: newMessages});
+  }),
+  on(roomUpdateMessageFailureAction, (state) => ({
+    ...state,
+  })),
+
+  on(roomMessageRemoveAction, (state) => ({
+    ...state,
+  })),
+  on(roomMessageRemoveSuccessAction, (state, action) => {
+    console.log('Delete should be successfull')
+    return ({
+      ...state,
+      messages: state.messages.filter((message) => action.messageId !== message._id)
+    })
+  }),
+  on(roomMessageRemoveFailureAction, (state) => ({
     ...state,
   })),
 
@@ -143,6 +223,20 @@ export const roomChatReducer = createReducer(
     isLoading: false,
   })),
   on(chatGetAvailableRooms, (state) => ({
+    ...state,
+    isLoading: false,
+  })),
+
+  on(chatSearchRoomsActions, (state) => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(chatSearchRoomsSuccesAction, (state, action) => ({
+    ...state,
+    allRooms: action.rooms,
+    isLoading: false,
+  })),
+  on(chatSearchRoomsFailureAction, (state) => ({
     ...state,
     isLoading: false,
   })),

@@ -9,7 +9,9 @@ import {RoomService} from "../../shared/services/room.service";
 import {Store} from "@ngrx/store";
 import {userAuthAction} from "../../store/user/user.actions";
 import {allRoomsSelector, isAllRoomsHasValue} from "../../store/room-chat/room-chat.selectors";
-import {chatGetAvailableRooms} from "../../store/room-chat/room-chat.actions";
+import {chatGetAvailableRooms, roomGetNewMessageAction} from "../../store/room-chat/room-chat.actions";
+import {map} from "rxjs/operators";
+import {IMessage} from "../../shared/models/IMessage";
 
 @Component({
   selector: 'app-chat',
@@ -48,7 +50,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.socketService.listenInvitation().pipe(
       tap(value => this.openInvitation(value))
     ).subscribe();
+
     this.socketService.listenNewMessage().pipe(
+      map((value)=>{
+        console.log(value.room );
+        this.store.dispatch(roomGetNewMessageAction({message: value.message, roomId: value.room}))
+      }),
       tap(() => this.recountUnread())
     ).subscribe();
 

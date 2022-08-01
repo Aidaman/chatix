@@ -1,8 +1,16 @@
-<div [ngStyle]="locationCss" class="container">
+<div *ngIf="isShown | async as displayed" >
+  <div  *ngIf="mouseLocation | async as coords"
+        [style.top]="coords.top+'px'"
+        [style.left]="coords.left+'px'"
+        [style.display]="displayed? 'block' : 'none'"
+        class="container">
     <ul>
-        <li (click)="selectOption(option.id)" class="option" *ngFor="let option of options">
-            <mat-icon class="option-icon">{{option.icon}}</mat-icon>
-            {{option.title}}
-        </li>
+      <li (click)="selectOption(option.id)"
+          *ngFor="let option of options"
+          class="option">
+        <mat-icon class="option-icon">{{option.icon}}</mat-icon>
+        {{option.id}}
+      </li>
     </ul>
+  </div>
 </div>

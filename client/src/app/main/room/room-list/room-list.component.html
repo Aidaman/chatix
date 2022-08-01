@@ -14,11 +14,13 @@
       <span>Create new room</span>
     </div>
 
-    <input matInput placeholder="Search room..."
+    <input matInput
+           placeholder="Search room..."
+           (input)="searchRooms()"
            [(ngModel)]="searchText">
     <mat-slide-toggle class="searchToggle"
                       (change)="toggleSearch()">
-      {{isSearchRoomList ? 'Globally' : 'Locally'}}
+      {{isPublicRooms ? 'Globally' : 'Locally'}}
     </mat-slide-toggle>
   </div>
   <div class="room-list">

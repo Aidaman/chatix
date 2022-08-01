@@ -34,7 +34,7 @@
                     </ng-template>
                 </span>
 
-        <div class="message-text" [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage}" snInViewport >
+        <div class="message-text" [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage}" snInViewport (inViewportChange)="viewportChange($event)">
 <!--          (inViewportChange)="viewportChange($event)"-->
           <p>{{message.content}}</p>
           <mat-icon

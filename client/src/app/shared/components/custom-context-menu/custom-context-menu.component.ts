@@ -1,47 +1,34 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ChatService} from "../../services/chat.service";
 import {IOption} from "../../models/IOption";
+import {IMessage} from "../../models/IMessage";
+import {IRoom} from "../../models/IRoom";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
-    selector: 'app-custom-context-menu',
-    templateUrl: './custom-context-menu.component.html',
-    styleUrls: ['./custom-context-menu.component.scss'],
-    host:{
-        '(document:click)': 'clickedOutside()'
-    },
+  selector: 'app-custom-context-menu',
+  templateUrl: './custom-context-menu.component.html',
+  styleUrls: ['./custom-context-menu.component.scss'],
+  host: {
+    '(document:click)': 'clickedOutside()'
+  },
 })
-export class CustomContextMenuComponent implements OnInit {
-    public options: IOption[] = [];
-    public isShown: boolean = false;
-    private mouseLocation: {left: number, top: number} = {left: 0, top: 0};
+export class CustomContextMenuComponent {
+  @Output() optionSelect: EventEmitter<string> = new EventEmitter<string>();
+  @Input() options: IOption[] = [];
 
-    constructor(private chatService: ChatService) {
-    }
+  public mouseLocation: BehaviorSubject<{ left: number, top: number }> = this.chatService.contextMenuCoords;
+  public isShown: BehaviorSubject<boolean> = this.chatService.showContextMenu
 
-    public ngOnInit(): void {
-        this.chatService.showContextMenu.subscribe((data) => {
-            if (data) {
-                this.options = data.options;
-                this.isShown = true;
-                this.mouseLocation = {left: data.event.clientX, top: data.event.clientY};
-            }
-        });
-    }
+  constructor(private chatService: ChatService) {
+  }
 
-    public clickedOutside(): void {
-        this.isShown = false;
-    }
+  public clickedOutside(): void {
+    this.chatService.showContextMenu.next(false);
+  }
 
-    public get locationCss(): object {
-        return {
-            display: this.isShown ? 'block' : 'none',
-            left: this.mouseLocation.left + 'px',
-            top: this.mouseLocation.top + 'px',
-        };
-    }
-
-    public selectOption(optionId: string): void {
-        this.chatService.emitOption.next(optionId);
-    }
+  public selectOption(optionId: string): void {
+    this.optionSelect.emit(optionId);
+  }
 
 }

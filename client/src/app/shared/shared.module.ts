@@ -8,6 +8,8 @@ import {CustomContextMenuComponent} from "./components/custom-context-menu/custo
 import {MatIconModule} from "@angular/material/icon";
 import { InputAreacalculationPipe } from './pipes/input-areacalculation.pipe';
 import { ScrollTrackDirective } from './directives/scroll-track.directive';
+import {MatDividerModule} from "@angular/material/divider";
+import { InViewPortDirective } from './directives/in-view-port.directive';
 
 @NgModule({
   declarations: [
@@ -18,11 +20,13 @@ import { ScrollTrackDirective } from './directives/scroll-track.directive';
     PremiumNicknamePipe,
     CustomContextMenuComponent,
     InputAreacalculationPipe,
+    InViewPortDirective,
   ],
-  imports: [
-    CommonModule,
-    MatIconModule
-  ],
+    imports: [
+        CommonModule,
+        MatIconModule,
+        MatDividerModule
+    ],
   exports: [
     ContextMenuDirective,
     ScrollTrackDirective,
@@ -31,7 +35,11 @@ import { ScrollTrackDirective } from './directives/scroll-track.directive';
     PremiumNicknamePipe,
     CustomContextMenuComponent,
     InputAreacalculationPipe,
+    InViewPortDirective,
   ],
+  providers: [
+    { provide: Window, useValue: window }
+  ]
 })
 export class SharedModule {
 }

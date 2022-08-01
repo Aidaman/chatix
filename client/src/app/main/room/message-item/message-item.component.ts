@@ -29,9 +29,8 @@ export class MessageItemComponent implements OnInit {
     }
 
     public viewportChange(e: any): void {
-      console.log("(message item component, viewportChange event)", e);
-        if (this.message.read.indexOf(this.chatService.me) === -1 && this.me !== this.message.creator?.id) {
-            this.viewChange.emit({inView: e, id: this.message._id,});
-        }
+        // if (this.message.read.indexOf(this.chatService.me) === -1 && this.me !== this.message.creator?.id) {
+        //     this.viewChange.emit({inView: e, id: this.message._id,});
+        // }
     }
 }

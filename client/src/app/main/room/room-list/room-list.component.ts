@@ -10,7 +10,8 @@ import {Router} from "@angular/router";
 import {ChatService} from "../../../shared/services/chat.service";
 import {roomSelector} from "../../../store/room-chat/room-chat.selectors";
 import {Store} from "@ngrx/store";
-import {roomSwitchAction} from "../../../store/room-chat/room-chat.actions";
+import {chatSearchRoomsActions, roomSwitchAction} from "../../../store/room-chat/room-chat.actions";
+import {map} from "rxjs/operators";
 
 /*
   this component used to show list of rooms$ and allows user to switch current room-chat
@@ -27,22 +28,21 @@ export class RoomListComponent implements OnInit {
   @Input() unread!: object;
 
   public searchText: string = '';
-  public isSearchRoomList: boolean = false;
+  public isPublicRooms: boolean = false;
   public theme: BehaviorSubject<string> = this.themingService.theme;
   public selectedRoom: Observable<IRoom | null> = this.store.select(roomSelector);
 
   constructor(private socketService: SocketService,
               private roomService: RoomService,
               private router: Router,
-
               private chatService: ChatService,
-
               private store: Store,
               private matDialog: MatDialog,
               private themingService: ThemingService) {
   }
 
   public ngOnInit(): void {
+    // this.searchRooms();
   }
 
   public createRoom(): void {
@@ -57,23 +57,24 @@ export class RoomListComponent implements OnInit {
     })
   }
 
-  public searchRooms(): void {
-    this.socketService.emit('searchRooms', this.searchText);
-  }
-
   public toggleSearch(): void {
-    this.isSearchRoomList = !this.isSearchRoomList;
-    this.searchRooms();
+    this.isPublicRooms = !this.isPublicRooms;
+    // this.searchRooms();
     // console.log(this.rooms$);
   }
 
-  public closeList(){
+  public searchRooms() {
+    this.socketService.emit('searchRoom', {title: this.searchText});
+    this.store.dispatch(chatSearchRoomsActions());
+  }
+
+  public closeList() {
     this.roomService.sideMenuOpened.next(false);
   }
 
   navigateRoom(roomId: string) {
     this.store.dispatch(roomSwitchAction({roomId}));
-    this.socketService.roomId = roomId;
+    // this.socketService.roomId = roomId;
     // this.store.dispatch(roomGetMessagesAction({roomId, offset: 50}));
     this.router.navigate(['/chat', roomId]);
   }

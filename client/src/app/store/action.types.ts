@@ -18,6 +18,14 @@ export enum ActionTypes {
   ROOM_GET_MESSAGES_SUCCESS = '[Room] get messages success',
   ROOM_GET_MESSAGES_FAILURE = '[Room] get messages failure',
 
+  ROOM_LOAD_MESSAGES = '[Room] load messages',
+  ROOM_LOAD_MESSAGES_SUCCESS = '[Room] load messages success',
+  ROOM_LOAD_MESSAGES_FAILURE = '[Room] load messages failure',
+
+  ROOM_GET_NEW_MESSAGE = '[Room] get new messages',
+  ROOM_GET_NEW_MESSAGE_SUCCESS = '[Room] get new messages success',
+  ROOM_GET_NEW_MESSAGE_FAILURE = '[Room] get new messages failure',
+
   ROOM_GET_AMOUNT_OF_MESSAGES = '[Room] get total of messages',
   ROOM_GET_AMOUNT_OF_MESSAGES_SUCCESS = '[Room] get total of messages success',
   ROOM_GET_AMOUNT_OF_MESSAGES_FAILURE = '[Room] get total of messages failure',
@@ -26,9 +34,13 @@ export enum ActionTypes {
   ROOM_SEND_MESSAGE_SUCCESS = '[Room] sent message successfully',
   ROOM_SEND_MESSAGE_FAILURE = '[Room] sending message failure',
 
-  ROOM_GET_PARTICIPANTS = '[Room] get participants',
-  ROOM_GET_PARTICIPANTS_SUCCESS = '[Room] get participants success',
-  ROOM_GET_PARTICIPANTS_FAILURE = '[Room] get participants failure',
+  ROOM_UPDATE_MESSAGE = '[Room] update messages',
+  ROOM_UPDATE_MESSAGE_SUCCESS = '[Room] updated message successfully',
+  ROOM_UPDATE_MESSAGE_FAILURE = '[Room] updating message failure',
+
+  ROOM_REMOVE_MESSAGE = '[Room] remove message',
+  ROOM_REMOVE_MESSAGE_SUCCESS = '[Room] removed message successfully',
+  ROOM_REMOVE_MESSAGE_FAILURE = '[Room] removing message failure',
 
   ROOM_REMOVE_PARTICIPANT = '[Room] remove participant',
   ROOM_REMOVE_PARTICIPANT_SUCCESS = '[Room] remove participant success',
@@ -38,14 +50,14 @@ export enum ActionTypes {
   ROOM_ADD_PARTICIPANT_SUCCESS = '[Room] add participant success',
   ROOM_ADD_PARTICIPANT_FAILURE = '[Room] add participant failure',
 
-  ROOM_INVITE_PARTICIPANT = '[Room] invite user',
-  ROOM_INVITE_PARTICIPANT_SUCCESS = '[Room] invite user success',
-  ROOM_INVITE_PARTICIPANT_FAILURE = '[Room] invite user failure',
-
   //FOR CHAT
   CHAT_GET_AVAILABLE_ROOMS = '[Chat] get available rooms',
   CHAT_GET_AVAILABLE_ROOMS_SUCCESS = '[Chat] get available rooms success',
   CHAT_GET_AVAILABLE_ROOMS_FAILURE = '[Chat] get available room failure',
+
+  CHAT_SEARCH_ROOMS = '[Chat] search rooms',
+  CHAT_SEARCH_ROOMS_SUCCESS = '[Chat] search rooms success',
+  CHAT_SEARCH_ROOMS_FAILURE = '[Chat] search room failure',
 
   CHAT_NEW_MESSAGE = '[Chat] new message',
 

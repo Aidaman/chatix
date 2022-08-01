@@ -3,7 +3,12 @@ import {environment} from "../../../environments/environment";
 import {map, Observable, Subject, takeUntil, tap} from "rxjs";
 import {LocalStorageService} from "./local-storage.service";
 import * as io from 'socket.io-client';
-import {chatGetAvailableRooms, roomGetMessagesAction, roomSwitchAction} from "../../store/room-chat/room-chat.actions";
+import {
+  chatGetAvailableRooms,
+  roomGetMessagesAction,
+  roomGetNewMessageAction,
+  roomSwitchAction
+} from "../../store/room-chat/room-chat.actions";
 import {Store} from "@ngrx/store";
 import {Router} from "@angular/router";
 
@@ -62,8 +67,7 @@ export class SocketService {
   public socket: any;
   public readonly uri: string = environment.API_URL;
   public isConnected: boolean = false;
-  public limit: number = 50;
-  public roomId: string = "";
+  // public roomId: string = "";
 
   public termination$: Subject<number> = new Subject<number>();
 
@@ -91,6 +95,7 @@ export class SocketService {
   }
 
   public emit(eventName: string, data: any): void {
+    // console.log(eventName, "emited")
     this.socket.emit(eventName, data);
   }
 
@@ -99,15 +104,15 @@ export class SocketService {
   }
 
   public listenJoin(): Observable<any> {
-    return this.listen('join');
+    return this.listen('join').pipe(takeUntil(this.termination$),);
   }
 
   public listenLeaveRoom(): Observable<any> {
     return this.listen('leaveRoom').pipe(
       map((data) => {
         console.log('this is data from socketService "leaveRoom" listener', data);
-        this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset: 50, limit: this.limit}))
-        return true
+        this.store.dispatch(roomGetMessagesAction({roomId: data.room}));
+        return true;
       }),
       takeUntil(this.termination$),
     );
@@ -115,18 +120,14 @@ export class SocketService {
 
   public listenNewMessage(): Observable<any> {
     return this.listen('newMessage').pipe(
-      map((data) => {
-        console.log('this is data from socketService "newMessage" listener', data);
-        if (data.room === this.roomId) {
-          this.store.dispatch(roomGetMessagesAction({roomId: data.room, offset: 0, limit: this.limit}));
-        }
-      }),
-      takeUntil(this.termination$),
-    );
+      // map((value)=>{
+      //   // this.store.dispatch(roomGetNewMessageAction({roomId: value.room, message: value}));
+      // }),
+      takeUntil(this.termination$));
   }
 
   public listenInvitation(): Observable<any> {
-    return this.listen('invitation');
+    return this.listen('invitation').pipe(takeUntil(this.termination$),);
   }
 
   public listenUserJoined(): Observable<any> {
@@ -193,19 +194,28 @@ export class SocketService {
   }
 
   public listenSearchRoomsResult(): Observable<any> {
-    return this.listen('searchRoomsResult');
+    return this.listen('searchRoomsResult').pipe(takeUntil(this.termination$));
   }
 
   public listenGetAllRooms(): Observable<any> {
-    return this.listen('allRooms');
+    return this.listen('allRooms').pipe(takeUntil(this.termination$));
   }
 
   public listenMessageRead(): Observable<any> {
     return this.listen('messageRead').pipe(
       tap((value) => {
         console.log("(listen Get All Rooms) incoming value: ", value);
-      })
+      }),
+      takeUntil(this.termination$)
     );
+  }
+
+  public listenMessageUpdated(): Observable<any> {
+    return this.listen('messageUpdated').pipe(takeUntil(this.termination$));
+  }
+
+  public listenMessageDeleted(): Observable<any> {
+    return this.listen('messageDeleted').pipe(takeUntil(this.termination$));
   }
 
   public destroy(): void {
