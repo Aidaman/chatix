@@ -12,17 +12,12 @@ import {BehaviorSubject} from "rxjs";
 // export class MessageItemComponent implements OnInit {
 export class MessageItemComponent {
   @Input() message!: IMessage;
-  @Output() loadRequest: EventEmitter<any> = new EventEmitter<any>();
   @Output() viewChange: EventEmitter<{ inView: boolean, id: string }> = new EventEmitter<{ inView: boolean, id: string, }>();
   public theme: BehaviorSubject<string> = this.themeService.theme;
   public me = this.chatService.me;
 
   constructor(private chatService: ChatService,
               private themeService: ThemingService,) {
-  }
-
-  public messageRequest(scroll?: boolean): void {
-    this.loadRequest.emit(scroll);
   }
 
   public viewportChange(e: boolean): void {

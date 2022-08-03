@@ -62,7 +62,7 @@ export class ChatService {
   public calculateUnread(messages: IMessage[]): number {
     let amountOfUnread = 0;
     messages.forEach(message => {
-      if (message.read.indexOf(this.me) === -1 && this.me !== message.creator?.id && !message.isSystemMessage)
+      if (!message.isSystemMessage && this.me !== message.creator?._id && message.read.indexOf(this.me) === -1)
         amountOfUnread += 1;
     });
     return amountOfUnread;
