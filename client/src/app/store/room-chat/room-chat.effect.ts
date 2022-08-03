@@ -16,7 +16,7 @@ import {
   roomGetNewMessageAction, roomGetNewMessageFailureAction, roomGetNewMessageSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
-  roomLoadMessagesSuccessAction,
+  roomLoadMessagesSuccessAction, roomMessageReadAction, roomMessageReadFailureAction, roomMessageReadSuccessAction,
   roomMessageRemoveAction,
   roomMessageRemoveFailureAction,
   roomMessageRemoveSuccessAction,
@@ -108,8 +108,18 @@ export class RoomChatEffect {
   deleteMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomMessageRemoveAction),
     switchMap(({messageId}) => this.socketService.listenMessageDeleted().pipe(
+      tap((value)=> {console.log(value)}),
       map(() => roomMessageRemoveSuccessAction({messageId})),
       catchError(() => of(roomMessageRemoveFailureAction)))),
+  ));
+
+  readMessage$ = createEffect(()=> this.actions$.pipe(
+    ofType(roomMessageReadAction),
+    switchMap(({roomId})=> this.socketService.listenMessageRead().pipe(
+      tap((value)=>{console.log(value)}),
+      map((value)=>roomMessageReadSuccessAction({messageId: value.messageId, userId: value.userId, roomId})),
+      catchError(()=> of(roomMessageReadFailureAction))
+    ))
   ));
 
   constructor(private actions$: Actions,

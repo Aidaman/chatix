@@ -11,7 +11,6 @@ import {userAuthAction} from "../../store/user/user.actions";
 import {allRoomsSelector, isAllRoomsHasValue} from "../../store/room-chat/room-chat.selectors";
 import {chatGetAvailableRooms, roomGetNewMessageAction} from "../../store/room-chat/room-chat.actions";
 import {map} from "rxjs/operators";
-import {IMessage} from "../../shared/models/IMessage";
 
 @Component({
   selector: 'app-chat',
@@ -21,13 +20,13 @@ import {IMessage} from "../../shared/models/IMessage";
 export class ChatComponent implements OnInit, OnDestroy {
   public opened: BehaviorSubject<boolean> = this.roomService.sideMenuOpened;
 
-  public unreadInRooms: object = {};
   public theme: BehaviorSubject<string> = this.themingService.theme;
   public overallUnreadMessages: number = 0;
 
   public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
     switchMap((value) => {
       if (!value) {
+
         this.store.dispatch(chatGetAvailableRooms());
       }
       return this.store.select(allRoomsSelector);
@@ -43,7 +42,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.store.dispatch(userAuthAction());
-
     this.socketService.emit('getAllRooms', {});
     this.store.dispatch(chatGetAvailableRooms());
 
@@ -56,7 +54,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         console.log(value.room );
         this.store.dispatch(roomGetNewMessageAction({message: value.message, roomId: value.room}))
       }),
-      tap(() => this.recountUnread())
+      // tap(() => this.recountUnread())
     ).subscribe();
 
     this.socketService.listenNewRoom().subscribe();
@@ -69,12 +67,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.socketService.disconnect();
   }
 
-  public recountUnread(): void {
-    this.overallUnreadMessages = 0;
-    Object.values(this.unreadInRooms).forEach((item) => {
-      this.overallUnreadMessages += item;
-    });
-  }
+  // public recountUnread(): void {
+  //   this.overallUnreadMessages = 0;
+  //   Object.values(this.unreadInRooms).forEach((item) => {
+  //     this.overallUnreadMessages += item;
+  //   });
+  // }
 
   public openSideNav(): void {
     this.roomService.sideMenuOpened.next(!this.roomService.sideMenuOpened.value);

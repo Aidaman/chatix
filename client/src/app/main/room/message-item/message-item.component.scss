@@ -31,8 +31,12 @@ $screen-xl-min: 1200px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.14) !important;
 }
 
-.own {
-  //align-items: flex-end;
+.message-wrapper.own {
+  align-items: flex-end;
+
+  .message-container {
+    flex-direction: row-reverse;
+  }
 
   .online {
     padding-right: 5px;
@@ -83,6 +87,9 @@ $screen-xl-min: 1200px;
   .message-container {
     display: flex;
     align-items: center;
+  }
+  .message-container.own {
+    flex-direction: row-reverse;
   }
 
   .avatar {
@@ -199,8 +206,8 @@ $screen-xl-min: 1200px;
 
   .premium {
     transition: 0.3s;
-    color: #9d8200;
-    filter: drop-shadow(0 0px 5px #000000);
+    color: #fda300;
+    filter: drop-shadow(0 0px 5px rgba(0, 0, 0, 0.5));
   }
 
   .message-text {

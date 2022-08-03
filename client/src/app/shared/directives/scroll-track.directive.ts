@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Directive,
   ElementRef,
   EventEmitter,
@@ -9,7 +10,7 @@ import {
 @Directive({
   selector: '[scroll]'
 })
-export class ScrollTrackDirective {
+export class ScrollTrackDirective implements AfterViewInit{
   @Output() onScroll = new EventEmitter<void>();
   private isEmitted: boolean = false;
   private scrollHeight: number = 0;
@@ -20,7 +21,7 @@ export class ScrollTrackDirective {
   @HostListener('scroll', ['$event'])
   scrollIt() {
     //@ts-ignore
-    if (event?.srcElement.scrollTop < 300 && !this.isEmitted) {
+    if (event?.srcElement.scrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
       this.onScroll.emit();
       this.isEmitted = true;
@@ -30,7 +31,7 @@ export class ScrollTrackDirective {
     }
   }
 
-  public reset() {
+  public ngAfterViewInit(): void {
     this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
   }
 }

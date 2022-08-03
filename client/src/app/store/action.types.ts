@@ -42,6 +42,10 @@ export enum ActionTypes {
   ROOM_REMOVE_MESSAGE_SUCCESS = '[Room] removed message successfully',
   ROOM_REMOVE_MESSAGE_FAILURE = '[Room] removing message failure',
 
+  ROOM_MESSAGE_READ = '[Room] User read message',
+  ROOM_MESSAGE_READ_SUCCESS = '[Room] User read message successfully',
+  ROOM_MESSAGE_READ_FAILURE = '[Room] User read message failure',
+
   ROOM_REMOVE_PARTICIPANT = '[Room] remove participant',
   ROOM_REMOVE_PARTICIPANT_SUCCESS = '[Room] remove participant success',
   ROOM_REMOVE_PARTICIPANT_FAILURE = '[Room] remove participant failure',

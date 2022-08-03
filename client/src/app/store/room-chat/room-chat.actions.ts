@@ -33,6 +33,20 @@ export const roomGetNewMessageFailureAction = createAction(
   ActionTypes.ROOM_GET_NEW_MESSAGE_FAILURE,
 )
 
+export const roomMessageReadAction = createAction(
+  ActionTypes.ROOM_MESSAGE_READ,
+  props<{ messageId: string, roomId: string, userId: string }>(),
+)
+
+export const roomMessageReadSuccessAction = createAction(
+  ActionTypes.ROOM_MESSAGE_READ_SUCCESS,
+  props<{ messageId: string, roomId: string, userId: string }>(),
+)
+
+export const roomMessageReadFailureAction = createAction(
+  ActionTypes.ROOM_MESSAGE_READ_FAILURE,
+)
+
 export const roomLoadMessagesAction = createAction(
   ActionTypes.ROOM_LOAD_MESSAGES,
   // props<{ roomId: string, offset: number}>(),

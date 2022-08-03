@@ -2,7 +2,10 @@ import {IRoom} from "../../shared/models/IRoom";
 import {createReducer, on, props} from "@ngrx/store";
 import {
   chatGetAvailableRooms,
-  chatGetAvailableRoomsSucces, chatSearchRoomsActions, chatSearchRoomsFailureAction, chatSearchRoomsSuccesAction,
+  chatGetAvailableRoomsSucces,
+  chatSearchRoomsActions,
+  chatSearchRoomsFailureAction,
+  chatSearchRoomsSuccesAction,
   roomAddParticipantAction,
   roomAddParticipantFailureAction,
   roomAddParticipantSuccessAction,
@@ -12,12 +15,17 @@ import {
   roomGetMessagesAction,
   roomGetMessagesFailureAction,
   roomGetMessagesSuccessAction,
-  roomGetNewMessageAction, roomGetNewMessageFailureAction,
+  roomGetNewMessageAction,
+  roomGetNewMessageFailureAction,
   // roomGetNewMessageFailureAction,
   // roomGetNewMessageSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
-  roomLoadMessagesSuccessAction, roomMessageRemoveAction,
+  roomLoadMessagesSuccessAction,
+  roomMessageReadAction,
+  roomMessageReadFailureAction,
+  roomMessageReadSuccessAction,
+  roomMessageRemoveAction,
   roomMessageRemoveFailureAction,
   roomMessageRemoveSuccessAction,
   roomRemoveParticipantAction,
@@ -28,7 +36,10 @@ import {
   roomSendMessageSuccessAction,
   roomSwitchAction,
   roomSwitchFailureAction,
-  roomSwitchSuccessAction, roomUpdateMessageAction, roomUpdateMessageFailureAction, roomUpdateMessageSuccessAction
+  roomSwitchSuccessAction,
+  roomUpdateMessageAction,
+  roomUpdateMessageFailureAction,
+  roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
 import {IMessage} from "../../shared/models/IMessage";
 
@@ -106,6 +117,23 @@ export const roomChatReducer = createReducer(
     } else return ({...state});
   }),
   on(roomGetNewMessageFailureAction, (state) => ({
+    ...state,
+  })),
+
+  on(roomMessageReadAction, (state) => ({
+    ...state,
+  })),
+  on(roomMessageReadSuccessAction, (state, action) => {
+    const newMessagesArr = state.messages.slice().map(message => {
+        if (message._id === action.messageId) message.read.push(action.userId);
+        return message;
+    });
+    return ({
+      ...state,
+      messages: newMessagesArr
+    })
+  }),
+  on(roomMessageReadFailureAction, (state) => ({
     ...state,
   })),
 

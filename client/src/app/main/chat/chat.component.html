@@ -4,8 +4,7 @@
     <mat-drawer-container autosize class="sidenav-wrapper">
       <mat-drawer class="sidenav-content"
                   [opened]="opened | async ">
-        <app-room-list  [rooms]="(rooms$ | async) | updateRooms"
-                        [unread]="unreadInRooms">
+        <app-room-list  [rooms]="(rooms$ | async) | updateRooms">
         </app-room-list>
       </mat-drawer>
       <app-room></app-room>

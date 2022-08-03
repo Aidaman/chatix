@@ -6,11 +6,11 @@ import {UpdateRoomsPipe} from "./pipes/update-rooms.pipe";
 import {PremiumNicknamePipe} from './pipes/premium-nickname.pipe';
 import {CustomContextMenuComponent} from "./components/custom-context-menu/custom-context-menu.component";
 import {MatIconModule} from "@angular/material/icon";
-import { InputAreacalculationPipe } from './pipes/input-areacalculation.pipe';
-import { ScrollTrackDirective } from './directives/scroll-track.directive';
+import {InputAreacalculationPipe} from './pipes/input-areacalculation.pipe';
+import {ScrollTrackDirective} from './directives/scroll-track.directive';
 import {MatDividerModule} from "@angular/material/divider";
-import { InViewPortDirective } from './directives/in-view-port.directive';
-import {FindUserPipe} from "./pipes/find-user-pipe.pipe";
+import {InViewPortDirective} from './directives/in-view-port.directive';
+import {IsPersonalMessagePipePipe} from "./pipes/find-user-pipe.pipe";
 
 @NgModule({
   declarations: [
@@ -19,16 +19,16 @@ import {FindUserPipe} from "./pipes/find-user-pipe.pipe";
     SearchPipe,
     UpdateRoomsPipe,
     PremiumNicknamePipe,
-    FindUserPipe,
+    IsPersonalMessagePipePipe,
     InputAreacalculationPipe,
     CustomContextMenuComponent,
     InViewPortDirective,
   ],
-    imports: [
-        CommonModule,
-        MatIconModule,
-        MatDividerModule
-    ],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatDividerModule
+  ],
   exports: [
     ContextMenuDirective,
     ScrollTrackDirective,
@@ -38,10 +38,10 @@ import {FindUserPipe} from "./pipes/find-user-pipe.pipe";
     CustomContextMenuComponent,
     InputAreacalculationPipe,
     InViewPortDirective,
-    FindUserPipe,
+    IsPersonalMessagePipePipe,
   ],
   providers: [
-    { provide: Window, useValue: window }
+    {provide: Window, useValue: window}
   ]
 })
 export class SharedModule {

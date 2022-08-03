@@ -23,7 +23,9 @@ export class ChatService {
   public lastSelectedMessageId: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   public rooms: BehaviorSubject<IRoom[]> = new BehaviorSubject<IRoom[]>([]);
-  public currentRoomId: BehaviorSubject<string> = new BehaviorSubject<string>('common');
+
+  public unreadInRooms: any;
+  public overallUnreadMessages: number = 0;
 
   constructor(private http: HttpClient,
               private localStorageService: LocalStorageService) {
@@ -51,5 +53,21 @@ export class ChatService {
         blacklistedId: id,
       }
     });
+  }
+
+  public recountUnread(): void {
+    this.overallUnreadMessages = 0;
+    Object.values(this.unreadInRooms).forEach((item: any) => {
+      this.overallUnreadMessages += item;
+    });
+  }
+
+  public calculateUnread(messages: IMessage[]): number {
+    let amountOfUnread = 0;
+    messages.forEach(message => {
+      if (message.read.indexOf(this.me) === -1 && this.me !== message.creator?.id)
+        amountOfUnread += 1;
+    });
+    return amountOfUnread;
   }
 }

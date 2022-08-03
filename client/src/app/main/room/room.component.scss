@@ -171,10 +171,10 @@ $screen-xl-min: 1200px;
       border-radius: 30px;
     }
 
-    .input-send{
+    .input-send {
       background: #333;
 
-      &:hover{
+      &:hover {
         background: #555;
       }
     }
@@ -195,7 +195,7 @@ $screen-xl-min: 1200px;
       border-radius: 30px;
     }
 
-    *{
+    * {
       transition: 0.5s;
     }
   }
@@ -203,9 +203,7 @@ $screen-xl-min: 1200px;
 
 .mt-lst {
   height: 100%;
-  .message-item {
-    max-width: 90% !important;
-  }
+  max-width: 100% !important;
 
   ::ng-deep .mat-list-item {
     height: auto;
@@ -229,6 +227,10 @@ $screen-xl-min: 1200px;
       //justify-self: flex-end;
       margin: 8px 20px 8px 20px;
       padding: 0;
+
+      .message-item {
+        align-self: flex-end;
+      }
     }
   }
 
@@ -484,7 +486,7 @@ $screen-xl-min: 1200px;
   text-transform: none;
 }
 
-#contextmenutarget  {
+#contextmenutarget {
   height: 100%;
   width: 100%;
   position: relative;

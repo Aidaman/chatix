@@ -13,92 +13,100 @@ module.exports = {
             const createdAt = Date.now();
             const creator = await User.findById(socket.decoded_token.id);
 
-            if(params.message.trim().length<1 || !creator){
+            if (params.message.trim().length < 1 || !creator) {
                 throw new Error('invalid message')
             }
 
             if (params.room !== 'common') {
-                const room = await Room.findOne({_id:params.room, users:socket.decoded_token.id});
-                if(room) {
+                const room = await Room.findOne({_id: params.room, users: socket.decoded_token.id});
+                if (room) {
                     const content = crypto.AES.encrypt(validator.escape(params.message), MESSAGE_KEY).toString();
                     const mess = await Message.create({createdAt, creator, room: params.room, content});
                     messId = mess._id;
-                    await room.update({lastAction:Date.now()});
-                }else{
+                    await room.update({lastAction: Date.now()});
+                } else {
                     throw new Error('Forbidden')
                 }
             }
-            io.to(params.room).emit('newMessage', {message:
-                    {content: params.message, createdAt, _id:messId , creator, isSystemMessage:false, read: []}, room: params.room })
-        }catch(e){
+            io.to(params.room).emit('newMessage', {
+                message:
+                    {content: params.message, createdAt, _id: messId, creator, isSystemMessage: false, read: []},
+                room: params.room
+            })
+        } catch (e) {
             console.log(e);
-            io.to(socket.id).emit('error',{error:{type: e.message}});
+            io.to(socket.id).emit('error', {error: {type: e.message}});
         }
     },
 
     readMessage: async (io, socket, params) => {
         try {
             const message = await Message.findById(params.messageId).populate('room');
-            if(!message){
+            if (!message) {
                 throw new Error('Message not found');
             }
-            console.log("(read message) message:", message);
+            console.log("(read message) message");
 
             const userInRoom = !!message.room.users.find(item => String(item) === String(socket.decoded_token.id));
-            if(!userInRoom || String(message.creator) === socket.decoded_token.id){
+            if (!userInRoom || String(message.creator) === socket.decoded_token.id) {
                 throw new Error('Not allowed to read');
             }
             console.log("(read message) user in room:", userInRoom);
 
-            if(!!message.read.find(i => String(i) === socket.decoded_token.id)){
+            if (!!message.read.find(i => String(i) === socket.decoded_token.id)) {
                 return console.log('message already read');
             }
+            console.log("(read message) message is read:", userInRoom);
 
             message.read.push(socket.decoded_token.id);
             await message.save();
-            return io.to(String(message.room._id)).emit('messageRead', {id: params.messageId, user: socket.decoded_token.id});
-        }catch (e) {
+            return io.to(String(message.room._id)).emit('messageRead', {
+                id: params.messageId,
+                user: socket.decoded_token.id
+            });
+        } catch (e) {
             console.log(e);
-            io.to(socket.id).emit('error',{error:{type: e.message}});
+            io.to(socket.id).emit('error', {error: {type: e.message}});
         }
     },
 
     updateMessage: async (io, socket, params) => {
         try {
             const message = await Message.findOne({_id: params.messageId, creator: socket.decoded_token.id});
-            if(!message){
+            if (!message) {
                 throw new Error('Not allowed');
             }
             const content = crypto.AES.encrypt(validator.escape(params.newContent), MESSAGE_KEY).toString();
             await message.update({content});
 
-            console.log("Update sending: ", {id: params.messageId, room: params.roomId,
-                newContent: params.newContent, createdAt: message.createdAt});
+            console.log("Update sending: ", {
+                id: params.messageId, room: params.roomId,
+                newContent: params.newContent, createdAt: message.createdAt
+            });
 
-            return io.to(params.roomId).emit('messageUpdated', {id: params.messageId, room: params.roomId,
-                newContent: params.newContent, createdAt: message.createdAt});
+            return io.to(params.roomId).emit('messageUpdated', {
+                id: params.messageId, room: params.roomId,
+                newContent: params.newContent, createdAt: message.createdAt
+            });
         } catch (e) {
             console.log(e);
-            io.to(socket.id).emit('error',{error:{type: e.message}});
+            io.to(socket.id).emit('error', {error: {type: e.message}});
         }
     },
 
     deleteMessage: async (io, socket, params) => {
-        try{
-            // const res = await Message.deleteOne({id: params.messageId, creator: socket.decoded_token.id});
-            await Message.deleteOne({id: params.messageId, creator: socket.decoded_token.id}, (err, obj)=>{
-                console.log("error", err, "object", obj);
-            });
-            // const res = await Message.deleteOne({id: params.messageId});
-            // await Message.deleteOne({id: params.messageId});
-            // console.log(res);
-            // if(!message){
-            //     throw new Error('Not allowed');
-            // }
+        try {
+            await Message.deleteOne(
+                {
+                    id: params.messageId,
+                    creator: socket.decoded_token.id
+                }, (err, obj) => {
+                    console.log("error", err, "object", obj);
+                });
             return io.to(params.roomId).emit('messageDeleted', {id: params.messageId, room: params.roomId});
-        }catch (e) {
+        } catch (e) {
             console.log(e);
-            io.to(socket.id).emit('error',{error:{type: e.message}});
+            io.to(socket.id).emit('error', {error: {type: e.message}});
         }
     }
 };

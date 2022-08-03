@@ -6,16 +6,15 @@
       <div class="room-info">
         <button mat-button (click)="toggleMatDrawer()">
           <mat-icon>
-            <!--    [matBadge]="overallUnreadMessages.toString()"
-                  matBadgePosition="above before"
-                  [matBadgeHidden]="overallUnreadMessages === 0"    -->
             vertical_split
           </mat-icon>
         </button>
         <div class="room-title">
-          <mat-icon>meeting_room</mat-icon>
+          <mat-icon [matBadge]="currentRoomUnreadCount"
+                    matBadgePosition="above after"
+                    [matBadgeHidden]="currentRoomUnreadCount === 0">meeting_room</mat-icon>
           <div class="room-title-text">
-            {{(room.users.length < 3 && !room.isPublic)? (me | findUserPipe: room.users) : room.title}}
+            {{me | isPersonalMessagePipe: room}}
             <small>{{room.users.length}} participants</small>
           </div>
           <button mat-button (click)="openSettings(room)">
@@ -27,7 +26,7 @@
       <mat-list *ngIf="checkIsCommon(room)" class="menu-items">
         <mat-list-item matRipple (click)="openInviteParticipantsDialog(room)">
           <!--     (click)="inviteUsers()"     -->
-          <mat-icon>person_add</mat-icon>
+          <mat-icon >person_add</mat-icon>
         </mat-list-item>
         <mat-divider vertical></mat-divider>
 
@@ -39,47 +38,47 @@
       </mat-list>
     </div>
 
-<!--        <perfect-scrollbar [config]="config" (psScrollY)="onScroll($event)">-->
-<!--    <perfect-scrollbar #scrollbarComponent-->
-<!--                       [config]="perfectScrollBarConfig"-->
-<!--                       (psScrollY)="onScroll($event, room)">-->
+    <!--        <perfect-scrollbar [config]="config" (psScrollY)="onScroll($event)">-->
+    <!--    <perfect-scrollbar #scrollbarComponent-->
+    <!--                       [config]="perfectScrollBarConfig"-->
+    <!--                       (psScrollY)="onScroll($event, room)">-->
 
-      <div id="contextmenu-control" scroll (onScroll)="onScroll(room._id)">
-        <div id="messagecontextmenutarget">
-          <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
-            <mat-list-item *ngFor="let message of messages" [ngClass]="{
+    <div id="contextmenu-control" scroll (onScroll)="onScroll(room._id)">
+      <div id="messagecontextmenutarget">
+        <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
+          <mat-list-item *ngFor="let message of messages" [ngClass]="{
                         'own': isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
                         'foreign' : isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
                         'system' : message.isSystemMessage}">
-              <div class="message-item">
-                <app-message-item [message]="message"
-                                  (viewChange)="onViewportChange($event, room, messages)"
-                                  (contextmenu)="onMessageRightClick($event, message)"
-                                  context-menu [isMyMessage]="isCreatedByMe(message.creator?._id)">
-<!--                                  (contextmenu)="onMessageRightClick(message)">-->
-                </app-message-item>
-              </div>
-            </mat-list-item>
+            <div class="message-item">
+              <app-message-item [message]="message"
+                                (viewChange)="onViewportChange($event, room, messages)"
+                                (contextmenu)="onMessageRightClick($event, message)"
+                                context-menu [isMyMessage]="isCreatedByMe(message.creator?._id)">
+                <!--                                  (contextmenu)="onMessageRightClick(emoji)">-->
+              </app-message-item>
+            </div>
+          </mat-list-item>
 
-            <app-custom-context-menu  context-menu
-                                      [options]="menuItems"
-                                      (optionSelect)="onOptionSelect($event)">
-            </app-custom-context-menu>
-          </mat-list>
-        </div>
+          <app-custom-context-menu context-menu
+                                   [options]="menuItems"
+                                   (optionSelect)="onOptionSelect($event)">
+          </app-custom-context-menu>
+        </mat-list>
       </div>
-<!--    </perfect-scrollbar>-->
+    </div>
+    <!--    </perfect-scrollbar>-->
 
     <div class="input-area">
       <div class="input-message" dir="auto">
-        <!--        (message$ | async)?.length / 64 ?? 1-->
+        <!--        (emoji$ | async)?.length / 64 ?? 1-->
         <textarea class="composer_rich_textarea"
                   [rows]="message | calculateRowsPipe"
                   [(ngModel)]="message"
                   (keydown.enter)="sendMessage($event, room)"></textarea>
         <!--        <div class="composer_rich_textarea"-->
         <!--                  contenteditable="true"-->
-        <!--                  [textContent]="message"-->
+        <!--                  [textContent]="emoji"-->
         <!--                  (input)="onInput($event)"-->
         <!--                  (keydown.enter)="sendMessage($event, room)"></div>-->
       </div>

@@ -20,6 +20,7 @@ import {HeaderComponent} from "./header/header.component";
 import {DialogModule} from "../dialog/dialog.module";
 import {MainRoutingModule} from "./main-routing.module";
 import {PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface, PerfectScrollbarModule} from "ngx-perfect-scrollbar";
+import {MatBadgeModule} from "@angular/material/badge";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -36,22 +37,23 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ThemingComponent,
     HeaderComponent
   ],
-  imports: [
-    CommonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatSlideToggleModule,
-    MatListModule,
-    MatButtonModule,
-    MatRippleModule,
-    MatInputModule,
-    FormsModule,
-    DialogModule,
-    SharedModule,
-    PerfectScrollbarModule,
+    imports: [
+        CommonModule,
+        MatSidenavModule,
+        MatIconModule,
+        MatSlideToggleModule,
+        MatListModule,
+        MatButtonModule,
+        MatRippleModule,
+        MatInputModule,
+        FormsModule,
+        DialogModule,
+        SharedModule,
+        PerfectScrollbarModule,
 
-    MainRoutingModule,
-  ],
+        MainRoutingModule,
+        MatBadgeModule,
+    ],
   providers: [
     {
       provide: PERFECT_SCROLLBAR_CONFIG,

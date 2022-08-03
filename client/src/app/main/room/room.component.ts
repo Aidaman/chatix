@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ThemingService} from "../../shared/services/theming.service";
 import {RoomService} from "../../shared/services/room.service";
 import {IRoom} from "../../shared/models/IRoom";
-import {BehaviorSubject, lastValueFrom, Observable, Subscription, switchMap, tap} from "rxjs";
+import {BehaviorSubject, filter, lastValueFrom, Observable, retry, Subscription, switchMap, tap} from "rxjs";
 import {IMessage} from "../../shared/models/IMessage";
 import {SocketService} from "../../shared/services/socket.service";
 import {IOption} from "../../shared/models/IOption";
@@ -16,13 +16,12 @@ import {
   chatGetAvailableRooms,
   roomGetAmountOfMessagesAction,
   roomGetMessagesAction,
-  roomLoadMessagesAction,
-  roomMessageRemoveAction, roomSwitchAction,
+  roomLoadMessagesAction, roomMessageReadAction,
+  roomMessageRemoveAction,
   roomUpdateMessageAction
 } from "../../store/room-chat/room-chat.actions";
 import {DialogInvitingRoomComponent} from "../../dialog/inviting-room/dialog-inviting-room.component";
 import {IUser} from "../../shared/models/IUser";
-import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-room',
@@ -37,8 +36,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
-  public emoji$: Observable<string> = this.roomService.message.asObservable();
+  public emoji$: Observable<string> = this.roomService.emoji.asObservable();
   public message: string = "";
+
+  public currentRoomUnreadCount: number = 0;
 
   public room$: Observable<IRoom | undefined> = this.activeRoute.params.pipe(
     switchMap(({id}) => {
@@ -47,15 +48,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           if (!value) {
             this.store.dispatch(chatGetAvailableRooms());
           }
-          return this.store.select(roomByIdSelect(id))
-        }),
-        map((value)=>{
-          if (!value){
-            this.router.navigate(["chat", "common"])
-          }
           this.store.dispatch(roomGetMessagesAction({roomId: id}));
-          return value;
-        })
+          return this.store.select(roomByIdSelect(id));
+        }),
+        filter(Boolean),
       );
     }),
   )
@@ -72,7 +68,11 @@ export class RoomComponent implements OnInit, OnDestroy {
         })
       )
       return [];
-    })
+    }),
+    // tap((messages)=> {
+    //   this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
+    //   return messages;
+    // })
   );
 
   public menuItems: IOption[] = [
@@ -108,22 +108,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.socketService.listenPrivacyChanged().subscribe();
     this.socketService.listenMessageRead().subscribe();
 
-    // this.socketService.listenMessageUpdated().pipe(
-    //   map((value)=>{
-    //     const index = iterativeBS(this.messages, value);
-    //     if (index !== -1) {
-    //       this.messages[index].content = value.newContent;
-    //     }
-    //   })
-    // ).subscribe();
   }
 
   ngOnDestroy(): void {
     this.emojiSubscription.unsubscribe();
   }
 
-  private deleteMessage(messageId: string) {
-    this.socketService.emit('deleteMessage', {messageId});
+  private deleteMessage(messageId: string, roomId: string) {
+    this.socketService.emit('deleteMessage', {messageId, roomId});
     this.store.dispatch(roomMessageRemoveAction({messageId}));
   }
 
@@ -158,10 +150,11 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public onViewportChange(event: {inView: boolean, id: string}, room: IRoom, messages: IMessage[]) {
     if (room._id !== 'common') {
-      // console.log("(on Viewport Change) event, room, messages:", event, room);
-      if (event.inView) {
+      if (event.inView ) {
+        // console.log("(on Viewport Change) event, room, messages:", event, room);
         this.socketService.emit('readMessage', {messageId: event.id});
-        this.roomService.calculateUnread(messages);
+        this.store.dispatch(roomMessageReadAction({messageId: event.id, roomId: room._id, userId: this.chatService.me}));
+        this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       }
     }
   }
@@ -180,14 +173,22 @@ export class RoomComponent implements OnInit, OnDestroy {
   *
       public calculateUnread(): void {
         this.amountOfUnread = 0;
+        this.messages.forEach(emoji => {
+            if (emoji.read.indexOf(this.me) === -1 && this.me !== emoji.creator._id)
+                this.amountOfUnread += 1;
+        });
+        this.allUnreadMessages.emit({unread: this.amountOfUnread, roomId: this.currentRoom._id});
+    }
+  *
+  *
+      public calculateUnread(): void {
+        this.amountOfUnread = 0;
         this.messages.forEach(message => {
             if (message.read.indexOf(this.me) === -1 && this.me !== message.creator._id)
                 this.amountOfUnread += 1;
         });
         this.unreadMessages.emit({unread: this.amountOfUnread, roomId: this.currentRoom._id});
     }
-  *
-  *
   */
 
   public onMessageRightClick(e: MouseEvent, message: IMessage): void {
@@ -201,8 +202,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   public async openSettings(room: IRoom): Promise<void> {
     const matDialogRef = this.matDialog.open(DialogRoomSettingsComponent, {data: room});
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
-      if (value.delete)
+      if (value.delete) {
         this.socketService.emit('roomDelete', {roomId: value.roomId});
+        this.router.navigate(['chat', 'common']);
+      }
 
       else {
         if (value.newRoomTitle !== room.title)
@@ -244,12 +247,13 @@ export class RoomComponent implements OnInit, OnDestroy {
   public onOptionSelect(e: string) {
     console.log(e);
     const messageId = this.lastSelectedMessage?._id as string;
+    const roomId = this.lastSelectedMessage?.room as string;
 
     if (e === "edit") {
       this.isEditing = true;
       this.message = this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "";
     } else if (e === "delete") {
-      this.deleteMessage(messageId);
+      this.deleteMessage(messageId, roomId);
     }
     this.chatService.showContextMenu.next(false);
   }
