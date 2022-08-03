@@ -1,8 +1,8 @@
-import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {Directive, HostListener, Input} from '@angular/core';
 import {ChatService} from "../services/chat.service";
 
 @Directive({
-    selector: '[context-menu]',
+    selector: '[app-context-menu]',
 })
 export class ContextMenuDirective {
   @Input() isMyMessage: boolean = true;

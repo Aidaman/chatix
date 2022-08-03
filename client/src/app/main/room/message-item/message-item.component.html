@@ -17,7 +17,7 @@
     <div class="message-container">
       <div class="avatar">
         <!--        *ngIf="emoji.creator?._id !== me"-->
-        <img [src]="message.creator?.avatar">
+        <img alt="Here be dragons" [src]="message.creator?.avatar">
       </div>
       <div class="message-content">
         <span class="message-user">
@@ -34,7 +34,10 @@
             </ng-template>
         </span>
 
-        <div class="message-text" [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage}">
+        <div class="message-text"
+             [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage}"
+             [matBadge]="message.read.length"
+             matBadgePosition="above after">
           <!--          (inViewportChange)="viewportChange($event)"-->
           <p>{{message.content}}</p>
           <mat-icon *ngIf="message.creator?._id === me">{{message.read.length > 0 ? 'done_all' : 'done'}}</mat-icon>

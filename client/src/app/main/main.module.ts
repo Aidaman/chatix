@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {MainComponent} from "./main.component";
 import {RoomComponent} from "./room/room.component";
 import {RoomListComponent} from "./room/room-list/room-list.component";
@@ -21,6 +21,7 @@ import {DialogModule} from "../dialog/dialog.module";
 import {MainRoutingModule} from "./main-routing.module";
 import {PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface, PerfectScrollbarModule} from "ngx-perfect-scrollbar";
 import {MatBadgeModule} from "@angular/material/badge";
+import {RoomResolver} from "../resolvers/room.resolver";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -37,28 +38,29 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ThemingComponent,
     HeaderComponent
   ],
-    imports: [
-        CommonModule,
-        MatSidenavModule,
-        MatIconModule,
-        MatSlideToggleModule,
-        MatListModule,
-        MatButtonModule,
-        MatRippleModule,
-        MatInputModule,
-        FormsModule,
-        DialogModule,
-        SharedModule,
-        PerfectScrollbarModule,
+  imports: [
+    CommonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    MatListModule,
+    MatButtonModule,
+    MatRippleModule,
+    MatInputModule,
+    FormsModule,
+    DialogModule,
+    SharedModule,
+    PerfectScrollbarModule,
 
-        MainRoutingModule,
-        MatBadgeModule,
-    ],
+    MainRoutingModule,
+    MatBadgeModule,
+  ],
   providers: [
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    }
+    },
   ]
 })
-export class MainModule { }
+export class MainModule {
+}

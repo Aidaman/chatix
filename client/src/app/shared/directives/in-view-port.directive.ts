@@ -1,11 +1,21 @@
-import {Directive, ElementRef, EventEmitter, HostBinding, Inject, Input, Output} from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnDestroy, OnInit,
+  Output
+} from '@angular/core';
 
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[snInViewport]',
 })
-export class InViewPortDirective {
+export class InViewPortDirective implements OnInit, AfterViewInit, OnDestroy{
   private inViewport!: boolean;
-  private hasIntersectionObserver!: boolean;
+  private readonly hasIntersectionObserver!: boolean;
   @Input() inViewportOptions!: IntersectionObserverInit;
   @Output() inViewportChange = new EventEmitter<boolean>();
   public observer!: IntersectionObserver;

@@ -8,10 +8,10 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[scroll]'
+  selector: '[app-scroll-track]'
 })
 export class ScrollTrackDirective implements AfterViewInit{
-  @Output() onScroll = new EventEmitter<void>();
+  @Output() loadMessages = new EventEmitter<void>();
   private isEmitted: boolean = false;
   private scrollHeight: number = 0;
 
@@ -23,7 +23,7 @@ export class ScrollTrackDirective implements AfterViewInit{
     //@ts-ignore
     if (event?.srcElement.scrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
-      this.onScroll.emit();
+      this.loadMessages.emit();
       this.isEmitted = true;
     }
     if(this.scrollHeight !== this.el.nativeElement.scrollHeight){

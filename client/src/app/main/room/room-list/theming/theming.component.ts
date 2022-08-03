@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Renderer2} from '@angular/core';
+import {Component, Inject, Renderer2} from '@angular/core';
 import {ThemingService} from "../../../../shared/services/theming.service";
 import {DOCUMENT} from "@angular/common";
 import {BehaviorSubject} from "rxjs";

@@ -153,7 +153,6 @@ module.exports = {
         try {
             let user = await User.findById(socket.decoded_token.id);
 
-            console.log(params);
             const usersOnline = await User.find({isOnline: true});
             const rooms = await Room.find({users: user._id}).populate([{path: 'users'}, {path: 'creator'}]).sort('-lastAction');
             rooms.push({

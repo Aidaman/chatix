@@ -1,8 +1,8 @@
-export interface IAddRoomProps {
-    title?: string;
-    participants?: IParticipant[];
-}
+// export interface IAddRoomProps {
+//     title?: string;
+//     participants?: IParticipant[];
+// }
 
-export interface IParticipant {
-    id?: string;
-}
+// export interface IParticipant {
+//     id?: string;
+// }

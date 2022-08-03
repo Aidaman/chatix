@@ -27,12 +27,11 @@ import {
   roomUpdateMessageFailureAction,
   roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
-import {map, of, switchMap, tap} from "rxjs";
+import {map, of, switchMap} from "rxjs";
 import {ChatService} from "../../shared/services/chat.service";
 import {catchError} from "rxjs/operators";
 import {SocketService} from "../../shared/services/socket.service";
 import {hasRoomValueSelector, offsetSelector, roomByIdSelect} from "./room-chat.selectors";
-import {IMessage} from "../../shared/models/IMessage";
 
 @Injectable()
 export class RoomChatEffect {
@@ -47,9 +46,6 @@ export class RoomChatEffect {
   searchRooms$ = createEffect(() => this.actions$.pipe(
     ofType(chatSearchRoomsActions),
     switchMap(() => this.socketService.listenSearchRoomsResult().pipe(
-      tap((value)=>{
-        console.log(value)
-      }),
       map((data) => chatSearchRoomsSuccesAction({rooms: data})),
       catchError(() => of(chatSearchRoomsFailureAction)),
     )),
@@ -66,9 +62,6 @@ export class RoomChatEffect {
   switchRoom$ = createEffect(() => this.actions$.pipe(
     ofType(roomSwitchAction),
     switchMap(({roomId}) => this.store.select(roomByIdSelect(roomId)).pipe(
-      tap((value)=> {
-        console.log(value);
-      }),
       //@ts-ignore
       map((value) => roomSwitchSuccessAction({room: value})),
       catchError(() => of(roomSwitchFailureAction)),
@@ -100,26 +93,20 @@ export class RoomChatEffect {
 
   updateMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomUpdateMessageAction),
-    switchMap(({messageId}) => this.socketService.listenMessageUpdated().pipe(
-      map((value) => roomUpdateMessageSuccessAction({messageId, correction: value.newContent})),
-      catchError(() => of(roomUpdateMessageFailureAction)))),
+    map(({messageId, correction}) => roomUpdateMessageSuccessAction({messageId, correction})),
+    catchError(() => of(roomUpdateMessageFailureAction)),
   ));
 
   deleteMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomMessageRemoveAction),
-    switchMap(({messageId}) => this.socketService.listenMessageDeleted().pipe(
-      tap((value)=> {console.log(value)}),
-      map(() => roomMessageRemoveSuccessAction({messageId})),
-      catchError(() => of(roomMessageRemoveFailureAction)))),
+    map(({messageId}) => roomMessageRemoveSuccessAction({messageId})),
+    catchError(() => of(roomMessageRemoveFailureAction)),
   ));
 
-  readMessage$ = createEffect(()=> this.actions$.pipe(
+  readMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomMessageReadAction),
-    switchMap(({roomId})=> this.socketService.listenMessageRead().pipe(
-      tap((value)=>{console.log(value)}),
-      map((value)=>roomMessageReadSuccessAction({messageId: value.messageId, userId: value.userId, roomId})),
-      catchError(()=> of(roomMessageReadFailureAction))
-    ))
+    map(({messageId, userId}) => roomMessageReadSuccessAction({messageId, userId})),
+    catchError(() => of(roomMessageReadFailureAction))
   ));
 
   constructor(private actions$: Actions,

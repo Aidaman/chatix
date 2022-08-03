@@ -18,10 +18,7 @@ export class ContactListComponent implements OnInit {
   @Input() isDisplayed: boolean = false;
   @Output() closeParticipants: EventEmitter<any> = new EventEmitter<any>();
 
-  private me: string = this.localStorageService.getUser()['id'] as string;
   private blacklist: string[] = [];
-  private lastSelectedContactId: string = '';
-  private content: string = '';
   public list: IUser[] = [];
   public roomId: string = '';
   public theme: string = 'dark';
@@ -30,9 +27,6 @@ export class ContactListComponent implements OnInit {
   //         id: 'invite',
   //         text: 'Invite to the chat',
   //         iconCss: 'e-cm-icons e-add'
-  //     },
-  //     {
-  //         separator: true
   //     },
   //     {
   //         id: 'ban',

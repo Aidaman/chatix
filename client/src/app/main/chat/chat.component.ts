@@ -9,8 +9,7 @@ import {RoomService} from "../../shared/services/room.service";
 import {Store} from "@ngrx/store";
 import {userAuthAction} from "../../store/user/user.actions";
 import {allRoomsSelector, isAllRoomsHasValue} from "../../store/room-chat/room-chat.selectors";
-import {chatGetAvailableRooms, roomGetNewMessageAction} from "../../store/room-chat/room-chat.actions";
-import {map} from "rxjs/operators";
+import {chatGetAvailableRooms} from "../../store/room-chat/room-chat.actions";
 
 @Component({
   selector: 'app-chat',
@@ -21,7 +20,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   public opened: BehaviorSubject<boolean> = this.roomService.sideMenuOpened;
 
   public theme: BehaviorSubject<string> = this.themingService.theme;
-  public overallUnreadMessages: number = 0;
 
   public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
     switchMap((value) => {
@@ -49,13 +47,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       tap(value => this.openInvitation(value))
     ).subscribe();
 
-    this.socketService.listenNewMessage().pipe(
-      map((value)=>{
-        console.log(value.room );
-        this.store.dispatch(roomGetNewMessageAction({message: value.message, roomId: value.room}))
-      }),
-      // tap(() => this.recountUnread())
-    ).subscribe();
+    this.socketService.listenNewMessage().subscribe();
 
     this.socketService.listenNewRoom().subscribe();
     this.socketService.listenRoomDeleted().subscribe();
@@ -73,10 +65,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   //     this.overallUnreadMessages += item;
   //   });
   // }
-
-  public openSideNav(): void {
-    this.roomService.sideMenuOpened.next(!this.roomService.sideMenuOpened.value);
-  }
 
   private async openInvitation(data: any): Promise<void> {
     const invitationDialogRef = this.dialog.open(DialogInvitationComponent,

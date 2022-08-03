@@ -43,7 +43,7 @@
     <!--                       [config]="perfectScrollBarConfig"-->
     <!--                       (psScrollY)="onScroll($event, room)">-->
 
-    <div id="contextmenu-control" scroll (onScroll)="onScroll(room._id)">
+    <div id="contextmenu-control" app-scroll-track (loadMessages)="onScroll(room._id)">
       <div id="messagecontextmenutarget">
         <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
           <mat-list-item *ngFor="let message of messages" [ngClass]="{
@@ -54,13 +54,13 @@
               <app-message-item [message]="message"
                                 (viewChange)="onViewportChange($event, room, messages)"
                                 (contextmenu)="onMessageRightClick($event, message)"
-                                context-menu [isMyMessage]="isCreatedByMe(message.creator?._id)">
+                                app-context-menu [isMyMessage]="isCreatedByMe(message.creator?._id)">
                 <!--                                  (contextmenu)="onMessageRightClick(emoji)">-->
               </app-message-item>
             </div>
           </mat-list-item>
 
-          <app-custom-context-menu context-menu
+          <app-custom-context-menu app-context-menu
                                    [options]="menuItems"
                                    (optionSelect)="onOptionSelect($event)">
           </app-custom-context-menu>

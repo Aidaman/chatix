@@ -7,7 +7,6 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatToolbarModule} from "@angular/material/toolbar";
-import {ContactListComponent} from './dialog/contact-list/contact-list.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MatCardModule} from "@angular/material/card";
 import {TokenInterceptor} from "./shared/interceptors/token.interceptor";
@@ -32,54 +31,55 @@ import {EffectsModule} from "@ngrx/effects";
 import {UserEffect} from "./store/user/user.effect";
 import {roomChatReducer} from "./store/room-chat/room-chat.reducer";
 import {RoomChatEffect} from "./store/room-chat/room-chat.effect";
+import {RoomResolver} from "./resolvers/room.resolver";
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        SignInComponent,
-    ],
-    imports: [
-        BrowserModule,
-        CommonModule,
-        BrowserAnimationsModule,
-        ReactiveFormsModule,
-        MatToolbarModule,
-        MatTabsModule,
-        MatFormFieldModule,
-        HttpClientModule,
-        MatCardModule,
-        AppRoutingModule,
-        FormsModule,
-        MatDialogModule,
-        MatAutocompleteModule,
-        MatProgressSpinnerModule,
-        MatCheckboxModule,
-        MatButtonToggleModule,
-        MatBadgeModule,
-        MatBottomSheetModule,
-        MatMenuModule,
-        SharedModule,
-        MatIconModule,
-        MatListModule,
-        StoreModule.forRoot({}),
-        StoreModule.forFeature('user', userReducer),
-        StoreModule.forFeature('room and chat', roomChatReducer),
-        StoreDevtoolsModule.instrument({}),
-        EffectsModule.forRoot([UserEffect, RoomChatEffect])
-    ],
-    providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            multi: true,
-            useClass: TokenInterceptor
-        },
-        { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
-        { provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } }
-    ],
+  declarations: [
+    AppComponent,
+    SignInComponent,
+  ],
+  imports: [
+    BrowserModule,
+    CommonModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    MatToolbarModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    HttpClientModule,
+    MatCardModule,
+    AppRoutingModule,
+    FormsModule,
+    MatDialogModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
+    MatButtonToggleModule,
+    MatBadgeModule,
+    MatBottomSheetModule,
+    MatMenuModule,
+    SharedModule,
+    MatIconModule,
+    MatListModule,
+    StoreModule.forRoot({}),
+    StoreModule.forFeature('user', userReducer),
+    StoreModule.forFeature('room and chat', roomChatReducer),
+    StoreDevtoolsModule.instrument({}),
+    EffectsModule.forRoot([UserEffect, RoomChatEffect])
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      multi: true,
+      useClass: TokenInterceptor
+    },
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}},
+    {provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}
+  ],
   exports: [
     CustomContextMenuComponent,
   ],
-    bootstrap: [AppComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule {
 }

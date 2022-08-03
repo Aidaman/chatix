@@ -4,7 +4,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {IRoom} from "../../shared/models/IRoom";
 import {debounceTime, Subscription} from "rxjs";
 import {SocketService} from "../../shared/services/socket.service";
-import {LocalStorageService} from "../../shared/services/local-storage.service";
 import {IUser} from "../../shared/models/IUser";
 import {ChatService} from "../../shared/services/chat.service";
 

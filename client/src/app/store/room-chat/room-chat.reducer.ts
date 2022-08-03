@@ -1,5 +1,5 @@
 import {IRoom} from "../../shared/models/IRoom";
-import {createReducer, on, props} from "@ngrx/store";
+import {createReducer, on} from "@ngrx/store";
 import {
   chatGetAvailableRooms,
   chatGetAvailableRoomsSucces,
@@ -106,9 +106,9 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomGetNewMessageAction, (state, action) => {
-    if (!state.selectedRoom || action.roomId === state.selectedRoom?._id){
+    if (!state.selectedRoom || action.roomId === state.selectedRoom?._id) {
       const newMessagesArr = state.messages.slice();
-      newMessagesArr.push(action.message);
+      newMessagesArr.push({...action.message});
       return ({
         ...state,
         messages: newMessagesArr
@@ -124,9 +124,11 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomMessageReadSuccessAction, (state, action) => {
-    const newMessagesArr = state.messages.slice().map(message => {
-        if (message._id === action.messageId) message.read.push(action.userId);
-        return message;
+    let newMessagesArr = [...state.messages].map((message: IMessage) => {
+      if (message._id === action.messageId && message.read.indexOf(action.userId) === -1) {
+        message = {...message, read: [...message.read, action.userId]};
+      }
+      return message
     });
     return ({
       ...state,
@@ -140,7 +142,7 @@ export const roomChatReducer = createReducer(
   on(roomLoadMessagesAction, (state) => ({
     ...state,
     isLoading: true,
-    offset: state.offset+50 > state.totalMessages? state.totalMessages : state.offset+50,
+    offset: state.offset + 50 > state.totalMessages ? state.totalMessages : state.offset + 50,
   })),
   on(roomLoadMessagesSuccessAction, (state, action) => {
     const newState = {...state, isLoading: false};
@@ -184,14 +186,14 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomUpdateMessageSuccessAction, (state, action) => {
-    const newMessages = state.messages.map((message: IMessage)=>{
-      if (message._id === action.messageId){
+    const newMessages = state.messages.map((message: IMessage) => {
+      if (message._id === action.messageId) {
         return {...message, content: action.correction};
       }
       return message;
     });
 
-    return ({...state,  messages: newMessages});
+    return ({...state, messages: newMessages});
   }),
   on(roomUpdateMessageFailureAction, (state) => ({
     ...state,
@@ -201,7 +203,7 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomMessageRemoveSuccessAction, (state, action) => {
-    console.log('Delete should be successfull')
+    console.log('Delete should be successful')
     return ({
       ...state,
       messages: state.messages.filter((message) => action.messageId !== message._id)
@@ -214,7 +216,7 @@ export const roomChatReducer = createReducer(
   // on(roomGetParticipantsAction, (state) => ({
   //   ...state,
   // })),
-  // on(roomGetParticipantsSuccesAction, (state, action) => ({
+  // on(roomGetParticipantsSuccessAction, (state, action) => ({
   //   ...state,
   // }))
 

@@ -45,13 +45,10 @@ module.exports = {
             if (!message) {
                 throw new Error('Message not found');
             }
-            console.log("(read message) message");
-
             const userInRoom = !!message.room.users.find(item => String(item) === String(socket.decoded_token.id));
             if (!userInRoom || String(message.creator) === socket.decoded_token.id) {
                 throw new Error('Not allowed to read');
             }
-            console.log("(read message) user in room:", userInRoom);
 
             if (!!message.read.find(i => String(i) === socket.decoded_token.id)) {
                 return console.log('message already read');
@@ -84,6 +81,7 @@ module.exports = {
                 newContent: params.newContent, createdAt: message.createdAt
             });
 
+            await message.save();
             return io.to(params.roomId).emit('messageUpdated', {
                 id: params.messageId, room: params.roomId,
                 newContent: params.newContent, createdAt: message.createdAt

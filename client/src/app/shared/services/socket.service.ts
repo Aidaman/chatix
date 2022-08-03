@@ -1,13 +1,16 @@
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from "../../../environments/environment";
-import {map, Observable, Subject, takeUntil, tap} from "rxjs";
+import {map, Observable, Subject, takeUntil} from "rxjs";
 import {LocalStorageService} from "./local-storage.service";
+// @ts-ignore
 import * as io from 'socket.io-client';
 import {
   chatGetAvailableRooms,
-  roomGetMessagesAction,
-  roomGetNewMessageAction,
-  roomSwitchAction
+  roomGetMessagesAction, roomGetNewMessageAction,
+  roomMessageReadAction,
+  roomMessageRemoveAction,
+  roomSwitchAction,
+  roomUpdateMessageAction
 } from "../../store/room-chat/room-chat.actions";
 import {Store} from "@ngrx/store";
 import {Router} from "@angular/router";
@@ -67,7 +70,6 @@ export class SocketService {
   public socket: any;
   public readonly uri: string = environment.API_URL;
   public isConnected: boolean = false;
-  // public roomId: string = "";
 
   public termination$: Subject<number> = new Subject<number>();
 
@@ -95,7 +97,6 @@ export class SocketService {
   }
 
   public emit(eventName: string, data: any): void {
-    // console.log(eventName, "emited")
     this.socket.emit(eventName, data);
   }
 
@@ -103,9 +104,9 @@ export class SocketService {
     this.socket.disconnect();
   }
 
-  public listenJoin(): Observable<any> {
-    return this.listen('join').pipe(takeUntil(this.termination$),);
-  }
+  // public listenJoin(): Observable<any> {
+  //   return this.listen('join').pipe(takeUntil(this.termination$),);
+  // }
 
   public listenLeaveRoom(): Observable<any> {
     return this.listen('leaveRoom').pipe(
@@ -120,9 +121,9 @@ export class SocketService {
 
   public listenNewMessage(): Observable<any> {
     return this.listen('newMessage').pipe(
-      // map((value)=>{
-      //   // this.store.dispatch(roomGetNewMessageAction({roomId: value.room, message: value}));
-      // }),
+      map((value)=>{
+        this.store.dispatch(roomGetNewMessageAction({message: value.message, roomId: value.room}))
+      }),
       takeUntil(this.termination$));
   }
 
@@ -136,8 +137,7 @@ export class SocketService {
 
   public listenNewRoom(): Observable<any> {
     return this.listen('newRoom').pipe(
-      map((data: any) => {
-        console.log('these data is from socketService "new room" listener', data)
+      map(() => {
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -167,7 +167,6 @@ export class SocketService {
         this.store.dispatch(chatGetAvailableRooms());
         this.store.dispatch(roomSwitchAction({roomId: 'common'}));
         this.router.navigate(['chat', 'common']);
-
       }),
       takeUntil(this.termination$),
     );
@@ -175,7 +174,7 @@ export class SocketService {
 
   public listenRoomRenamed(): Observable<any> {
     return this.listen('roomRename').pipe(
-      map((data: any) => {
+      map(() => {
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -185,7 +184,7 @@ export class SocketService {
 
   public listenPrivacyChanged(): Observable<any> {
     return this.listen('privacyChanged').pipe(
-      map((data: any) => {
+      map(() => {
         this.emit('getAllRooms', {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -203,19 +202,27 @@ export class SocketService {
 
   public listenMessageRead(): Observable<any> {
     return this.listen('messageRead').pipe(
-      tap((value) => {
-        console.log("(listen Message Read) incoming value: ", value);
+      map((value)=>{
+        this.store.dispatch(roomMessageReadAction({messageId: value.id, userId: value.user}));
       }),
       takeUntil(this.termination$)
     );
   }
 
   public listenMessageUpdated(): Observable<any> {
-    return this.listen('messageUpdated').pipe(takeUntil(this.termination$));
+    return this.listen('messageUpdated').pipe(
+      map((value)=>{
+        this.store.dispatch(roomUpdateMessageAction({messageId: value.id, correction: value.newContent}));
+      }),
+      takeUntil(this.termination$));
   }
 
   public listenMessageDeleted(): Observable<any> {
-    return this.listen('messageDeleted').pipe(takeUntil(this.termination$));
+    return this.listen('messageDeleted').pipe(
+      map((value)=>{
+        this.store.dispatch(roomMessageRemoveAction({messageId: value.id}));
+      }),
+      takeUntil(this.termination$));
   }
 
   public destroy(): void {

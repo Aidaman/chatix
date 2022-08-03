@@ -1,15 +1,14 @@
 import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
-import {ChatComponent} from "./chat/chat.component";
 import {MainComponent} from "./main.component";
-import {RoomComponent} from "./room/room.component";
+import {RoomResolver} from "../resolvers/room.resolver";
 
 const routes: Routes = [
   // {path: '', component: MainComponent, children: [
   //     {path: ':id', component: RoomComponent}
   //   ]},
   // {path: ':id', component: RoomComponent},
-  {path: ':id', component: MainComponent},
+  {path: ':id', component: MainComponent, },
 ]
 
 @NgModule({

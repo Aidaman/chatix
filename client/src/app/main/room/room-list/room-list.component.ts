@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {IRoom} from "../../../shared/models/IRoom";
 import {SocketService} from "../../../shared/services/socket.service";
 import {ThemingService} from "../../../shared/services/theming.service";
@@ -20,11 +20,8 @@ import {chatSearchRoomsActions, roomSwitchAction} from "../../../store/room-chat
   templateUrl: './room-list.component.html',
   styleUrls: ['./room-list.component.scss']
 })
-export class RoomListComponent implements OnInit {
+export class RoomListComponent {
   @Input() rooms: IRoom[] = [];
-  // @Input() unread!: {inView: boolean, id: string};
-
-  // public unread: Map<string, number> = new Map<string, number>();
 
   //This object is structured like that: {roomId: amountOfUnread}
   public unread: object = {};
@@ -32,7 +29,6 @@ export class RoomListComponent implements OnInit {
   public searchText: string = '';
   public isPublicRooms: boolean = false;
   public theme: BehaviorSubject<string> = this.themingService.theme;
-  public selectedRoom: Observable<IRoom | null> = this.store.select(roomSelector);
 
   constructor(private socketService: SocketService,
               private roomService: RoomService,
@@ -41,10 +37,6 @@ export class RoomListComponent implements OnInit {
               private store: Store,
               private matDialog: MatDialog,
               private themingService: ThemingService) {
-  }
-
-  public ngOnInit(): void {
-    // this.searchRooms();
   }
 
   public createRoom(): void {

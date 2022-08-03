@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from "rxjs";
 import {LocalStorageService} from "./local-storage.service";
 import {IUser} from "../models/IUser";
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {Params, Router} from "@angular/router";
 import {SocketService} from "./socket.service";
 import {Store} from "@ngrx/store";
 import {userAuthAction} from "../../store/user/user.actions";

@@ -55,7 +55,6 @@ module.exports = {
                 throw new Error('Room not found');
             }
 
-            console.log("(invite user) room: ", room);
             let participants = Array.from(new Set(params.participants.concat(room.users)));
             participants = await User.find({
                 _id:{
@@ -78,7 +77,6 @@ module.exports = {
                 }
                 return flag;
             });
-            console.log("(invite user) participants: ", participants);
 
             room.creator = invitor;
             for (let user of participants){

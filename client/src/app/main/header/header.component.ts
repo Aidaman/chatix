@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {AuthService} from "../../shared/services/auth.service";
 import {LocalStorageService} from "../../shared/services/local-storage.service";
 import {Router} from "@angular/router";

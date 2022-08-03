@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {IMessage} from "../models/IMessage";
-import {IOption} from "../models/IOption";
 import {environment} from "../../../environments/environment";
 import {IRoom} from "../models/IRoom";
 import {LocalStorageService} from "./local-storage.service";
@@ -17,10 +16,8 @@ export class ChatService {
 
   public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public contextMenuCoords: BehaviorSubject<{ top: number, left: number }> = new BehaviorSubject<{ top: number, left: number }>({top: 0, left: 0});
-  public emitOption: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   public emoji: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  public lastSelectedMessageId: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   public rooms: BehaviorSubject<IRoom[]> = new BehaviorSubject<IRoom[]>([]);
 
@@ -65,7 +62,7 @@ export class ChatService {
   public calculateUnread(messages: IMessage[]): number {
     let amountOfUnread = 0;
     messages.forEach(message => {
-      if (message.read.indexOf(this.me) === -1 && this.me !== message.creator?.id)
+      if (message.read.indexOf(this.me) === -1 && this.me !== message.creator?.id && !message.isSystemMessage)
         amountOfUnread += 1;
     });
     return amountOfUnread;

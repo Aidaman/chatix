@@ -9,15 +9,12 @@ import {BehaviorSubject} from "rxjs";
   templateUrl: './dialog-invitation.component.html',
   styleUrls: ['./dialog-invitation.component.scss'],
 })
-export class DialogInvitationComponent implements OnInit {
+export class DialogInvitationComponent {
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
   constructor(public dialogRef: MatDialogRef<DialogInvitationComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IRoom,
               private themingService: ThemingService) {
-  }
-
-  public ngOnInit(): void {
   }
 
   public onAgree(): void {

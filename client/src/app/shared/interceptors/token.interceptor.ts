@@ -35,6 +35,6 @@ export class TokenInterceptor implements HttpInterceptor {
 				}
 			})
 		}
-		return throwError(error);
+		return throwError(() => error);
 	}
 }

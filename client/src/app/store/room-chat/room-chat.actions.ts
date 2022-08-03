@@ -1,7 +1,6 @@
 import {ActionTypes} from "../action.types";
 import {createAction, props} from "@ngrx/store";
 import {IMessage} from "../../shared/models/IMessage";
-import {IUser} from "../../shared/models/IUser";
 import {IRoom} from "../../shared/models/IRoom";
 
 export const roomGetMessagesAction = createAction(
@@ -35,12 +34,12 @@ export const roomGetNewMessageFailureAction = createAction(
 
 export const roomMessageReadAction = createAction(
   ActionTypes.ROOM_MESSAGE_READ,
-  props<{ messageId: string, roomId: string, userId: string }>(),
+  props<{ messageId: string, userId: string }>(),
 )
 
 export const roomMessageReadSuccessAction = createAction(
   ActionTypes.ROOM_MESSAGE_READ_SUCCESS,
-  props<{ messageId: string, roomId: string, userId: string }>(),
+  props<{ messageId: string, userId: string }>(),
 )
 
 export const roomMessageReadFailureAction = createAction(
@@ -92,7 +91,7 @@ export const roomSendMessageFailureAction = createAction(
 
 export const roomUpdateMessageAction = createAction(
   ActionTypes.ROOM_UPDATE_MESSAGE,
-  props<{ messageId: string }>()
+  props<{ messageId: string, correction: string }>()
 )
 
 export const roomUpdateMessageSuccessAction = createAction(

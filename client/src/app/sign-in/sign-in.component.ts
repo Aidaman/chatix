@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../shared/services/auth.service";
 import {environment} from "../../environments/environment";
-import {ActivatedRoute, Router} from "@angular/router";
-import {LocalStorageService} from "../shared/services/local-storage.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-sign-in',

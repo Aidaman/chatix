@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
+import {Component} from '@angular/core';
 import {EMOJI} from "../../shared/EMOJIS";
 import {ChatService} from "../../shared/services/chat.service";
 

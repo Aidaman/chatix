@@ -1,17 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {ChatService} from "../../services/chat.service";
 import {IOption} from "../../models/IOption";
-import {IMessage} from "../../models/IMessage";
-import {IRoom} from "../../models/IRoom";
 import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-custom-context-menu',
   templateUrl: './custom-context-menu.component.html',
   styleUrls: ['./custom-context-menu.component.scss'],
-  host: {
-    '(document:click)': 'clickedOutside()'
-  },
 })
 export class CustomContextMenuComponent {
   @Output() optionSelect: EventEmitter<string> = new EventEmitter<string>();
@@ -23,7 +18,8 @@ export class CustomContextMenuComponent {
   constructor(private chatService: ChatService) {
   }
 
-  public clickedOutside(): void {
+  @HostListener('document:click', ['$event'])
+  clickedOutside(): void {
     this.chatService.showContextMenu.next(false);
   }
 
