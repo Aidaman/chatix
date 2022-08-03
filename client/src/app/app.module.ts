@@ -61,9 +61,9 @@ import {RoomResolver} from "./resolvers/room.resolver";
     SharedModule,
     MatIconModule,
     MatListModule,
-    StoreModule.forRoot({}),
-    StoreModule.forFeature('user', userReducer),
-    StoreModule.forFeature('room and chat', roomChatReducer),
+    StoreModule.forRoot({user: userReducer, room: roomChatReducer}),
+    // StoreModule.forFeature('user', userReducer),
+    // StoreModule.forFeature('room and chat', roomChatReducer),
     StoreDevtoolsModule.instrument({}),
     EffectsModule.forRoot([UserEffect, RoomChatEffect])
   ],

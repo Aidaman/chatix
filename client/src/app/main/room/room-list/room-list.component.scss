@@ -129,6 +129,28 @@
     border-top: 1px solid rgba(0, 0, 0, 0.22);
     position: relative;
     height: calc(100vh - 349px);
+
+    overflow-y: auto;
+
+    &::-webkit-scrollbar{
+      width: 8px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    &::-webkit-scrollbar-track{
+      background-color: rgba(255, 255, 255, 0.25);
+      transition: 0.3s;
+      border-radius: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      transition: 0.3s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+    }
   }
 
   .room-title {

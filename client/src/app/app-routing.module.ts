@@ -6,14 +6,14 @@ import {RoomResolver} from "./resolvers/room.resolver";
 
 
 const routes: Routes = [
-    {path: '', redirectTo: '/chat/common', pathMatch: 'full'},
-    {path: 'chat', loadChildren: () => import('./main/main.module').then(m => m.MainModule), canActivate: [AuthGuard], },
-    {path: 'auth', component: SignInComponent}
+  {path: '', redirectTo: '/chat/common', pathMatch: 'full'},
+  {path: 'chat', loadChildren: () => import('./main/main.module').then(m => m.MainModule), canActivate: [AuthGuard],},
+  {path: 'auth', component: SignInComponent}
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
 export class AppRoutingModule {
 }

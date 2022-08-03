@@ -45,7 +45,7 @@
 
     <div id="contextmenu-control" app-scroll-track (loadMessages)="onScroll(room._id)">
       <div id="messagecontextmenutarget">
-        <mat-list class="mt-lst" *ngIf="messages$ | async as messages">
+        <mat-list class="mt-lst " *ngIf="messages$ | async as messages">
           <mat-list-item *ngFor="let message of messages" [ngClass]="{
                         'own': isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
                         'foreign' : isCreatedByMe(message.creator?._id) && !message.isSystemMessage,

@@ -49,52 +49,52 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public currentRoomUnreadCount: number = 0;
 
-  public room$: Observable<IRoom | undefined> = this.activeRoute.params.pipe(
-    switchMap(({id}) => {
-      return this.store.select(isAllRoomsHasValue).pipe(
-        switchMap((value) => {
-          if (!value) {
-            this.store.dispatch(chatGetAvailableRooms());
-            this.store.dispatch(roomSwitchAction({roomId: id}))
-          }
-          this.store.dispatch(roomSwitchAction({roomId: id}));
-          this.store.dispatch(roomGetMessagesAction({roomId: id}));
-          return this.store.select(roomByIdSelect(id));
-        }),
-        filter(Boolean),
-      );
-    }),
-  )
+  // public room$: Observable<IRoom | undefined> = this.activeRoute.params.pipe(
+  //   switchMap(({id}) => {
+  //     return this.store.select(isAllRoomsHasValue).pipe(
+  //       switchMap((value) => {
+  //         if (!value) {
+  //           this.store.dispatch(chatGetAvailableRooms());
+  //           // this.store.dispatch(roomSwitchAction({roomId: id}))
+  //         }
+  //         this.store.dispatch(roomSwitchAction({roomId: id}));
+  //         this.store.dispatch(roomGetMessagesAction({roomId: id}));
+  //         return this.store.select(roomByIdSelect(id));
+  //       }),
+  //       filter(Boolean),
+  //     );
+  //   }),
+  // )
 
-  // This is for the resolver update
-  // public room$: Observable<IRoom | null> = this.store.select(currentRoom());
+  // This is for the resolver solution
+  public room$: Observable<IRoom | null> = this.store.select(currentRoom());
 
-  public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
-    switchMap(({id}) => {
-      if (id !== 'common') return this.store.select(isAllRoomsHasValue).pipe(
-        switchMap((value) => {
-          if (!value) {
-            this.store.dispatch(chatGetAvailableRooms());
-          }
-          this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
-          return this.store.select(messagesSelector);
-        })
-      )
-      return [];
-    }),
-    tap((messages) => {
-      this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
-      return messages;
-    })
-  );
-
-  // This is for the resolver update
-  // public messages$: Observable<IMessage[]> = this.store.select(messagesSelector).pipe(
+  // public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
+  //   switchMap(({id}) => {
+  //     if (id !== 'common') return this.store.select(isAllRoomsHasValue).pipe(
+  //       switchMap((value) => {
+  //         if (!value) {
+  //           this.store.dispatch(chatGetAvailableRooms());
+  //         }
+  //         this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
+  //         return this.store.select(messagesSelector);
+  //       })
+  //     )
+  //     return [];
+  //   }),
   //   tap((messages) => {
   //     this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
   //     return messages;
   //   })
   // );
+
+  // This is for the resolver solution
+  public messages$: Observable<IMessage[]> = this.store.select(messagesSelector).pipe(
+    tap((messages) => {
+      this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
+      return messages;
+    })
+  );
 
 
   public menuItems: IOption[] = [
@@ -121,6 +121,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.activeRoute.data.subscribe((data) => {
+      console.log(data);
+    });
+
     this.socketService.emit('searchRooms', {});
     this.emojiSubscription = this.emoji$.subscribe();
 

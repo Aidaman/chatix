@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import {forwardRef, Injectable} from '@angular/core';
 import {
   Resolve,
   RouterStateSnapshot,
   ActivatedRouteSnapshot, ActivatedRoute
 } from '@angular/router';
-import {filter, Observable, of, switchMap} from 'rxjs';
+import {combineLatest, filter, map, Observable, of, switchMap, take} from 'rxjs';
 import {Store} from "@ngrx/store";
 import {isAllRoomsHasValue, messagesSelector, roomByIdSelect} from "../store/room-chat/room-chat.selectors";
 import {
@@ -14,23 +14,24 @@ import {
 } from "../store/room-chat/room-chat.actions";
 import {MainRoutingModule} from "../main/main-routing.module";
 import {MainModule} from "../main/main.module";
+import {IMessage} from "../shared/models/IMessage";
+import {IRoom} from "../shared/models/IRoom";
 
 @Injectable({
   providedIn: "root"
 })
-export class RoomResolver implements Resolve<boolean> {
+export class RoomResolver implements Resolve<{room: IRoom, messages: IMessage[] }> {
   constructor(private store: Store){}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<{room: IRoom, messages: IMessage[] }> {
     console.log("resolver activated");
 
-    const id = route.params["id"];
-
-    this.store.select(isAllRoomsHasValue).pipe(
+    const room$ = this.store.select(isAllRoomsHasValue).pipe(
       switchMap((value) => {
+        const id = route.params["id"];
         if (!value) {
           this.store.dispatch(chatGetAvailableRooms());
-          this.store.dispatch(roomSwitchAction({roomId: id}))
+          // this.store.dispatch(roomSwitchAction({roomId: id}))
         }
         this.store.dispatch(roomSwitchAction({roomId: id}));
         this.store.dispatch(roomGetMessagesAction({roomId: id}));
@@ -39,16 +40,21 @@ export class RoomResolver implements Resolve<boolean> {
       filter(Boolean),
     );
 
-    this.store.select(isAllRoomsHasValue).pipe(
+    const messages$ = this.store.select(isAllRoomsHasValue).pipe(
       switchMap((value) => {
+        const id = route.params["id"];
         if (!value) {
           this.store.dispatch(chatGetAvailableRooms());
         }
         this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
         return this.store.select(messagesSelector);
-      })
-    )
+      }),
+      filter((messages)=>!!messages.length),
+    );
 
-    return of(true);
+    return combineLatest([room$, messages$]).pipe(
+      map(([room, messages])=> ({room, messages})),
+      take(1),
+    );
   }
 }
