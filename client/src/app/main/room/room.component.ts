@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ThemingService} from "../../shared/services/theming.service";
 import {RoomService} from "../../shared/services/room.service";
 import {IRoom} from "../../shared/models/IRoom";
-import {BehaviorSubject, filter, lastValueFrom, Observable, Subscription, switchMap, tap} from "rxjs";
+import {BehaviorSubject, filter, lastValueFrom, map, Observable, Subscription, switchMap, tap} from "rxjs";
 import {IMessage} from "../../shared/models/IMessage";
 import {SocketService} from "../../shared/services/socket.service";
 import {IOption} from "../../shared/models/IOption";
@@ -39,7 +39,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
-  public emoji$: Observable<string> = this.roomService.emoji.asObservable();
+  public emoji$: Observable<string> = this.roomService.emoji.asObservable().pipe(
+    map((value) => {
+      this.message += value;
+      return value
+    })
+  );
   public message: string = "";
 
   public currentRoomUnreadCount: number = 0;
@@ -77,7 +82,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       )
       return [];
     }),
-    tap((messages)=> {
+    tap((messages) => {
       this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       return messages;
     })
@@ -117,9 +122,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.socketService.emit('searchRooms', {});
-    this.emojiSubscription = this.emoji$.subscribe((value: string) => {
-      this.message += value;
-    });
+    this.emojiSubscription = this.emoji$.subscribe();
 
     this.socketService.listenUserLeft().subscribe();
     this.socketService.listenPrivacyChanged().subscribe();

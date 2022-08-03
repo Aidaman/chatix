@@ -17,8 +17,6 @@ export class ChatService {
   public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public contextMenuCoords: BehaviorSubject<{ top: number, left: number }> = new BehaviorSubject<{ top: number, left: number }>({top: 0, left: 0});
 
-  public emoji: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
   public rooms: BehaviorSubject<IRoom[]> = new BehaviorSubject<IRoom[]>([]);
 
   public unreadInRooms: any;

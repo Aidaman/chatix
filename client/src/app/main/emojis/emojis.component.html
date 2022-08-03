@@ -1,4 +1,6 @@
-<div class="smiles-wrapper">
+<div class="smiles-wrapper"
+     *ngIf="theme | async as theme"
+     [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
   <p class="title">EMOJI</p>
   <div class="smiles-list">
     <div class="smile-item" *ngFor="let smile of smiles" (click)="sendToInput(smile)">

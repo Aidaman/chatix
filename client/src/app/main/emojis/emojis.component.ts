@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {EMOJI} from "../../shared/EMOJIS";
 import {ChatService} from "../../shared/services/chat.service";
+import {ThemingService} from "../../shared/services/theming.service";
+import {RoomService} from "../../shared/services/room.service";
 
 @Component({
   selector: 'app-emojis',
@@ -9,13 +11,15 @@ import {ChatService} from "../../shared/services/chat.service";
 })
 export class EmojisComponent {
   public smiles: string[] = Object.values(EMOJI);
+  public theme = this.themeService.theme;
 
-  constructor(public chatService: ChatService) {
+  constructor(public roomService: RoomService,
+              public themeService: ThemingService) {
   }
 
   public sendToInput(smile: string): void {
-    this.chatService.emoji.next(smile);
-    console.log(this.chatService.emoji.value)
+    this.roomService.emoji.next(smile);
+    // console.log(this.chatService.emoji.value)
   }
 
 }
