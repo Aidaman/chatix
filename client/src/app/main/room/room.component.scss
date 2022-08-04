@@ -478,7 +478,7 @@ $screen-xl-min: 1200px;
 //}
 
 .e-cm-icons {
-  font-family: 'FontAwesome';
+  font-family: 'FontAwesome', sans-serif;
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
@@ -508,6 +508,10 @@ $screen-xl-min: 1200px;
     background-color: rgba(255, 255, 255, 0.25);
     transition: 0.3s;
     border-radius: 6px;
+
+    &:hover {
+      background-color: rgba(148, 148, 148, 0.25);
+    }
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.05);

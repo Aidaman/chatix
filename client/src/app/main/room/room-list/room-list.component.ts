@@ -5,12 +5,16 @@ import {ThemingService} from "../../../shared/services/theming.service";
 import {BehaviorSubject, Observable} from "rxjs";
 import {RoomService} from "../../../shared/services/room.service";
 import {MatDialog} from "@angular/material/dialog";
-import {DialogAddingRoomComponent} from "../../../dialog/adding-room/dialog-adding-room.component";
+import {DialogAddingRoomComponent} from "../../../dialog/new-room-dialog/dialog-adding-room.component";
 import {Router} from "@angular/router";
 import {ChatService} from "../../../shared/services/chat.service";
-import {roomSelector} from "../../../store/room-chat/room-chat.selectors";
 import {Store} from "@ngrx/store";
 import {chatSearchRoomsActions, roomSwitchAction} from "../../../store/room-chat/room-chat.actions";
+import {SnackBarNotificationService} from "../../../shared/services/snack-bar-notification.service";
+
+/*
+* Make tabs for rooms: admin, private, all
+*/
 
 /*
   this component used to show list of rooms$ and allows user to switch current room-chat
@@ -36,18 +40,23 @@ export class RoomListComponent {
               private chatService: ChatService,
               private store: Store,
               private matDialog: MatDialog,
+              private snackBar: SnackBarNotificationService,
               private themingService: ThemingService) {
   }
 
   public createRoom(): void {
     const newRoomDialogRef = this.matDialog.open(DialogAddingRoomComponent);
     newRoomDialogRef.afterClosed().subscribe((value) => {
+      if (!value) {
+        this.snackBar.openSnackBar("Room has not been created", "Ok");
+        return;
+      }
       const newRoom = {
         ...value,
         participants: [this.chatService.me, ...value.participants],
       }
       this.socketService.emit('createRoom', newRoom);
-    })
+    });
   }
 
   public toggleSearch(): void {

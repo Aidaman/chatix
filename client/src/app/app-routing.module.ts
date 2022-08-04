@@ -2,12 +2,11 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {AuthGuard} from "./shared/guards/auth.guard";
 import {SignInComponent} from "./sign-in/sign-in.component";
-import {RoomResolver} from "./resolvers/room.resolver";
-
 
 const routes: Routes = [
   {path: '', redirectTo: '/chat/common', pathMatch: 'full'},
-  {path: 'chat', loadChildren: () => import('./main/main.module').then(m => m.MainModule), canActivate: [AuthGuard],},
+  {path: 'chat', redirectTo: '/chat/common', pathMatch: 'full'},
+  {path: 'chat', loadChildren: () => import('./main/main.module').then(m => m.MainModule), canActivate: [AuthGuard]},
   {path: 'auth', component: SignInComponent}
 ];
 

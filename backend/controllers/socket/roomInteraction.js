@@ -15,7 +15,8 @@ module.exports = {
                 room = await room.populate([{path: 'users'}, {path: 'creator'}]).execPopulate();
                 socket.join(params.roomId);
                 io.to(socket.id).emit('newRoom', room);
-                return io.to(params.roomId).emit('userJoined', {user, roomId: params.roomId});
+
+                return io.to(params.roomId).emit('userJoined', {user: user, room: room});
             }
             throw new Error('Not allowed');
         } catch (e) {
@@ -54,7 +55,8 @@ module.exports = {
                     creator: user
                 });
                 io.to(getUserSocketsRoom(user)).emit('newRoom', room);
-                io.to(params.roomId).emit('userJoined', {user, roomId: params.roomId});
+                console.log(user, room);
+                io.to(params.roomId).emit('userJoined', {user, room});
                 return socket.broadcast.to(params.roomId).emit('newMessage', {
                     message: {
                         content,
@@ -82,7 +84,8 @@ module.exports = {
                 room.lastAction = Date.now();
                 room = await room.save();
 
-                io.to(params.roomId).emit('userLeft', {userId: id, roomId: params.roomId});
+                console.log(user, room);
+                io.to(params.roomId).emit('userLeft', {user: user, room: room});
 
                 user.socketIds.forEach(i => {
                     const socket = io.sockets.connected[i];
@@ -113,9 +116,10 @@ module.exports = {
 
                 if (room.users.length === 1) {
                     const lastUser = await room.populate('users').execPopulate();
+                    console.log(user, room);
                     io.to(getUserSocketsRoom(lastUser.users[0])).emit('userLeft', {
-                        userId: lastUser.users[0]._id,
-                        roomId: params.roomId
+                        user: lastUser.users[0],
+                        room: room
                     });
                     lastUser.users[0].socketIds.forEach(socketId => {
                         const socket = io.sockets.connected[socketId];

@@ -32,7 +32,7 @@ module.exports = {
                     usersOnline,
                     rooms
                 });
-            io.emit('userJoined', {roomId: 'common', user});
+            io.emit('userJoined', {user});
             io.emit('userConnected', user._id);
         }catch (e){
             console.log(e);
@@ -78,7 +78,7 @@ module.exports = {
             if(user.socketIds.length === 0) {
                 user.isOnline = false;
                 io.emit('userDisconnected', id);
-                io.emit('userLeft', {userId: id, roomId: 'common'});
+                io.emit('userLeft', {user: user, roomId: 'common'});
             }
             await user.save();
         } catch(e){

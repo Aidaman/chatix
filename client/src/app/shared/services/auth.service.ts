@@ -30,7 +30,7 @@ export class AuthService {
       this.localStorageService.setUser(JSON.stringify(user));
       this.socketService.connect();
       this.store.dispatch(userAuthAction())
-      this.router.navigate(['/chat', user.id]);
+      this.router.navigate(["/chat", "common"]);
     }
   }
 }

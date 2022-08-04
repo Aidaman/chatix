@@ -12,21 +12,24 @@
         <div class="room-title">
           <mat-icon [matBadge]="currentRoomUnreadCount"
                     matBadgePosition="above after"
-                    [matBadgeHidden]="currentRoomUnreadCount === 0">meeting_room</mat-icon>
+                    [matBadgeHidden]="currentRoomUnreadCount === 0">meeting_room
+          </mat-icon>
           <div class="room-title-text">
             {{me | isPersonalMessagePipe: room}}
             <small>{{room.users.length}} participants</small>
           </div>
-          <button mat-button (click)="openSettings(room)">
+          <button mat-button (click)="openSettings(room, $event)">
             <mat-icon>people_alt</mat-icon>
           </button>
         </div>
       </div>
 
+<!--      <app-contact-list [room]="room"></app-contact-list>-->
+
       <mat-list *ngIf="checkIsCommon(room)" class="menu-items">
         <mat-list-item matRipple (click)="openInviteParticipantsDialog(room)">
           <!--     (click)="inviteUsers()"     -->
-          <mat-icon >person_add</mat-icon>
+          <mat-icon>person_add</mat-icon>
         </mat-list-item>
         <mat-divider vertical></mat-divider>
 

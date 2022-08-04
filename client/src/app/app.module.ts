@@ -31,7 +31,7 @@ import {EffectsModule} from "@ngrx/effects";
 import {UserEffect} from "./store/user/user.effect";
 import {roomChatReducer} from "./store/room-chat/room-chat.reducer";
 import {RoomChatEffect} from "./store/room-chat/room-chat.effect";
-import {RoomResolver} from "./resolvers/room.resolver";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -61,9 +61,9 @@ import {RoomResolver} from "./resolvers/room.resolver";
     SharedModule,
     MatIconModule,
     MatListModule,
+    MatSnackBarModule,
+
     StoreModule.forRoot({user: userReducer, room: roomChatReducer}),
-    // StoreModule.forFeature('user', userReducer),
-    // StoreModule.forFeature('room and chat', roomChatReducer),
     StoreDevtoolsModule.instrument({}),
     EffectsModule.forRoot([UserEffect, RoomChatEffect])
   ],

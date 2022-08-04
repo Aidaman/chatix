@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, EMPTY, Observable} from "rxjs";
 import {IMessage} from "../models/IMessage";
 import {environment} from "../../../environments/environment";
 import {IRoom} from "../models/IRoom";
@@ -12,8 +12,6 @@ import {LocalStorageService} from "./local-storage.service";
 export class ChatService {
   public me: string = this.localStorageService.getUser()['id'] as string;
 
-  public currentRoomUsers: BehaviorSubject<object[]> = new BehaviorSubject<object[]>([]);
-
   public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public contextMenuCoords: BehaviorSubject<{ top: number, left: number }> = new BehaviorSubject<{ top: number, left: number }>({top: 0, left: 0});
 
@@ -22,11 +20,15 @@ export class ChatService {
   public unreadInRooms: any;
   public overallUnreadMessages: number = 0;
 
+  public contactListCoord: BehaviorSubject<{ isOpen: boolean, xPos: number, yPos: number }>
+    = new BehaviorSubject<{ isOpen: boolean, xPos: number, yPos: number }>({ isOpen: false, xPos: 0, yPos: 0 });
+
   constructor(private http: HttpClient,
               private localStorageService: LocalStorageService) {
   }
 
   public getRoomContent(id: string, offset?: number, limit?: number): Observable<IMessage[]> {
+    if (id === "common") return EMPTY;
     return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
   }
 

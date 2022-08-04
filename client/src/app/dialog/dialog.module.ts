@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {DialogAddingRoomComponent} from "./adding-room/dialog-adding-room.component";
-import {DialogInvitationComponent} from "./invitation/dialog-invitation.component";
-import {DialogInvitingRoomComponent} from "./inviting-room/dialog-inviting-room.component";
-import {DialogRoomSettingsComponent} from "./room-settings/dialog-room-settings.component";
+import {DialogAddingRoomComponent} from "./new-room-dialog/dialog-adding-room.component";
+import {DialogInvitationComponent} from "./invitation-dialog/dialog-invitation.component";
+import {DialogInvitingRoomComponent} from "./invite-to-room-dialog/dialog-inviting-room.component";
+import {DialogRoomSettingsComponent} from "./room-configuration-dialog/dialog-room-settings.component";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatIconModule} from "@angular/material/icon";
@@ -15,7 +15,6 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {MatRippleModule} from "@angular/material/core";
 import {MatListModule} from "@angular/material/list";
-import {ContactListComponent} from "./contact-list/contact-list.component";
 
 @NgModule({
   declarations: [
@@ -23,7 +22,6 @@ import {ContactListComponent} from "./contact-list/contact-list.component";
     DialogInvitationComponent,
     DialogInvitingRoomComponent,
     DialogRoomSettingsComponent,
-    ContactListComponent,
   ],
   imports: [
     CommonModule,
@@ -46,7 +44,6 @@ import {ContactListComponent} from "./contact-list/contact-list.component";
     DialogInvitationComponent,
     DialogInvitingRoomComponent,
     DialogRoomSettingsComponent,
-    ContactListComponent,
   ],
   providers: [
     {

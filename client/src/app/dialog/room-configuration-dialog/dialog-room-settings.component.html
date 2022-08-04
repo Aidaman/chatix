@@ -1,0 +1,71 @@
+<div class="dialog-wrapper"
+     *ngIf="theme | async as theme"
+     [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
+  <div class="dialog-content-wrapper">
+
+    <h1 mat-dialog-title>
+      <input type="text" [(ngModel)]="newRoomTitle">
+<!--      <span contenteditable="true">{{room.title}}</span>-->
+      <mat-icon matRipple>edit</mat-icon>
+    </h1>
+
+    <mat-slide-toggle [checked]="isRoomPublic" (change)="switchPrivate()">
+      {{isRoomPublic ? 'Public' : 'Private'}}
+    </mat-slide-toggle>
+
+    <mat-divider></mat-divider>
+    <div class="part-wrapper">
+      <h2 mat-dialog-title>Participants</h2>
+    </div>
+
+    <div class="scrollable">
+      <div class="part-list" *ngFor="let user of participants">
+        <div class="user-container">
+          <div class="avatar">
+            <img [src]="user.avatar" alt="">
+          </div>
+          <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
+        </div>
+        <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
+          <i class="material-icons">
+            delete
+          </i>
+        </button>
+      </div>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button (click)="onNoClick()" class="close-btn">
+        <i class="material-icons">
+          clear
+        </i>
+      </button>
+      <button mat-button (click)="onUpdate()"
+              class="create-btn">Update</button>
+      <button (click)="deleteConfirm()"
+              *ngIf="room.creator?._id === me
+              && room.title.toLowerCase() !== 'favorites'
+              && room.title.toLowerCase() !== 'common'"
+              class="create-btn"
+              mat-button>Delete</button>
+    </div>
+    <div class="deleting-area" *ngIf="delete">
+      <mat-form-field>
+        <input matInput type="text" [placeholder]="'Enter title of room to confirm'" #input>
+      </mat-form-field>
+      <button type="button" mat-button [disabled]="input.value !== room.title" (click)="onDelete()">
+        <i class="material-icons">
+          check
+        </i>
+      </button>
+      <button type="button" mat-button (click)="deleteConfirm()">
+        <i class="material-icons">
+          close
+        </i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+

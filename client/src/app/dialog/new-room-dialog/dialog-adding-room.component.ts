@@ -12,7 +12,7 @@ import {BehaviorSubject, debounceTime, Subscription} from "rxjs";
 * And it emits "onSearch"
 */
 @Component({
-  selector: 'app-adding-room-chat',
+  selector: 'app-new-room-dialog-chat',
   templateUrl: './dialog-adding-room.component.html',
   styleUrls: ['./dialog-adding-room.component.scss'],
 })
@@ -41,7 +41,6 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    console.log(this.me)
     this.onSearch();
     this.listenSearch();
   }

@@ -12,7 +12,7 @@ export class LocalStorageService {
     }
 
     public getUser(): IUser {
-        return JSON.parse(localStorage.getItem('user') as string) as IUser;
+        return JSON.parse(localStorage.getItem('user') as string) ?? "";
     }
 
     public getToken(): string {

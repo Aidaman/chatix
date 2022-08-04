@@ -1,10 +1,11 @@
 import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
 import {MainComponent} from "./main.component";
-import {RoomResolver} from "../resolvers/room.resolver";
+
+// resolve: {room: RoomResolver}
 
 const routes: Routes = [
-  {path: ':id', component: MainComponent, resolve: {room: RoomResolver}},
+  {path: ':id', component: MainComponent},
 ]
 
 @NgModule({

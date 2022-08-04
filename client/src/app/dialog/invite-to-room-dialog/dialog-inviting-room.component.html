@@ -1,28 +1,25 @@
 <div class="dialog-wrapper"
-     *ngIf="theme | async as theme"
      [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
   <div class="dialog-content-wrapper">
-    <h1 mat-dialog-title>Create new room</h1>
-    <mat-slide-toggle (change)="switchPrivate()">
-      {{!isPublic ? 'Private' : 'Public'}}
-    </mat-slide-toggle>
-    <form [formGroup]="newRoomForm">
-      <mat-form-field>
-        <input matInput placeholder="Title" formControlName="title">
-      </mat-form-field>
+    <h1 mat-dialog-title>Invitations to {{room.title}}</h1>
+
+    <form [formGroup]="addUsersForm">
       <div class="part-wrapper">
-        <h2 mat-dialog-title>Participants</h2>
+        <h2 mat-dialog-title>Add users below</h2>
         <button type="button" mat-button (click)="addParticipant()">
           <i class="material-icons">add</i>
         </button>
       </div>
-      <div formArrayName="participants">
+
+      <div class="user-list" formArrayName="participants">
         <div *ngFor="let item of participants.controls; let pointIndex=index" [formGroupName]="pointIndex.toString()">
           <mat-form-field class="part-input">
-            <input matInput [placeholder]="'Participant - ' + (pointIndex + 1)"
-                   formControlName="name"
-                   (focus)="selectedInput = pointIndex"
-                   [matAutocomplete]="auto">
+            <label>
+              <input matInput [placeholder]="'Participant - ' + (pointIndex + 1)"
+                     formControlName="name"
+                     (click)="selectedInput = pointIndex"
+                     [matAutocomplete]="auto">
+            </label>
             <mat-autocomplete #auto="matAutocomplete">
               <mat-option *ngFor="let state of searchedUsers"
                           [value]="state.name"
@@ -39,16 +36,15 @@
         </div>
       </div>
     </form>
+
     <div mat-dialog-actions>
-      <button mat-button (click)="onCloseClick()" class="close-btn">
+      <button mat-button (click)="onNoClick()" class="close-btn">
         <i class="material-icons">clear</i>
       </button>
-      <button mat-button (click)="onCreate()"
-              class="create-btn"
-              [disabled]="!newRoomForm.valid
-                    || newRoomForm.untouched
-                    || !validateInputs()
-                    || participants.length < 1">Create room
+      <button mat-button (click)="onInvite()" class="create-btn" [disabled]="!addUsersForm.valid
+                || addUsersForm.untouched
+                || !validateInputs()
+                || participants.length < 1">Invite
       </button>
     </div>
   </div>

@@ -8,5 +8,20 @@ export class AppComponent {}
 
 /*
     @device TODO: MAKE ADAPTIVE TEMPLATE
-    @Sockets TODO: FIND API FOR SOCKETS
+
+    @room-creation TODO: progress bar :)
+
+    TODO: snack-bar notifications
+
+    TODO: pop up for messages that will show who read it
+    TODO: scroll bar improve
+    TODO: unread in Rooms
+    TODO: Input field
+
+    TODO: room list tabs:
+          rooms where current user is admin, private rooms, public rooms
+
+
+
+    TODO: EXTRA Поприкалываться с нодой. что бы можно было пересылатьи отвечать на сообщения
  */

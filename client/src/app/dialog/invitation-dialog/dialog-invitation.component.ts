@@ -5,7 +5,7 @@ import {ThemingService} from "../../shared/services/theming.service";
 import {BehaviorSubject} from "rxjs";
 
 @Component({
-  selector: 'app-invitation',
+  selector: 'app-invitation-dialog',
   templateUrl: './dialog-invitation.component.html',
   styleUrls: ['./dialog-invitation.component.scss'],
 })

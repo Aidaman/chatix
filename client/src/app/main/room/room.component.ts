@@ -8,7 +8,7 @@ import {SocketService} from "../../shared/services/socket.service";
 import {IOption} from "../../shared/models/IOption";
 import {ChatService} from "../../shared/services/chat.service";
 import {MatDialog} from "@angular/material/dialog";
-import {DialogRoomSettingsComponent} from "../../dialog/room-settings/dialog-room-settings.component";
+import {DialogRoomSettingsComponent} from "../../dialog/room-configuration-dialog/dialog-room-settings.component";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {
@@ -23,7 +23,7 @@ import {
   roomGetMessagesAction,
   roomLoadMessagesAction, roomMessageRemoveAction, roomSwitchAction, roomUpdateMessageAction
 } from "../../store/room-chat/room-chat.actions";
-import {DialogInvitingRoomComponent} from "../../dialog/inviting-room/dialog-inviting-room.component";
+import {DialogInvitingRoomComponent} from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import {IUser} from "../../shared/models/IUser";
 
 @Component({
@@ -49,53 +49,43 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public currentRoomUnreadCount: number = 0;
 
-  // public room$: Observable<IRoom | undefined> = this.activeRoute.params.pipe(
-  //   switchMap(({id}) => {
-  //     return this.store.select(isAllRoomsHasValue).pipe(
-  //       switchMap((value) => {
-  //         if (!value) {
-  //           this.store.dispatch(chatGetAvailableRooms());
-  //           // this.store.dispatch(roomSwitchAction({roomId: id}))
-  //         }
-  //         this.store.dispatch(roomSwitchAction({roomId: id}));
-  //         this.store.dispatch(roomGetMessagesAction({roomId: id}));
-  //         return this.store.select(roomByIdSelect(id));
-  //       }),
-  //       filter(Boolean),
-  //     );
-  //   }),
-  // )
+  public room$: Observable<IRoom | undefined> = this.activeRoute.params.pipe(
+    switchMap(({id}) => {
+      return this.store.select(isAllRoomsHasValue).pipe(
+        switchMap((value) => {
+          if (!value) {
+            this.store.dispatch(chatGetAvailableRooms());
+            // this.store.dispatch(roomSwitchAction({roomId: id}))
+          }
+          this.store.dispatch(roomSwitchAction({roomId: id}));
+          this.store.dispatch(roomGetMessagesAction({roomId: id}));
+          return this.store.select(roomByIdSelect(id));
+        }),
+        filter(Boolean),
+      );
+    }),
+  );
 
-  // This is for the resolver solution
-  public room$: Observable<IRoom | null> = this.store.select(currentRoom());
-
-  // public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
-  //   switchMap(({id}) => {
-  //     if (id !== 'common') return this.store.select(isAllRoomsHasValue).pipe(
-  //       switchMap((value) => {
-  //         if (!value) {
-  //           this.store.dispatch(chatGetAvailableRooms());
-  //         }
-  //         this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
-  //         return this.store.select(messagesSelector);
-  //       })
-  //     )
-  //     return [];
-  //   }),
-  //   tap((messages) => {
-  //     this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
-  //     return messages;
-  //   })
-  // );
-
-  // This is for the resolver solution
-  public messages$: Observable<IMessage[]> = this.store.select(messagesSelector).pipe(
+  public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
+    switchMap(({id}) => {
+      if (id !== 'common') return this.store.select(isAllRoomsHasValue).pipe(
+        switchMap((value) => {
+          if (!value) {
+            this.store.dispatch(chatGetAvailableRooms());
+          }
+          this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
+          return this.store.select(messagesSelector);
+        })
+      )
+      return [];
+    }),
     tap((messages) => {
       this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       return messages;
     })
   );
 
+  public contactListConfig: BehaviorSubject<{ isOpen: boolean; xPos: number; yPos: number }> = this.chatService.contactListCoord;
 
   public menuItems: IOption[] = [
     {
@@ -121,10 +111,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.activeRoute.data.subscribe((data) => {
-      console.log(data);
-    });
-
     this.socketService.emit('searchRooms', {});
     this.emojiSubscription = this.emoji$.subscribe();
 
@@ -133,6 +119,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.socketService.listenMessageDeleted().subscribe();
     this.socketService.listenMessageUpdated().subscribe();
     this.socketService.listenMessageRead().subscribe();
+
+    this.socketService.listenUserJoined().subscribe();
   }
 
   ngOnDestroy(): void {
@@ -190,9 +178,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  public async openSettings(room: IRoom): Promise<void> {
+  public async openSettings(room: IRoom, e: MouseEvent): Promise<void> {
     const matDialogRef = this.matDialog.open(DialogRoomSettingsComponent, {data: room});
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
+      if (!value) return;
       if (value.delete) {
         this.socketService.emit('roomDelete', {roomId: value.roomId});
         this.router.navigate(['chat', 'common']);

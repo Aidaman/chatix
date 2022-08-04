@@ -19,13 +19,8 @@ import {SharedModule} from "../shared/shared.module";
 import {HeaderComponent} from "./header/header.component";
 import {DialogModule} from "../dialog/dialog.module";
 import {MainRoutingModule} from "./main-routing.module";
-import {PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface, PerfectScrollbarModule} from "ngx-perfect-scrollbar";
 import {MatBadgeModule} from "@angular/material/badge";
-import {RoomResolver} from "../resolvers/room.resolver";
-
-const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-  suppressScrollX: true
-};
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -50,17 +45,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FormsModule,
     DialogModule,
     SharedModule,
-    PerfectScrollbarModule,
 
     MainRoutingModule,
     MatBadgeModule,
+    MatButtonToggleModule,
   ],
-  providers: [
-    {
-      provide: PERFECT_SCROLLBAR_CONFIG,
-      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    },
-  ]
 })
 export class MainModule {
 }

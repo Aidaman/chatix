@@ -13,10 +13,15 @@ import {
   roomGetMessagesAction,
   roomGetMessagesFailureAction,
   roomGetMessagesSuccessAction,
-  roomGetNewMessageAction, roomGetNewMessageFailureAction, roomGetNewMessageSuccessAction,
+  roomGetNewMessageAction,
+  roomGetNewMessageFailureAction,
+  roomGetNewMessageSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
-  roomLoadMessagesSuccessAction, roomMessageReadAction, roomMessageReadFailureAction, roomMessageReadSuccessAction,
+  roomLoadMessagesSuccessAction,
+  roomMessageReadAction,
+  roomMessageReadFailureAction,
+  roomMessageReadSuccessAction,
   roomMessageRemoveAction,
   roomMessageRemoveFailureAction,
   roomMessageRemoveSuccessAction,
@@ -27,11 +32,12 @@ import {
   roomUpdateMessageFailureAction,
   roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
-import {map, of, switchMap} from "rxjs";
+import {map, of, switchMap, tap, throwError} from "rxjs";
 import {ChatService} from "../../shared/services/chat.service";
 import {catchError} from "rxjs/operators";
 import {SocketService} from "../../shared/services/socket.service";
 import {hasRoomValueSelector, offsetSelector, roomByIdSelect} from "./room-chat.selectors";
+import {SnackBarNotificationService} from "../../shared/services/snack-bar-notification.service";
 
 @Injectable()
 export class RoomChatEffect {
@@ -87,18 +93,24 @@ export class RoomChatEffect {
   newMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomGetNewMessageAction),
     switchMap(({roomId, message}) => this.store.select(hasRoomValueSelector).pipe(
+      tap(()=>{
+        if (message.creator?._id !== this.chatService.me)
+          this.snackBar.openSnackBar("You receive new Message", "");
+      }),
       map(() => roomGetNewMessageSuccessAction({message, roomId})),
       catchError(() => of(roomGetNewMessageFailureAction))))
   ));
 
   updateMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomUpdateMessageAction),
+    tap(()=>this.snackBar.openSnackBar("Message has been updated","Ok")),
     map(({messageId, correction}) => roomUpdateMessageSuccessAction({messageId, correction})),
     catchError(() => of(roomUpdateMessageFailureAction)),
   ));
 
   deleteMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomMessageRemoveAction),
+    tap(()=>this.snackBar.openSnackBar("Message has been deleted","Ok")),
     map(({messageId}) => roomMessageRemoveSuccessAction({messageId})),
     catchError(() => of(roomMessageRemoveFailureAction)),
   ));
@@ -111,6 +123,7 @@ export class RoomChatEffect {
 
   constructor(private actions$: Actions,
               private chatService: ChatService,
+              private snackBar: SnackBarNotificationService,
               private socketService: SocketService,
               private store: Store) {
   }

@@ -8,11 +8,12 @@ import {IUser} from "../../shared/models/IUser";
 import {ChatService} from "../../shared/services/chat.service";
 
 @Component({
-  selector: 'app-inviting-room-chat',
+  selector: 'app-invite-to-room-dialog-chat',
   templateUrl: './dialog-inviting-room.component.html',
   styleUrls: ['./dialog-inviting-room.component.scss'],
 })
 export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
+
   public addUsersForm: UntypedFormGroup = this.fb.group({
     participants: this.fb.array([this.fb.group({
       name: ['', [Validators.required]]
@@ -87,7 +88,6 @@ export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
 
   //Searching users that can be invited
   public onSearch(): Subscription {
-    //Взагалі-то це повинно бути змінною, і пропихуватись у темплейт
     return this.addUsersForm.valueChanges
       .pipe(debounceTime((300)))
       .subscribe((changes) => {
