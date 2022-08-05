@@ -1,20 +1,20 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {IRoom} from "../../shared/models/IRoom";
-import {SocketService} from "../../shared/services/socket.service";
-import {MatDialog} from "@angular/material/dialog";
-import {DialogInvitationComponent} from "../../dialog/invitation-dialog/dialog-invitation.component";
-import {ThemingService} from "../../shared/services/theming.service";
-import {BehaviorSubject, lastValueFrom, Observable, switchMap, tap} from "rxjs";
-import {RoomService} from "../../shared/services/room.service";
-import {Store} from "@ngrx/store";
-import {userAuthAction} from "../../store/user/user.actions";
-import {allRoomsSelector, isAllRoomsHasValue} from "../../store/room-chat/room-chat.selectors";
-import {chatGetAvailableRooms} from "../../store/room-chat/room-chat.actions";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { IRoom } from "../../shared/models/IRoom";
+import { SocketService } from "../../shared/services/socket.service";
+import { MatDialog } from "@angular/material/dialog";
+import { DialogInvitationComponent } from "../../dialog/invitation-dialog/dialog-invitation.component";
+import { ThemingService } from "../../shared/services/theming.service";
+import { BehaviorSubject, lastValueFrom, Observable, switchMap, tap } from "rxjs";
+import { RoomService } from "../../shared/services/room.service";
+import { Store } from "@ngrx/store";
+import { userAuthAction } from "../../store/user/user.actions";
+import { allRoomsSelector, isAllRoomsHasValue } from "../../store/room-chat/room-chat.selectors";
+import { chatGetAvailableRooms } from "../../store/room-chat/room-chat.actions";
 
 @Component({
-  selector: 'app-chat',
-  templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  selector: "app-chat",
+  templateUrl: "./chat.component.html",
+  styleUrls: ["./chat.component.scss"]
 })
 export class ChatComponent implements OnInit, OnDestroy {
   public opened: BehaviorSubject<boolean> = this.roomService.sideMenuOpened;
@@ -40,7 +40,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.store.dispatch(userAuthAction());
-    this.socketService.emit('getAllRooms', {});
+    this.socketService.emit("getAllRooms", {});
     this.store.dispatch(chatGetAvailableRooms());
 
     this.socketService.listenInvitation().pipe(
@@ -68,16 +68,16 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private async openInvitation(data: any): Promise<void> {
     const invitationDialogRef = this.dialog.open(DialogInvitationComponent,
-      {width: '450px', height: '200px', hasBackdrop: true, data});
+      { width: "450px", height: "200px", hasBackdrop: true, data });
 
     const invitationResultSource$ = invitationDialogRef.afterClosed().pipe(tap((response) => {
       if (response) {
         if (response.isAgree)
-          this.socketService.emit('acceptInvitation', {roomId: response.roomId});
+          this.socketService.emit("acceptInvitation", { roomId: response.roomId });
         else
-          this.socketService.emit('leaveRoom', {roomId: response.roomId});
+          this.socketService.emit("leaveRoom", { roomId: response.roomId });
       }
-    }))
+    }));
 
     await lastValueFrom(invitationResultSource$);
   }

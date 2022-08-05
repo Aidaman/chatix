@@ -1,8 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {IRoom} from "../models/IRoom";
+import { Pipe, PipeTransform } from "@angular/core";
+import { IRoom } from "../models/IRoom";
 
 @Pipe({
-  name: 'updateRooms'
+  name: "updateRooms"
 })
 export class UpdateRoomsPipe implements PipeTransform {
   transform(rooms: IRoom[] | null): IRoom[] {

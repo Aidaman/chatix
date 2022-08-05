@@ -1,8 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {IRoom} from "../models/IRoom";
+import { Pipe, PipeTransform } from "@angular/core";
+import { IRoom } from "../models/IRoom";
 
 @Pipe({
-    name: 'search'
+    name: "search"
 })
 export class SearchPipe implements PipeTransform {
     transform(rooms: IRoom[], searchText: string): IRoom[] {

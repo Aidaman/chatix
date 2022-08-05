@@ -18,7 +18,7 @@
             {{me | isPersonalMessagePipe: room}}
             <small>{{room.users.length}} participants</small>
           </div>
-          <button mat-button (click)="openSettings(room, $event)">
+          <button mat-button (click)="openSettings(room)">
             <mat-icon>people_alt</mat-icon>
           </button>
         </div>
@@ -37,7 +37,7 @@
           <mat-icon>exit_to_app</mat-icon>
         </mat-list-item>
 
-        <mat-divider vertical *ngIf="isCreatedByMe(room.creator?._id)"></mat-divider>
+        <mat-divider vertical *ngIf="room.creator?._id | isCreatedByMe"></mat-divider>
       </mat-list>
     </div>
 
@@ -46,27 +46,34 @@
     <!--                       [config]="perfectScrollBarConfig"-->
     <!--                       (psScrollY)="onScroll($event, room)">-->
 
-    <div id="contextmenu-control" app-scroll-track (loadMessages)="onScroll(room._id)">
+    <div id="contextmenu-control"
+         app-scroll-track
+         (loadMessages)="onScroll(room._id)"
+         [roomId]="room._id">
       <div id="messagecontextmenutarget">
         <mat-list class="mt-lst " *ngIf="messages$ | async as messages">
           <mat-list-item *ngFor="let message of messages" [ngClass]="{
-                        'own': isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
-                        'foreign' : isCreatedByMe(message.creator?._id) && !message.isSystemMessage,
+                        'own': (message.creator?._id | isCreatedByMe) && !message.isSystemMessage,
+                        'foreign' : (message.creator?._id | isCreatedByMe) && !message.isSystemMessage,
                         'system' : message.isSystemMessage}">
             <div class="message-item">
               <app-message-item [message]="message"
-                                (viewChange)="onViewportChange($event, room, messages)"
-                                (contextmenu)="onMessageRightClick($event, message)"
-                                app-context-menu [isMyMessage]="isCreatedByMe(message.creator?._id)">
-                <!--                                  (contextmenu)="onMessageRightClick(emoji)">-->
+                                app-context-menu
+                                [isMyMessage]="message.creator?._id | isCreatedByMe"
+                                [cdkContextMenuTriggerFor]="context_menu"
+                                (contextmenu)="onMessageRightClick(message)"
+                                (viewChange)="onViewportChange($event, room, messages)">
               </app-message-item>
             </div>
           </mat-list-item>
 
-          <app-custom-context-menu app-context-menu
-                                   [options]="menuItems"
-                                   (optionSelect)="onOptionSelect($event)">
-          </app-custom-context-menu>
+          <ng-template #context_menu>
+            <app-custom-context-menu cdkMenu
+                                     [options]="menuItems"
+                                     (optionSelect)="onOptionSelect($event)">
+            </app-custom-context-menu>
+          </ng-template>
+
         </mat-list>
       </div>
     </div>

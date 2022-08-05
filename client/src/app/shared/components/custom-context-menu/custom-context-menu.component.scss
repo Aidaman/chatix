@@ -16,12 +16,20 @@ ul {
   .option {
     display: flex;
     align-items: center;
+    //justify-content: center;
+
     padding: 5px 7px;
     cursor: pointer;
     font-family: 'Quicksand', "Noto Color Emoji", "Helvetica Neue", sans-serif;
 
     .option-icon {
       margin-right: 5px;
+    }
+
+    .avatar{
+      border-radius: 50%;
+      margin: 0 5px 0 0;
+      height: 25px;
     }
 
     &:hover {

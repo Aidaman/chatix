@@ -34,7 +34,18 @@
             "prefix": "app",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "semi": ["error", "always"],
+        "no-extra-bind": "error",
+        "object-curly-spacing": ["error", "always"],
+        "no-extra-semi": "error",
+        "sort-vars": ["warn" ],
+        "max-params": ["warn", 3],
+        "quotes": ["error", "double"],
+        "arrow-spacing": "error",
+        "no-unused-expressions": "error",
+        "no-var": "error",
+        "no-unneeded-ternary": "error"
       }
     },
     {

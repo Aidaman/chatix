@@ -1,5 +1,5 @@
-import {IRoom} from "../../shared/models/IRoom";
-import {createReducer, on} from "@ngrx/store";
+import { IRoom } from "../../shared/models/IRoom";
+import { createReducer, on } from "@ngrx/store";
 import {
   chatGetAvailableRooms,
   chatGetAvailableRoomsSucces,
@@ -41,7 +41,7 @@ import {
   roomUpdateMessageFailureAction,
   roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
-import {IMessage} from "../../shared/models/IMessage";
+import { IMessage } from "../../shared/models/IMessage";
 
 export interface IRoomChatState {
   allRooms: IRoom[],
@@ -63,7 +63,7 @@ const initialRoomState: IRoomChatState = {
   isLoading: false,
   hasRoomValue: false,
   hasMessagesValue: false,
-}
+};
 
 export const roomChatReducer = createReducer(
   initialRoomState,
@@ -108,13 +108,13 @@ export const roomChatReducer = createReducer(
   on(roomGetNewMessageAction, (state, action) => {
     if (!state.selectedRoom || action.roomId === state.selectedRoom?._id) {
       const newMessagesArr = state.messages.slice();
-      newMessagesArr.push({...action.message});
+      newMessagesArr.push({ ...action.message });
       return ({
         ...state,
         messages: newMessagesArr
       });
 
-    } else return ({...state});
+    } else return ({ ...state });
   }),
   on(roomGetNewMessageFailureAction, (state) => ({
     ...state,
@@ -126,14 +126,14 @@ export const roomChatReducer = createReducer(
   on(roomMessageReadSuccessAction, (state, action) => {
     let newMessagesArr = [...state.messages].map((message: IMessage) => {
       if (message._id === action.messageId && message.read.indexOf(action.userId) === -1) {
-        message = {...message, read: [...message.read, action.userId]};
+        message = { ...message, read: [...message.read, action.userId] };
       }
-      return message
+      return message;
     });
     return ({
       ...state,
       messages: newMessagesArr
-    })
+    });
   }),
   on(roomMessageReadFailureAction, (state) => ({
     ...state,
@@ -145,11 +145,11 @@ export const roomChatReducer = createReducer(
     offset: state.offset + 50 > state.totalMessages ? state.totalMessages : state.offset + 50,
   })),
   on(roomLoadMessagesSuccessAction, (state, action) => {
-    const newState = {...state, isLoading: false};
+    const newState = { ...state, isLoading: false };
     const newMessagesArr = state.messages.slice();
     newMessagesArr.unshift(...action.messages);
 
-    return ({...newState, messages: newMessagesArr});
+    return ({ ...newState, messages: newMessagesArr });
   }),
   on(roomLoadMessagesFailureAction, (state) => ({
     ...state,
@@ -188,12 +188,12 @@ export const roomChatReducer = createReducer(
   on(roomUpdateMessageSuccessAction, (state, action) => {
     const newMessages = state.messages.map((message: IMessage) => {
       if (message._id === action.messageId) {
-        return {...message, content: action.correction};
+        return { ...message, content: action.correction };
       }
       return message;
     });
 
-    return ({...state, messages: newMessages});
+    return ({ ...state, messages: newMessages });
   }),
   on(roomUpdateMessageFailureAction, (state) => ({
     ...state,
@@ -203,11 +203,11 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomMessageRemoveSuccessAction, (state, action) => {
-    console.log('Delete should be successful')
+    console.log("Delete should be successful");
     return ({
       ...state,
       messages: state.messages.filter((message) => action.messageId !== message._id)
-    })
+    });
   }),
   on(roomMessageRemoveFailureAction, (state) => ({
     ...state,

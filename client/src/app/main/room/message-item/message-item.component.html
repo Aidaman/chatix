@@ -15,7 +15,7 @@
 
   <ng-template #notSystemMessage>
     <div class="message-container">
-      <div class="avatar">
+      <div class="avatar" [ngClass]="{'online': message.creator?.isOnline && message.creator?._id !== me}">
         <!--        *ngIf="emoji.creator?._id !== me"-->
         <img alt="Here be dragons" [src]="message.creator?.avatar">
       </div>
@@ -25,12 +25,12 @@
                 <span class="online">Deleted</span>
             </ng-container>
             <ng-template #userExist>
-              <!--<span class="online" *ngIf="users[emoji.creator._id].online && emoji.creator._id === me">Online</span>-->
+              <!--<span class="online" *ngIf="users[message.creator._id].online && message.creator._id === me">Online</span>-->
                 <span [ngClass]="{'premium': message.creator?.isPremium}">
                     {{message.creator?.name | premiumNickname: !!message.creator?.isPremium}}
                 </span>
-              <!--<span class="online" *ngIf="users[emoji.creator._id].online && emoji.creator._id !== me">Online</span>-->
-              <!--<span class="online" *ngIf="emoji.creator?.isOnline">Online</span>-->
+              <!--<span class="online" *ngIf="users[message.creator._id].online && message.creator._id !== me">Online</span>-->
+              <!--              <span class="online" *ngIf="message.creator?.isOnline && message.creator?._id !== me">Online</span>-->
             </ng-template>
         </span>
 
@@ -40,7 +40,14 @@
              matBadgePosition="above after">
           <!--          (inViewportChange)="viewportChange($event)"-->
           <p>{{message.content}}</p>
-          <mat-icon *ngIf="message.creator?._id === me">{{message.read.length > 0 ? 'done_all' : 'done'}}</mat-icon>
+          <button *ngIf="message.creator?._id === me"
+                  [cdkMenuTriggerFor]="readers"
+                  app-context-menu
+                  [isMyMessage]="message.creator?._id | isCreatedByMe"
+                  class="read"
+                  mat-icon-button>
+            <mat-icon>{{message.read.length > 0 ? 'done_all' : 'done'}}</mat-icon>
+          </button>
         </div>
         <small class="message-date">
           <span>{{message.createdAt | date: 'HH:mm' : ''}}</span>
@@ -53,4 +60,22 @@
   </ng-template>
 </div>
 
-<!--TODO: Do not show online status on own messages, and via border on others' ones -->
+<ng-template #readers>
+  <app-custom-context-menu cdkMenu [options]="menuItems | async">
+  </app-custom-context-menu>
+
+<!--  <div class="context-menu" cdkMenu-->
+<!--       *ngIf="currentRoom | async as room">-->
+<!--    <ng-template *ngFor="let user of room.users">-->
+<!--      <ng-template *ngFor="let read of message.read">-->
+<!--        <div class="user" *ngIf="user._id === read">-->
+<!--          <mat-icon class="option-icon">"Person"</mat-icon>{{user.name}}-->
+<!--        </div>-->
+<!--      </ng-template>-->
+<!--    </ng-template>-->
+<!--  </div>-->
+
+<!--  <div class="context-menu" *ngFor="let user of menuItems | async">-->
+<!--    <mat-icon class="option-icon">"Person"</mat-icon>{{user.id}}&ndash;&gt;-->
+<!--  </div>-->
+</ng-template>

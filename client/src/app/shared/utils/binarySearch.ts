@@ -1,4 +1,4 @@
-import {IMessage} from "../models/IMessage";
+import { IMessage } from "../models/IMessage";
 
 export function iterativeBS(arr: IMessage[], x: any) {
     let start = 0;

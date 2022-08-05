@@ -1,30 +1,30 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {IRoom} from "../../shared/models/IRoom";
-import {debounceTime, Subscription} from "rxjs";
-import {SocketService} from "../../shared/services/socket.service";
-import {IUser} from "../../shared/models/IUser";
-import {ChatService} from "../../shared/services/chat.service";
+import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { IRoom } from "../../shared/models/IRoom";
+import { debounceTime, Subscription } from "rxjs";
+import { SocketService } from "../../shared/services/socket.service";
+import { IUser } from "../../shared/models/IUser";
+import { ChatService } from "../../shared/services/chat.service";
 
 @Component({
-  selector: 'app-invite-to-room-dialog-chat',
-  templateUrl: './dialog-inviting-room.component.html',
-  styleUrls: ['./dialog-inviting-room.component.scss'],
+  selector: "app-invite-to-room-dialog-chat",
+  templateUrl: "./dialog-inviting-room.component.html",
+  styleUrls: ["./dialog-inviting-room.component.scss"],
 })
 export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
 
   public addUsersForm: UntypedFormGroup = this.fb.group({
     participants: this.fb.array([this.fb.group({
-      name: ['', [Validators.required]]
+      name: ["", [Validators.required]]
     })])
   });
   public selectedInput: number | null = 0;
 
-  public room: IRoom = this.data
+  public room: IRoom = this.data;
   public searchedUsers: any[] = [];
   public userIds: any = [false];
-  public theme: string = 'dark';
+  public theme: string = "dark";
 
   constructor(public dialogRef: MatDialogRef<DialogInvitingRoomComponent>,
               private fb: UntypedFormBuilder,
@@ -44,11 +44,11 @@ export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
   }
 
   public get participants(): UntypedFormArray {
-    return this.addUsersForm.get('participants') as UntypedFormArray;
+    return this.addUsersForm.get("participants") as UntypedFormArray;
   }
 
   public addParticipant(): void {
-    this.participants.push(this.fb.group({name: ['', [Validators.required]]}));
+    this.participants.push(this.fb.group({ name: ["", [Validators.required]] }));
     this.userIds.push(null);
   }
 
@@ -68,15 +68,15 @@ export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
       || !(this.data.users.find((user: IUser) =>
         user._id === userId)));
     this.userIds = Array.from(new Set(this.userIds));
-    this.dialogRef.close({roomId: this.data._id, participants: this.userIds,});
+    this.dialogRef.close({ roomId: this.data._id, participants: this.userIds, });
   }
 
   public listenSearch(): Subscription{
-    return this.socketService.listen('searchResult')
+    return this.socketService.listen("searchResult")
       .subscribe(users => {
         if (this.selectedInput !== null
           && users.length === 1
-          && this.addUsersForm.get('participants')?.value[this.selectedInput].name === users[0].name) {
+          && this.addUsersForm.get("participants")?.value[this.selectedInput].name === users[0].name) {
           this.userIds[this.selectedInput] = users[0]._id;
         } else {
           this.searchedUsers = users.filter((user: any) => user._id !== this.chatService.me);
@@ -92,9 +92,9 @@ export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
       .pipe(debounceTime((300)))
       .subscribe((changes) => {
         if (this.selectedInput !== null) {
-          this.socketService.emit('searchUsers', changes.participants[this.selectedInput].name);
+          this.socketService.emit("searchUsers", changes.participants[this.selectedInput].name);
         }
-      })
+      });
   }
 
   public pushId(userId: string): void {

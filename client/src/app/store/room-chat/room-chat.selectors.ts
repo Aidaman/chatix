@@ -1,7 +1,7 @@
-import {createFeatureSelector, createSelector} from "@ngrx/store";
-import {IRoomChatState} from "./room-chat.reducer";
+import { createFeatureSelector, createSelector } from "@ngrx/store";
+import { IRoomChatState } from "./room-chat.reducer";
 
-export const roomChatFeatureSelector = createFeatureSelector<IRoomChatState>('room');
+export const roomChatFeatureSelector = createFeatureSelector<IRoomChatState>("room");
 
 export const roomSelector = createSelector(
   roomChatFeatureSelector,
@@ -26,19 +26,19 @@ export const hasRoomValueSelector = createSelector(
 export const isAllRoomsHasValue = createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.allRooms !== []
-)
+);
 
 export const allRoomsSelector = createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.allRooms
-)
+);
 
 export const roomByIdSelect = (id: string) => createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.allRooms.find((value) => value._id === id),
-)
+);
 
 export const currentRoom = () => createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.selectedRoom,
-)
+);

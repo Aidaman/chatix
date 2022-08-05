@@ -88,6 +88,7 @@ $screen-xl-min: 1200px;
     display: flex;
     align-items: center;
   }
+
   .message-container.own {
     flex-direction: row-reverse;
   }
@@ -147,25 +148,34 @@ $screen-xl-min: 1200px;
 
   .message-text {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     margin: 4px 0 3px 0;
     border-radius: 20px;
 
     p {
       margin: 0;
-      padding: 5px 15px 5px 10px;
+      padding: 5px 10px;
+      //line-height: 30px;
       font-family: 'Open Sans', "Noto Color Emoji", "Helvetica Neue", sans-serif;
       font-weight: 400;
       letter-spacing: 0;
       word-break: break-word;
     }
 
-    mat-icon {
-      transition: 0.3s;
-      margin: 0 10px 4px 10px;
+    .mat-icon-button {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      align-self: center;
+      justify-self: center;
+
+      mat-icon {
+        transition: 0.3s;
+        align-self: flex-end;
+      }
     }
 
-    &.own{
+    &.own {
       background: rgba(75, 85, 114, 0.5);
       color: #ffffff;
     }
@@ -192,6 +202,15 @@ $screen-xl-min: 1200px;
     transition: 0.3s;
     background-color: rgba(0, 0, 0, 0.19);
     color: black;
+  }
+
+  .avatar {
+    &.online {
+      border: 2px solid #3071c2;
+      padding: 2px;
+
+      filter: drop-shadow(0 0px 5px #000000);
+    }
   }
 
   .message-user {
@@ -234,6 +253,15 @@ $screen-xl-min: 1200px;
     color: white;
   }
 
+  .avatar {
+    &.online {
+      border: 2px solid #ff6162;
+      padding: 2px;
+
+      filter: drop-shadow(0 0px 5px #000000);
+    }
+  }
+
   .message-user {
     transition: 0.3s;
     color: white;
@@ -256,7 +284,7 @@ $screen-xl-min: 1200px;
 
     mat-icon {
       transition: 0.3s;
-      color: #273038;
+      color: #ff6162;
     }
   }
 
@@ -265,6 +293,5 @@ $screen-xl-min: 1200px;
       transition: 0.3s;
       color: rgba(243, 246, 255, 0.92);
     }
-
   }
 }

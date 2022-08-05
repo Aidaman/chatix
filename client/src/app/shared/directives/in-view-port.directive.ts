@@ -7,11 +7,11 @@ import {
   Input,
   OnDestroy, OnInit,
   Output
-} from '@angular/core';
+} from "@angular/core";
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: '[snInViewport]',
+  selector: "[snInViewport]",
 })
 export class InViewPortDirective implements OnInit, AfterViewInit, OnDestroy{
   private inViewport!: boolean;
@@ -20,12 +20,12 @@ export class InViewPortDirective implements OnInit, AfterViewInit, OnDestroy{
   @Output() inViewportChange = new EventEmitter<boolean>();
   public observer!: IntersectionObserver;
 
-  @HostBinding('class.sn-viewport--in')
+  @HostBinding("class.sn-viewport--in")
   get isInViewport(): boolean {
     return this.inViewport;
   }
 
-  @HostBinding('class.sn-viewport--out')
+  @HostBinding("class.sn-viewport--out")
   get isNotInViewport(): boolean {
     return !this.inViewport;
   }
@@ -44,7 +44,7 @@ export class InViewPortDirective implements OnInit, AfterViewInit, OnDestroy{
   ngAfterViewInit() {
     if (this.hasIntersectionObserver) {
       // @ts-ignore
-      const IntersectionObserver = this.window['IntersectionObserver'];
+      const IntersectionObserver = this.window["IntersectionObserver"];
       this.observer = new IntersectionObserver(
         this.intersectionObserverCallback.bind(this),
         this.inViewportOptions
@@ -72,22 +72,22 @@ export class InViewPortDirective implements OnInit, AfterViewInit, OnDestroy{
     // Exits early if all IntersectionObserver and IntersectionObserverEntry
     // features are natively supported.
     if (
-      'IntersectionObserver' in this.window &&
-      'IntersectionObserverEntry' in this.window
+      "IntersectionObserver" in this.window &&
+      "IntersectionObserverEntry" in this.window
     ) {
       // Minimal polyfill for Edge 15's lack of `isIntersecting`
       // See: https://github.com/w3c/IntersectionObserver/issues/211
       if (
         !(
-          'isIntersecting' in
+          "isIntersecting" in
           // @ts-ignore
-          this.window['IntersectionObserverEntry']['prototype']
+          this.window["IntersectionObserverEntry"]["prototype"]
         )
       ) {
         Object.defineProperty(
           // @ts-ignore
-          this.window['IntersectionObserverEntry']['prototype'],
-          'isIntersecting',
+          this.window["IntersectionObserverEntry"]["prototype"],
+          "isIntersecting",
           {
             get: function () {
               return this.intersectionRatio > 0;

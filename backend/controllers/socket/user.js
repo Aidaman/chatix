@@ -42,7 +42,7 @@ module.exports = {
 
     searchUsers: async (io, socket, params) => {
         try {
-            const users = await User.find({name: {$regex: '.*' + params + '.*', $options : 'i'},
+            const users = await User.find({name: {$regex: '.*' + params + '.*'},
                 _id:{$ne:socket.decoded_token.id},
                 blacklist:{$ne:socket.decoded_token.id}
             });

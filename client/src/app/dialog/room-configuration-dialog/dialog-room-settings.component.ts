@@ -1,15 +1,15 @@
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {IRoom} from "../../shared/models/IRoom";
-import {IUser} from "../../shared/models/IUser";
-import {ThemingService} from "../../shared/services/theming.service";
-import {BehaviorSubject} from "rxjs";
-import {ChatService} from "../../shared/services/chat.service";
+import { Component, Inject } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { IRoom } from "../../shared/models/IRoom";
+import { IUser } from "../../shared/models/IUser";
+import { ThemingService } from "../../shared/services/theming.service";
+import { BehaviorSubject } from "rxjs";
+import { ChatService } from "../../shared/services/chat.service";
 
 @Component({
-  selector: 'app-room-chat-settings',
-  templateUrl: './dialog-room-settings.component.html',
-  styleUrls: ['./dialog-room-settings.component.scss'],
+  selector: "app-room-chat-settings",
+  templateUrl: "./dialog-room-settings.component.html",
+  styleUrls: ["./dialog-room-settings.component.scss"],
 })
 export class DialogRoomSettingsComponent{
   public participants: IUser[] = this.room.users.filter(user => user._id !== this.me);
@@ -18,7 +18,7 @@ export class DialogRoomSettingsComponent{
   public removedUsers: IUser[] = [];
   public delete: boolean = false;
 
-  public me = this.chatService.me
+  public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themeService.theme;
 
   constructor(public dialogRef: MatDialogRef<DialogRoomSettingsComponent>,
@@ -33,7 +33,7 @@ export class DialogRoomSettingsComponent{
       ...this.room,
       newRoomTitle: this.newRoomTitle,
       newIsPublic: this.isRoomPublic,
-      deletedUsers: this.removedUsers});
+      deletedUsers: this.removedUsers });
   }
 
   public onDelete(): void {

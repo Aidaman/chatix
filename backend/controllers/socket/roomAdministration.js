@@ -179,7 +179,7 @@ module.exports = {
             if (!room || String(room.creator) !== socket.decoded_token.id) {
                 throw new Error("Room not found or you don't have permission")
             }
-            io.to(params.roomId).emit('roomDeleted', {id: params.roomId});
+            io.to(params.roomId).emit('roomDeleted', {room: room});
             room.users.forEach(user => {
                 user.socketIds.forEach(socketId => {
                     const socket = io.sockets.connected[socketId];

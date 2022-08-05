@@ -1,16 +1,23 @@
-<div *ngIf="isShown | async as displayed" >
-  <div  *ngIf="mouseLocation | async as coords"
-        [style.top]="coords.top+'px'"
-        [style.left]="coords.left+'px'"
-        [style.display]="displayed? 'block' : 'none'"
-        class="container">
-    <ul>
-      <li (click)="selectOption(option.id)"
-          *ngFor="let option of options"
-          class="option">
+<!--<div *ngIf="isShown | async as displayed"
+         [style.display]="isShown? 'block' : 'none'">-->
+
+<!--*ngIf="contextMenuConfig | async as coords"
+    [style.top]="coords.top+'px'"
+    [style.left]="coords.left+'px'"-->
+<div *ngIf="isShown | async" class="container">
+  <ul>
+    <li (click)="selectOption(option.id)"
+        *ngFor="let option of options"
+        class="option">
+      <div style="display: flex; align-items: center;" *ngIf="option.id === 'user' else notUser">
+        <img [src]="option.icon" alt="" class="avatar">
+        <i>{{option.title}}</i>
+      </div>
+      <ng-template #notUser>
         <mat-icon class="option-icon">{{option.icon}}</mat-icon>
         {{option.id}}
-      </li>
-    </ul>
-  </div>
+      </ng-template>
+    </li>
+  </ul>
 </div>
+<!--</div>-->

@@ -1,13 +1,13 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {IRoom} from "../../shared/models/IRoom";
-import {ThemingService} from "../../shared/services/theming.service";
-import {BehaviorSubject} from "rxjs";
+import { Component, Inject, OnInit } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { IRoom } from "../../shared/models/IRoom";
+import { ThemingService } from "../../shared/services/theming.service";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
-  selector: 'app-invitation-dialog',
-  templateUrl: './dialog-invitation.component.html',
-  styleUrls: ['./dialog-invitation.component.scss'],
+  selector: "app-invitation-dialog",
+  templateUrl: "./dialog-invitation.component.html",
+  styleUrls: ["./dialog-invitation.component.scss"],
 })
 export class DialogInvitationComponent {
   public theme: BehaviorSubject<string> = this.themingService.theme;

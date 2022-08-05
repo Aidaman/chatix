@@ -6,7 +6,7 @@ const {
     connect,
     searchUsers,
     changeColor,
-    disconnect
+    disconnect, searchUsersById
 } = require('./controllers/socket/user');
 
 const {

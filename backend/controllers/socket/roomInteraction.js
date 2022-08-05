@@ -129,7 +129,7 @@ module.exports = {
                     });
 
                     await room.remove();
-                    io.to(params.roomId).emit('roomDeleted',{id:params.roomId});
+                    io.to(params.roomId).emit('roomDeleted', {id: params.roomId});
                 }
             } else throw new Error('Not allowed');
         } catch (e) {

@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html'
+    selector: "app-root",
+    templateUrl: "./app.component.html"
 })
 export class AppComponent {}
 
@@ -10,8 +10,6 @@ export class AppComponent {}
     @device TODO: MAKE ADAPTIVE TEMPLATE
 
     @room-creation TODO: progress bar :)
-
-    TODO: snack-bar notifications
 
     TODO: pop up for messages that will show who read it
     TODO: scroll bar improve

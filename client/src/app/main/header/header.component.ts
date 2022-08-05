@@ -1,18 +1,18 @@
-import {Component} from '@angular/core';
-import {AuthService} from "../../shared/services/auth.service";
-import {LocalStorageService} from "../../shared/services/local-storage.service";
-import {Router} from "@angular/router";
-import {IUser} from "../../shared/models/IUser";
-import { ThemingService } from '../../shared/services/theming.service';
-import {BehaviorSubject, Observable} from "rxjs";
-import {userSelector} from "../../store/user/user.selectors";
-import {Store} from "@ngrx/store";
-import {userLogoutAction} from "../../store/user/user.actions";
+import { Component } from "@angular/core";
+import { AuthService } from "../../shared/services/auth.service";
+import { LocalStorageService } from "../../shared/services/local-storage.service";
+import { Router } from "@angular/router";
+import { IUser } from "../../shared/models/IUser";
+import { ThemingService } from "../../shared/services/theming.service";
+import { BehaviorSubject, Observable } from "rxjs";
+import { userSelector } from "../../store/user/user.selectors";
+import { Store } from "@ngrx/store";
+import { userLogoutAction } from "../../store/user/user.actions";
 
 @Component({
-    selector: 'app-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss']
+    selector: "app-header",
+    templateUrl: "./header.component.html",
+    styleUrls: ["./header.component.scss"]
 })
 export class HeaderComponent{
     public user: Observable<IUser | null> = this.store.select(userSelector);
@@ -27,6 +27,6 @@ export class HeaderComponent{
     public logOut(): void {
         this.localStorageService.logout();
         this.store.dispatch(userLogoutAction());
-        this.router.navigate(['/auth']);
+        this.router.navigate(["/auth"]);
     }
 }

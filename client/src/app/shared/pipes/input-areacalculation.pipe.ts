@@ -1,7 +1,7 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-  name: 'calculateRowsPipe'
+  name: "calculateRowsPipe"
 })
 export class InputAreacalculationPipe implements PipeTransform {
 

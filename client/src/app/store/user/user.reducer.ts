@@ -1,9 +1,9 @@
-import {IUser} from "../../shared/models/IUser";
+import { IUser } from "../../shared/models/IUser";
 import {
   userAcceptInvitation, userAuthAction, userAuthFailureAction, userAuthSuccessAction,
   userLogoutAction, userRejectInvitation
 } from "./user.actions";
-import {createReducer, on} from "@ngrx/store";
+import { createReducer, on } from "@ngrx/store";
 
 export interface IUserState {
   user: IUser | null,
@@ -15,22 +15,22 @@ const initialUserState: IUserState = {
   user: null,
   isLoading: false,
   hasValue: false,
-}
+};
 
 export const userReducer = createReducer(
   initialUserState,
 
-  on(userAuthAction, (state)=>({
+  on(userAuthAction, (state) => ({
       ...state,
       isLoading: true,
     })),
-  on(userAuthSuccessAction, (state, action)=>({
+  on(userAuthSuccessAction, (state, action) => ({
       ...state,
       isLoading: false,
       hasValue: true,
       user: action.user
     })),
-  on(userAuthFailureAction, (state)=> ({
+  on(userAuthFailureAction, (state) => ({
       ...state,
       hasValue: false,
       isLoading: false,
@@ -44,9 +44,9 @@ export const userReducer = createReducer(
     ...state,
   })),
 
-  on(userLogoutAction, ()=> ({
+  on(userLogoutAction, () => ({
       user: null,
       isLoading: false,
       hasValue: false,
     }))
-)
+);

@@ -1,11 +1,11 @@
-import {Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class RoomService {
-  public emoji: BehaviorSubject<string> = new BehaviorSubject<string>(' ');
+  public emoji: BehaviorSubject<string> = new BehaviorSubject<string>(" ");
   public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {}

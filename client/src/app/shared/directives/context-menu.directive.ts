@@ -1,8 +1,8 @@
-import {Directive, HostListener, Input} from '@angular/core';
-import {ChatService} from "../services/chat.service";
+import { Directive, HostListener, Input } from "@angular/core";
+import { ChatService } from "../services/chat.service";
 
 @Directive({
-    selector: '[app-context-menu]',
+    selector: "[app-context-menu]",
 })
 export class ContextMenuDirective {
   @Input() isMyMessage: boolean = true;
@@ -10,11 +10,9 @@ export class ContextMenuDirective {
   constructor(private chatService: ChatService) {
   }
 
-  @HostListener('contextmenu', ['$event'])
+  @HostListener("contextmenu", ["$event"])
   rightClicked(event: MouseEvent): void {
     event.preventDefault();
-    if (this.isMyMessage) {
-      this.chatService.showContextMenu.next(true);
-    }
+    this.chatService.isMyMessage.next(this.isMyMessage);
   }
 }

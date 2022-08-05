@@ -1,14 +1,14 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from "rxjs";
-import {LocalStorageService} from "./local-storage.service";
-import {IUser} from "../models/IUser";
-import {Params, Router} from "@angular/router";
-import {SocketService} from "./socket.service";
-import {Store} from "@ngrx/store";
-import {userAuthAction} from "../../store/user/user.actions";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+import { LocalStorageService } from "./local-storage.service";
+import { IUser } from "../models/IUser";
+import { Params, Router } from "@angular/router";
+import { SocketService } from "./socket.service";
+import { Store } from "@ngrx/store";
+import { userAuthAction } from "../../store/user/user.actions";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
   constructor(private router: Router,
@@ -25,11 +25,11 @@ export class AuthService {
   }
 
   public authenticate(params: Params): void {
-    if (params['token']){
-      const user = params as IUser
+    if (params["token"]){
+      const user = params as IUser;
       this.localStorageService.setUser(JSON.stringify(user));
       this.socketService.connect();
-      this.store.dispatch(userAuthAction())
+      this.store.dispatch(userAuthAction());
       this.router.navigate(["/chat", "common"]);
     }
   }

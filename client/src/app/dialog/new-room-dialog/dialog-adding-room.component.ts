@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import {MatDialogRef} from "@angular/material/dialog";
-import {SocketService} from "../../shared/services/socket.service";
-import {LocalStorageService} from "../../shared/services/local-storage.service";
-import {ThemingService} from "../../shared/services/theming.service";
-import {BehaviorSubject, debounceTime, Subscription} from "rxjs";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { MatDialogRef } from "@angular/material/dialog";
+import { SocketService } from "../../shared/services/socket.service";
+import { LocalStorageService } from "../../shared/services/local-storage.service";
+import { ThemingService } from "../../shared/services/theming.service";
+import { BehaviorSubject, debounceTime, Subscription } from "rxjs";
 
 /*
 * This component represents modal window for creating new room-chat
@@ -12,19 +12,19 @@ import {BehaviorSubject, debounceTime, Subscription} from "rxjs";
 * And it emits "onSearch"
 */
 @Component({
-  selector: 'app-new-room-dialog-chat',
-  templateUrl: './dialog-adding-room.component.html',
-  styleUrls: ['./dialog-adding-room.component.scss'],
+  selector: "app-new-room-dialog-chat",
+  templateUrl: "./dialog-adding-room.component.html",
+  styleUrls: ["./dialog-adding-room.component.scss"],
 })
 export class DialogAddingRoomComponent implements OnInit, OnDestroy {
-  private me = this.localStorageService.getUser()['id'] as string;
+  private me = this.localStorageService.getUser()["id"] as string;
 
   public newRoomForm: UntypedFormGroup = this.fb.group({
-    title: ['', [
+    title: ["", [
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(20)]],
-    participants: this.fb.array([this.fb.group({name: ['', [Validators.required]]})])
+    participants: this.fb.array([this.fb.group({ name: ["", [Validators.required]] })])
   });
   public selectedInput: number | null = null;
 
@@ -51,11 +51,11 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
   }
 
   public get participants(): UntypedFormArray {
-    return this.newRoomForm.get('participants') as UntypedFormArray;
+    return this.newRoomForm.get("participants") as UntypedFormArray;
   }
 
   public addParticipant(): void {
-    this.participants.push(this.fb.group({name: ['', [Validators.required]]}));
+    this.participants.push(this.fb.group({ name: ["", [Validators.required]] }));
     this.userIds.push(null);
   }
 
@@ -74,7 +74,7 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
     this.userIds = this.userIds.filter(userId => userId !== this.me);
     this.userIds = Array.from(new Set(this.userIds));
     this.dialogRef.close({
-      roomTitle: this.newRoomForm.get('title')?.value,
+      roomTitle: this.newRoomForm.get("title")?.value,
       participants: this.userIds,
       isPublic: this.isPublic
     });
@@ -88,17 +88,17 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
       .pipe(debounceTime((300)))
       .subscribe((changes) => {
         if (this.selectedInput !== null) {
-          this.socketService.emit('searchUsers', changes.participants[this.selectedInput].name);
+          this.socketService.emit("searchUsers", changes.participants[this.selectedInput].name);
         }
-      })
+      });
   }
 
   public listenSearch(): Subscription{
-    return this.socketService.listen('searchResult')
+    return this.socketService.listen("searchResult")
       .subscribe(users => {
         if (this.selectedInput !== null
           && users.length === 1
-          && this.newRoomForm.get('participants')?.value[this.selectedInput].name === users[0].name) {
+          && this.newRoomForm.get("participants")?.value[this.selectedInput].name === users[0].name) {
           this.userIds[this.selectedInput] = users[0]._id;
         } else {
           this.searchedUsers = users.filter((user: any) => user._id !== this.me);
