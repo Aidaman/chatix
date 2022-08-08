@@ -15,21 +15,11 @@ import { IMessage } from "../models/IMessage";
   selector: "[app-scroll-track]"
 })
 export class ScrollTrackDirective implements AfterViewInit {
-  @Input() roomId: string = "common";
   @Output() loadMessages = new EventEmitter<void>();
   private isEmitted: boolean = false;
   private scrollHeight: number = 0;
 
-  constructor(private el: ElementRef,
-              private chatService: ChatService,
-              private socketService: SocketService) {
-    this.socketService.listenNewMessage().pipe(
-      map((value: { message: IMessage, roomId: string }) => {
-        if (value.roomId === this.roomId && value.message.creator?._id === this.chatService.me) {
-          this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
-        }
-      }),
-    ).subscribe();
+  constructor(private el: ElementRef,) {
   }
 
   public ngAfterViewInit(): void {
@@ -37,7 +27,7 @@ export class ScrollTrackDirective implements AfterViewInit {
   }
 
   @HostListener("scroll", ["$event"])
-  scrollIt() {
+  public scrollIt() {
     //@ts-ignore
     if (event?.srcElement.scrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;

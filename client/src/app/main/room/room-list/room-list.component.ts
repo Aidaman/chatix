@@ -1,8 +1,8 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { IRoom } from "../../../shared/models/IRoom";
 import { SocketService } from "../../../shared/services/socket.service";
 import { ThemingService } from "../../../shared/services/theming.service";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, lastValueFrom, Observable, take } from "rxjs";
 import { RoomService } from "../../../shared/services/room.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialog-adding-room.component";
@@ -11,6 +11,7 @@ import { ChatService } from "../../../shared/services/chat.service";
 import { Store } from "@ngrx/store";
 import { chatSearchRoomsActions, roomSwitchAction } from "../../../store/room-chat/room-chat.actions";
 import { SnackBarNotificationService } from "../../../shared/services/snack-bar-notification.service";
+import { IMessage } from "../../../shared/models/IMessage";
 
 /*
 * Make tabs for rooms: admin, private, all
@@ -24,7 +25,7 @@ import { SnackBarNotificationService } from "../../../shared/services/snack-bar-
   templateUrl: "./room-list.component.html",
   styleUrls: ["./room-list.component.scss"]
 })
-export class RoomListComponent {
+export class RoomListComponent implements OnInit{
   @Input() rooms: IRoom[] = [];
 
   //This object is structured like that: {roomId: amountOfUnread}
@@ -44,11 +45,41 @@ export class RoomListComponent {
               private themingService: ThemingService) {
   }
 
+  ngOnInit(): void {
+    this.countUnreadInRooms().then();
+  }
+
+  private async countUnreadInRooms(): Promise<void> {
+
+    // for (const room of this.rooms) {
+    //   const id = room._id;
+    //   const unreadObj = {
+    //     [id]: 0,
+    //   };
+    //
+    //   console.log(unreadObj);
+    //
+    //   const messages = await lastValueFrom(this.chatService.getRoomContent(room._id, 0, 0).pipe(take(1)));
+    //   messages.forEach((message: IMessage) => {
+    //     if (message.read.indexOf(this.chatService.me) === -1){
+    //       unreadObj[id] += 1;
+    //     }
+    //   });
+    //
+    //   this.unread = {
+    //     ...this.unread,
+    //     [id]: unreadObj[id],
+    //   };
+    // }
+    // console.log(this.unread);
+  }
+
+
   public createRoom(): void {
     const newRoomDialogRef = this.matDialog.open(DialogAddingRoomComponent);
     newRoomDialogRef.afterClosed().subscribe((value) => {
       if (!value) {
-        this.snackBar.openSnackBar("Room has not been created", "Ok");
+        this.snackBar.openSnackBar("Room has not been created", ["Ok"]);
         return;
       }
       const newRoom = {
@@ -74,6 +105,9 @@ export class RoomListComponent {
   }
 
   public navigateRoom(roomId: string) {
+    this.chatService.getRoomUnreadContent(roomId).subscribe((value) => {
+      console.log(value);
+    });
     this.store.dispatch(roomSwitchAction({ roomId }));
     this.router.navigate(["/chat", roomId]);
   }

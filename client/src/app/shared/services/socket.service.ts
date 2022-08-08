@@ -120,8 +120,8 @@ export class SocketService {
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
       map((value: { message: IMessage, room: string }) => {
-        this.snackBar.openSnackBar("You receive new Message", "");
         this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
+        this.snackBar.openSnackBar("You receive new Message", []);
       }),
       takeUntil(this.termination$));
   }
@@ -151,12 +151,12 @@ export class SocketService {
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
 
-        if (!value.room) {
-          this.snackBar.openSnackBar("welcome " + value.user.name, "");
+        if (!value.room && value.user._id === this.chatService.me) {
+          this.snackBar.openSnackBar("welcome " + value.user.name, []);
           return;
         }
         else {
-          this.snackBar.openSnackBar(value.user.name + " has joined " + value.room.title, "");
+          this.snackBar.openSnackBar(value.user.name + " has joined " + value.room.title, []);
           if (value.user._id === this.chatService.me)
             this.router.navigate(["chat", value.room._id]);
           else return;
@@ -186,7 +186,7 @@ export class SocketService {
         }
         // else this.router.navigate(["chat", value.room._id]);
 
-        this.snackBar.openSnackBar(value.user.name + " left the room " + value.room.title, "Ok");
+        this.snackBar.openSnackBar(value.user.name + " left the room " + value.room.title, []);
       }),
       takeUntil(this.termination$),
     );
@@ -202,7 +202,7 @@ export class SocketService {
     return this.listen("newRoom").pipe(
       map(() => {
         this.emit("getAllRooms", {});
-        this.snackBar.openSnackBar("Room has been created", "Ok");
+        this.snackBar.openSnackBar("Room has been created", ["Ok"]);
         this.store.dispatch(chatGetAvailableRooms());
       }),
       takeUntil(this.termination$),
@@ -219,7 +219,7 @@ export class SocketService {
   public listenRoomDeleted(): Observable<any> {
     return this.listen("roomDeleted").pipe(
       map((data: { room: IRoom }) => {
-        this.snackBar.openSnackBar(data.room.title + " has been deleted", "");
+        this.snackBar.openSnackBar(data.room.title + " has been deleted", []);
 
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
@@ -237,7 +237,7 @@ export class SocketService {
   public listenRoomRenamed(): Observable<any> {
     return this.listen("roomRename").pipe(
       map(() => {
-        this.snackBar.openSnackBar("room has been renamed", "");
+        this.snackBar.openSnackBar("room has been renamed", []);
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -254,7 +254,7 @@ export class SocketService {
   public listenPrivacyChanged(): Observable<any> {
     return this.listen("privacyChanged").pipe(
       map(() => {
-        this.snackBar.openSnackBar("room privacy changed", "Ok");
+        this.snackBar.openSnackBar("room privacy changed", ["Ok"]);
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -300,7 +300,7 @@ export class SocketService {
   public listenMessageUpdated(): Observable<any> {
     return this.listen("messageUpdated").pipe(
       map((value) => {
-        this.snackBar.openSnackBar("Message has been updated","Ok");
+        this.snackBar.openSnackBar("Message has been updated",["Ok"]);
         this.store.dispatch(roomUpdateMessageAction({ messageId: value.id, correction: value.newContent }));
       }),
       takeUntil(this.termination$));
@@ -315,7 +315,7 @@ export class SocketService {
   public listenMessageDeleted(): Observable<any> {
     return this.listen("messageDeleted").pipe(
       map((value) => {
-        this.snackBar.openSnackBar("Message has been deleted","Ok");
+        this.snackBar.openSnackBar("Message has been deleted",["Ok", "Discard"]);
         this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
       }),
       takeUntil(this.termination$));

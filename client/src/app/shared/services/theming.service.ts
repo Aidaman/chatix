@@ -4,7 +4,7 @@ import { LocalStorageService } from "./local-storage.service";
 
 /*
 *
-* //TODO: UPDATE THEMING SERVICE
+* TODO: UPDATE THEMING SERVICE
 *
 */
 

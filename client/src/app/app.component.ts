@@ -9,8 +9,6 @@ export class AppComponent {}
 /*
     @device TODO: MAKE ADAPTIVE TEMPLATE
 
-    @room-creation TODO: progress bar :)
-
     TODO: pop up for messages that will show who read it
     TODO: scroll bar improve
     TODO: unread in Rooms

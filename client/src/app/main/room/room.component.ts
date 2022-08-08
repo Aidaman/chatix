@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ThemingService } from "../../shared/services/theming.service";
 import { RoomService } from "../../shared/services/room.service";
 import { IRoom } from "../../shared/models/IRoom";
@@ -24,6 +24,7 @@ import {
 } from "../../store/room-chat/room-chat.actions";
 import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import { IUser } from "../../shared/models/IUser";
+import { ScrollTrackDirective } from "../../shared/directives/scroll-track.directive";
 
 @Component({
   selector: "app-room",
@@ -31,6 +32,8 @@ import { IUser } from "../../shared/models/IUser";
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit, OnDestroy {
+  // @ViewChild(ScrollTrackDirective) private scrollTrack!: ScrollTrackDirective;
+
   private isEditing = false;
   private emojiSubscription!: Subscription;
   private lastSelectedMessage: IMessage | null = null;
@@ -163,13 +166,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-
   // public onMessageRightClick( e: MouseEventmessage: IMessage): void {
   public onMessageRightClick(message: IMessage): void {
-    // e.preventDefault();
     if (message.creator?._id === this.chatService.me) {
       this.lastSelectedMessage = message;
-      // this.chatService.contextMenuConfig.next({ top: e.y, left: e.x });
     }
   }
 
@@ -221,6 +221,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     console.log(e);
     const messageId = this.lastSelectedMessage?._id as string;
     const roomId = this.lastSelectedMessage?.room as string;
+    console.log(this.lastSelectedMessage);
 
     if (e === "edit") {
       this.isEditing = true;

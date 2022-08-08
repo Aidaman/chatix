@@ -96,7 +96,7 @@ module.exports = {
         try {
             await Message.deleteOne(
                 {
-                    id: params.messageId,
+                    _id: params.messageId,
                     creator: socket.decoded_token.id
                 }, (err, obj) => {
                     console.log("error", err, "object", obj);

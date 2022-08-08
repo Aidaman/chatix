@@ -16,7 +16,7 @@ import {
   roomGetMessagesFailureAction,
   roomGetMessagesSuccessAction,
   roomGetNewMessageAction,
-  roomGetNewMessageFailureAction,
+  roomGetNewMessageFailureAction, roomGetNewMessageSuccessAction,
   // roomGetNewMessageFailureAction,
   // roomGetNewMessageSuccessAction,
   roomLoadMessagesAction,
@@ -105,7 +105,7 @@ export const roomChatReducer = createReducer(
   on(roomGetNewMessageAction, (state) => ({
     ...state,
   })),
-  on(roomGetNewMessageAction, (state, action) => {
+  on(roomGetNewMessageSuccessAction, (state, action) => {
     if (!state.selectedRoom || action.roomId === state.selectedRoom?._id) {
       const newMessagesArr = state.messages.slice();
       newMessagesArr.push({ ...action.message });
