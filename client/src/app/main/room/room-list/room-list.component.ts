@@ -51,27 +51,6 @@ export class RoomListComponent implements OnInit{
 
   private async countUnreadInRooms(): Promise<void> {
 
-    // for (const room of this.rooms) {
-    //   const id = room._id;
-    //   const unreadObj = {
-    //     [id]: 0,
-    //   };
-    //
-    //   console.log(unreadObj);
-    //
-    //   const messages = await lastValueFrom(this.chatService.getRoomContent(room._id, 0, 0).pipe(take(1)));
-    //   messages.forEach((message: IMessage) => {
-    //     if (message.read.indexOf(this.chatService.me) === -1){
-    //       unreadObj[id] += 1;
-    //     }
-    //   });
-    //
-    //   this.unread = {
-    //     ...this.unread,
-    //     [id]: unreadObj[id],
-    //   };
-    // }
-    // console.log(this.unread);
   }
 
 
