@@ -19,7 +19,7 @@ import { IUser } from "../models/IUser";
 import { IRoom } from "../models/IRoom";
 import { ChatService } from "./chat.service";
 import { IMessage } from "../models/IMessage";
-import {RoomService} from "./room.service";
+import { RoomService } from "./room.service";
 
 @Injectable({
   providedIn: "root"

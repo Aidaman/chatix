@@ -16,9 +16,6 @@ import {
   roomGetNewMessageAction,
   roomGetNewMessageFailureAction,
   roomGetNewMessageSuccessAction,
-  roomGetUnreadAction,
-  roomGetUnreadFailureAction,
-  roomGetUnreadSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
   roomLoadMessagesSuccessAction,
@@ -35,7 +32,7 @@ import {
   roomUpdateMessageFailureAction,
   roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
-import {concatMap, map, mergeMap, of, switchMap, take,} from "rxjs";
+import { concatMap, map, mergeMap, of, switchMap, take, } from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
 import { catchError } from "rxjs/operators";
 import { SocketService } from "../../shared/services/socket.service";
@@ -136,15 +133,6 @@ export class RoomChatEffect {
     ofType(roomMessageReadAction),
     map(({ messageId, userId }) => roomMessageReadSuccessAction({ messageId, userId })),
     catchError(() => of(roomMessageReadFailureAction()))
-  ));
-
-  getUnreadInRoom$ = createEffect(() => this.actions$.pipe(
-    ofType(roomGetUnreadAction),
-    concatMap(({ roomId }) => this.chatService.getRoomUnreadContent(roomId).pipe(
-      take(1),
-      map((unread: string) => roomGetUnreadSuccessAction({ unread, roomId })),
-      catchError(() => of(roomGetUnreadFailureAction())),
-    )),
   ));
 
   constructor(private actions$: Actions,

@@ -18,9 +18,6 @@ import {
   roomGetNewMessageAction,
   roomGetNewMessageFailureAction,
   roomGetNewMessageSuccessAction,
-  roomGetUnreadAction,
-  roomGetUnreadFailureAction,
-  roomGetUnreadSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
   roomLoadMessagesSuccessAction,
@@ -248,38 +245,6 @@ export const roomChatReducer = createReducer(
   on(roomAddParticipantFailureAction, (state) => ({
     ...state,
   })),
-
-  on(roomGetUnreadAction, (state, action) => {
-    let newRoomArr = [...state.allRooms].map((room: IRoom) => {
-      if (room._id === action.roomId) {
-        room = { ...room, unread: 0 };
-      }
-      return room;
-    });
-
-    return ({
-      ...state,
-      allRooms: newRoomArr,
-    });
-  }),
-  on(roomGetUnreadSuccessAction, (state, action) => {
-    let newRoomArr = [...state.allRooms].map((room: IRoom) => {
-      if (room._id === action.roomId) {
-        console.log("(room-chat reducer)", action.roomId, +action.unread);
-        room = { ...room, unread: +action.unread };
-      }
-      return room;
-    });
-
-    return ({
-      ...state,
-      allRooms: newRoomArr,
-    });
-  }),
-  on(roomGetUnreadFailureAction, (state) => ({
-    ...state,
-  })),
-
 
   on(chatGetAvailableRooms, (state) => ({
     ...state,

@@ -61,24 +61,3 @@ module.exports.roomContent = async (req, res) => {
         res.status(500).send('error')
     }
 };
-
-module.exports.roomUnreadContent = async (req, res) => {
-    try {
-        const messages = await Message.find({room: req.params.id}).skip(+req.query.offset).sort('-createdAt').populate('creator');
-        if (!messages){
-            throw new Error('Not Found')
-        }
-
-        let unread = 0;
-        messages.forEach((message) => {
-           if (message.read.indexOf(req.decoded.id) === -1)
-            unread += 1;
-        });
-
-        // console.log("unread:",unread);
-        return res.status(200).send(unread.toString());
-    } catch (e) {
-        console.log(e);
-        res.status(500).send('error')
-    }
-};

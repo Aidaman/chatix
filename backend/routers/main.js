@@ -7,8 +7,6 @@ router.use(checkJWT);
 
 router.get('/roomContent/:id', roomContent);
 
-router.get('/roomUnreadContent/:id', roomUnreadContent);
-
 router.get('/roomAmountOfMessage/:id', roomAmountOfMessage);
 
 router.get('/blacklist', getBlacklist);

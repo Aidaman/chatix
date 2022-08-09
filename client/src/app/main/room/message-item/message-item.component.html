@@ -48,6 +48,7 @@
                   mat-icon-button>
             <mat-icon>{{message.read.length > 0 ? 'done_all' : 'done'}}</mat-icon>
           </button>
+
         </div>
         <small class="message-date">
           <span>{{message.createdAt | date: 'HH:mm' : ''}}</span>
@@ -58,24 +59,8 @@
       </div>
     </div>
   </ng-template>
+
+  <ng-template #readers>
+    <app-custom-context-menu cdkMenu [options]="menuItems | async"></app-custom-context-menu>
+  </ng-template>
 </div>
-
-<ng-template #readers>
-  <app-custom-context-menu cdkMenu [options]="menuItems | async">
-  </app-custom-context-menu>
-
-<!--  <div class="context-menu" cdkMenu-->
-<!--       *ngIf="currentRoom | async as room">-->
-<!--    <ng-template *ngFor="let user of room.users">-->
-<!--      <ng-template *ngFor="let read of message.read">-->
-<!--        <div class="user" *ngIf="user._id === read">-->
-<!--          <mat-icon class="option-icon">"Person"</mat-icon>{{user.name}}-->
-<!--        </div>-->
-<!--      </ng-template>-->
-<!--    </ng-template>-->
-<!--  </div>-->
-
-<!--  <div class="context-menu" *ngFor="let user of menuItems | async">-->
-<!--    <mat-icon class="option-icon">"Person"</mat-icon>{{user.id}}&ndash;&gt;-->
-<!--  </div>-->
-</ng-template>

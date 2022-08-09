@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from "@angular/core";
 import { ChatService } from "../../services/chat.service";
 import { IOption } from "../../models/IOption";
-import {BehaviorSubject} from "rxjs";
+import { BehaviorSubject } from "rxjs";
 // import { BehaviorSubject } from "rxjs";
 
 @Component({

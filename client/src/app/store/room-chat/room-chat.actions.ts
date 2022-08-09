@@ -214,18 +214,3 @@ export const roomSwitchSuccessAction = createAction(
 export const roomSwitchFailureAction = createAction(
   ActionTypes.ROOM_SWITCH_FAILURE,
 );
-
-
-export const roomGetUnreadAction = createAction(
-  ActionTypes.ROOM_GET_UNREAD,
-  props<{ roomId: string, unread?: number }>()
-);
-
-export const roomGetUnreadSuccessAction = createAction(
-  ActionTypes.ROOM_GET_UNREAD_SUCCESS,
-  props<{ unread: string, roomId: string }>()
-);
-
-export const roomGetUnreadFailureAction = createAction(
-  ActionTypes.ROOM_GET_UNREAD_FAILURE,
-);

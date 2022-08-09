@@ -38,7 +38,7 @@ export const roomByIdSelect = (id: string) => createSelector(
   (chatState: IRoomChatState) => chatState.allRooms.find((value) => value._id === id),
 );
 
-export const currentRoom = () => createSelector(
+export const currentRoomSelector = () => createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.selectedRoom,
 );

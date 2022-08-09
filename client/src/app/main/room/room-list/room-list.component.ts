@@ -2,7 +2,7 @@ import { Component, OnInit, } from "@angular/core";
 import { IRoom } from "../../../shared/models/IRoom";
 import { SocketService } from "../../../shared/services/socket.service";
 import { ThemingService } from "../../../shared/services/theming.service";
-import {BehaviorSubject, concatMap, map, Observable, of, switchMap, take,} from "rxjs";
+import { BehaviorSubject, concatMap, map, Observable, of, switchMap, take, } from "rxjs";
 import { RoomService } from "../../../shared/services/room.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialog-adding-room.component";
@@ -12,7 +12,6 @@ import { Store } from "@ngrx/store";
 import {
   chatGetAvailableRooms,
   chatSearchRoomsActions,
-  roomGetUnreadAction,
   roomSwitchAction
 } from "../../../store/room-chat/room-chat.actions";
 import { SnackBarNotificationService } from "../../../shared/services/snack-bar-notification.service";

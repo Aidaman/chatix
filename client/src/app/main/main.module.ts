@@ -21,7 +21,7 @@ import { DialogModule } from "../dialog/dialog.module";
 import { MainRoutingModule } from "./main-routing.module";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import {CdkMenuModule} from "@angular/cdk/menu";
+import { CdkMenuModule } from "@angular/cdk/menu";
 
 @NgModule({
   declarations: [

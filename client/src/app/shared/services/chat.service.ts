@@ -4,7 +4,6 @@ import { BehaviorSubject, EMPTY, Observable } from "rxjs";
 import { IMessage } from "../models/IMessage";
 import { environment } from "../../../environments/environment";
 import { LocalStorageService } from "./local-storage.service";
-import {IRoom} from "../models/IRoom";
 
 @Injectable({
   providedIn: "root"
@@ -23,11 +22,6 @@ export class ChatService {
   public getRoomContent(id: string, offset?: number, limit?: number): Observable<IMessage[]> {
     if (id === "common") return EMPTY;
     return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
-  }
-
-  public getRoomUnreadContent(id: string): Observable<string> {
-    if (id === "common") return EMPTY;
-    return this.http.get<string>(`${environment.API_URL}/roomUnreadContent/${id}`);
   }
 
   public getRoomMessagesamount(id: string): Observable<string> {

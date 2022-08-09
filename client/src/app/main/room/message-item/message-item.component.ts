@@ -1,26 +1,26 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { IMessage } from "../../../shared/models/IMessage";
 import { ChatService } from "../../../shared/services/chat.service";
 import { ThemingService } from "../../../shared/services/theming.service";
-import {BehaviorSubject, map, Observable, of, switchAll, switchMap, take} from "rxjs";
+import { BehaviorSubject, map, Observable, of, switchAll, switchMap, take } from "rxjs";
 import { IOption } from "../../../shared/models/IOption";
 import { SocketService } from "../../../shared/services/socket.service";
 import { IRoom } from "../../../shared/models/IRoom";
 import { Store } from "@ngrx/store";
-import { currentRoom } from "../../../store/room-chat/room-chat.selectors";
+import { currentRoomSelector } from "../../../store/room-chat/room-chat.selectors";
 
 @Component({
   selector: "app-message-item",
   templateUrl: "./message-item.component.html",
   styleUrls: ["./message-item.component.scss"]
 })
-export class MessageItemComponent implements OnInit {
+export class MessageItemComponent  {
   @Input() message!: IMessage;
   @Output() viewChange: EventEmitter<{ inView: boolean, id: string }> = new EventEmitter<{ inView: boolean, id: string, }>();
   public theme: BehaviorSubject<string> = this.themeService.theme;
   public me = this.chatService.me;
-  public menuItems: Observable<IOption[] | null> = this.store.select(currentRoom()).pipe(
-    switchMap((value) => {
+  public menuItems: Observable<IOption[] | null> = this.store.select(currentRoomSelector()).pipe(
+    map((value) => {
       const newArr = value?.users.filter((user) => this.message.read.indexOf(user._id) !== -1).map((value) => {
         return ({
           id: "user",
@@ -29,7 +29,7 @@ export class MessageItemComponent implements OnInit {
         }) as IOption;
       });
       console.log(newArr);
-      return of(newArr ?? null);
+      return newArr ?? null;
     })
   );
   // public currentRoom: Observable<IRoom | undefined> = this.store.select(roomByIdSelect(this.message?._id));
@@ -40,9 +40,7 @@ export class MessageItemComponent implements OnInit {
               private themeService: ThemingService,) {
   }
 
-  ngOnInit(): void {
 
-  }
 
   public viewportChange(e: boolean): void {
     if (this.message.read.indexOf(this.me) === -1 && this.me !== this.message.creator?._id) {
