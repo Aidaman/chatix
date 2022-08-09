@@ -16,9 +16,11 @@ import {
   roomGetMessagesFailureAction,
   roomGetMessagesSuccessAction,
   roomGetNewMessageAction,
-  roomGetNewMessageFailureAction, roomGetNewMessageSuccessAction,
-  // roomGetNewMessageFailureAction,
-  // roomGetNewMessageSuccessAction,
+  roomGetNewMessageFailureAction,
+  roomGetNewMessageSuccessAction,
+  roomGetUnreadAction,
+  roomGetUnreadFailureAction,
+  roomGetUnreadSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
   roomLoadMessagesSuccessAction,
@@ -106,15 +108,20 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomGetNewMessageSuccessAction, (state, action) => {
+    const rooms = state.allRooms.slice().map((room: IRoom) => {
+      if (room._id === action.roomId)
+        room = { ...room, unread: 1 + room.unread };
+      return room;
+    });
     if (!state.selectedRoom || action.roomId === state.selectedRoom?._id) {
       const newMessagesArr = state.messages.slice();
       newMessagesArr.push({ ...action.message });
       return ({
         ...state,
-        messages: newMessagesArr
+        messages: newMessagesArr,
+        allRooms: rooms
       });
-
-    } else return ({ ...state });
+    } else return ({ ...state, allRooms: rooms });
   }),
   on(roomGetNewMessageFailureAction, (state) => ({
     ...state,
@@ -124,15 +131,23 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomMessageReadSuccessAction, (state, action) => {
-    let newMessagesArr = [...state.messages].map((message: IMessage) => {
+    const newMessagesArr = [...state.messages].map((message: IMessage) => {
       if (message._id === action.messageId && message.read.indexOf(action.userId) === -1) {
         message = { ...message, read: [...message.read, action.userId] };
       }
       return message;
     });
+
+    const rooms = [...state.allRooms].map((room: IRoom) => {
+      if (state.selectedRoom !== null && room._id === state.selectedRoom._id)
+        room = { ...room, unread: room.unread - 1 };
+      return room;
+    });
+
     return ({
       ...state,
-      messages: newMessagesArr
+      messages: newMessagesArr,
+      allRooms: rooms,
     });
   }),
   on(roomMessageReadFailureAction, (state) => ({
@@ -203,7 +218,6 @@ export const roomChatReducer = createReducer(
     ...state,
   })),
   on(roomMessageRemoveSuccessAction, (state, action) => {
-    console.log("Delete should be successful");
     return ({
       ...state,
       messages: state.messages.filter((message) => action.messageId !== message._id)
@@ -212,13 +226,6 @@ export const roomChatReducer = createReducer(
   on(roomMessageRemoveFailureAction, (state) => ({
     ...state,
   })),
-
-  // on(roomGetParticipantsAction, (state) => ({
-  //   ...state,
-  // })),
-  // on(roomGetParticipantsSuccessAction, (state, action) => ({
-  //   ...state,
-  // }))
 
   on(roomRemoveParticipantAction, (state) => ({
     ...state
@@ -239,6 +246,37 @@ export const roomChatReducer = createReducer(
     room: action.room,
   })),
   on(roomAddParticipantFailureAction, (state) => ({
+    ...state,
+  })),
+
+  on(roomGetUnreadAction, (state, action) => {
+    let newRoomArr = [...state.allRooms].map((room: IRoom) => {
+      if (room._id === action.roomId) {
+        room = { ...room, unread: 0 };
+      }
+      return room;
+    });
+
+    return ({
+      ...state,
+      allRooms: newRoomArr,
+    });
+  }),
+  on(roomGetUnreadSuccessAction, (state, action) => {
+    let newRoomArr = [...state.allRooms].map((room: IRoom) => {
+      if (room._id === action.roomId) {
+        console.log("(room-chat reducer)", action.roomId, +action.unread);
+        room = { ...room, unread: +action.unread };
+      }
+      return room;
+    });
+
+    return ({
+      ...state,
+      allRooms: newRoomArr,
+    });
+  }),
+  on(roomGetUnreadFailureAction, (state) => ({
     ...state,
   })),
 

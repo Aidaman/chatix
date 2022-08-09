@@ -165,6 +165,19 @@ module.exports = {
                 users: usersOnline
             });
 
+            for (const room of rooms) {
+                if (!room.isFavorites)
+                {
+                    const messages = await Message.find({room: room.id, isSystemMessage: false})
+                    messages.forEach((message)=>{
+                        if ((String(message.creator) !== String(user._id))
+                            && message.read.find(i => String(i) === String(user._id)) === undefined) {
+                            room.unread += 1;
+                        }
+                    });
+                }
+            }
+
             io.to(socket.id).emit('allRooms', rooms)
         } catch (e) {
             console.log(e);

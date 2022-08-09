@@ -16,6 +16,9 @@ import {
   roomGetNewMessageAction,
   roomGetNewMessageFailureAction,
   roomGetNewMessageSuccessAction,
+  roomGetUnreadAction,
+  roomGetUnreadFailureAction,
+  roomGetUnreadSuccessAction,
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
   roomLoadMessagesSuccessAction,
@@ -32,7 +35,7 @@ import {
   roomUpdateMessageFailureAction,
   roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
-import { map, of, switchMap, tap, throwError } from "rxjs";
+import {concatMap, map, mergeMap, of, switchMap, take,} from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
 import { catchError } from "rxjs/operators";
 import { SocketService } from "../../shared/services/socket.service";
@@ -49,7 +52,7 @@ export class RoomChatEffect {
     ofType(chatGetAvailableRooms),
     switchMap(() => this.socketService.listenGetAllRooms().pipe(
       map((data) => chatGetAvailableRoomsSucces({ rooms: data })),
-      catchError(() => of(chatGetAvailableRoomsFailure)),
+      catchError(() => of(chatGetAvailableRoomsFailure())),
     )),
   ));
 
@@ -62,7 +65,7 @@ export class RoomChatEffect {
     ofType(chatSearchRoomsActions),
     switchMap(() => this.socketService.listenSearchRoomsResult().pipe(
       map((data) => chatSearchRoomsSuccesAction({ rooms: data })),
-      catchError(() => of(chatSearchRoomsFailureAction)),
+      catchError(() => of(chatSearchRoomsFailureAction())),
     )),
   ));
 
@@ -73,7 +76,7 @@ export class RoomChatEffect {
     ofType(roomGetAmountOfMessagesAction),
     switchMap(({ roomId }) => this.chatService.getRoomMessagesamount(roomId).pipe(
       map((data) => roomGetAmountOfMessagesSuccessAction({ amount: +data })),
-      catchError(() => of(roomGetAmountOfMessagesFailureAction)),
+      catchError(() => of(roomGetAmountOfMessagesFailureAction())),
     ))
   ));
 
@@ -84,7 +87,7 @@ export class RoomChatEffect {
     ofType(roomSwitchAction),
     switchMap(({ roomId }) => this.store.select(roomByIdSelect(roomId)).pipe(
       map((value: IRoom | undefined) => roomSwitchSuccessAction({ room: value ?? null })),
-      catchError(() => of(roomSwitchFailureAction)),
+      catchError(() => of(roomSwitchFailureAction())),
     )))
   );
 
@@ -95,7 +98,7 @@ export class RoomChatEffect {
     ofType(roomGetMessagesAction),
     switchMap(({ roomId }) => this.chatService.getRoomContent(roomId, 0, 50).pipe(
       map((messages) => roomGetMessagesSuccessAction({ messages })),
-      catchError(() => of(roomGetMessagesFailureAction))))
+      catchError(() => of(roomGetMessagesFailureAction()))))
   ));
 
   /*
@@ -106,7 +109,7 @@ export class RoomChatEffect {
     switchMap(({ roomId }) => this.store.select(offsetSelector).pipe(
       switchMap((offset) => this.chatService.getRoomContent(roomId, offset, 50).pipe(
         map((messages) => roomLoadMessagesSuccessAction({ messages })),
-        catchError(() => of(roomLoadMessagesFailureAction))))
+        catchError(() => of(roomLoadMessagesFailureAction()))))
     )),
   ));
 
@@ -114,25 +117,34 @@ export class RoomChatEffect {
     ofType(roomGetNewMessageAction),
     switchMap(({ roomId, message }) => this.store.select(hasRoomValueSelector).pipe(
       map(() => roomGetNewMessageSuccessAction({ message, roomId })),
-      catchError(() => of(roomGetNewMessageFailureAction))))
+      catchError(() => of(roomGetNewMessageFailureAction()))))
   ));
 
   updateMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomUpdateMessageAction),
     map(({ messageId, correction }) => roomUpdateMessageSuccessAction({ messageId, correction })),
-    catchError(() => of(roomUpdateMessageFailureAction)),
+    catchError(() => of(roomUpdateMessageFailureAction())),
   ));
 
   deleteMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomMessageRemoveAction),
     map(({ messageId }) => roomMessageRemoveSuccessAction({ messageId })),
-    catchError(() => of(roomMessageRemoveFailureAction)),
+    catchError(() => of(roomMessageRemoveFailureAction())),
   ));
 
   readMessage$ = createEffect(() => this.actions$.pipe(
     ofType(roomMessageReadAction),
     map(({ messageId, userId }) => roomMessageReadSuccessAction({ messageId, userId })),
-    catchError(() => of(roomMessageReadFailureAction))
+    catchError(() => of(roomMessageReadFailureAction()))
+  ));
+
+  getUnreadInRoom$ = createEffect(() => this.actions$.pipe(
+    ofType(roomGetUnreadAction),
+    concatMap(({ roomId }) => this.chatService.getRoomUnreadContent(roomId).pipe(
+      take(1),
+      map((unread: string) => roomGetUnreadSuccessAction({ unread, roomId })),
+      catchError(() => of(roomGetUnreadFailureAction())),
+    )),
   ));
 
   constructor(private actions$: Actions,

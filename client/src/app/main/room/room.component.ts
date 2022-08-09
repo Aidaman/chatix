@@ -32,8 +32,6 @@ import { ScrollTrackDirective } from "../../shared/directives/scroll-track.direc
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit, OnDestroy {
-  // @ViewChild(ScrollTrackDirective) private scrollTrack!: ScrollTrackDirective;
-
   private isEditing = false;
   private emojiSubscription!: Subscription;
   private lastSelectedMessage: IMessage | null = null;
@@ -162,6 +160,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       if (event.inView) {
         this.socketService.emit("readMessage", { messageId: event.id });
         this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
+        // this.store.dispatch(updateAmountOfUnreadAction({amount: currentRoomUnreadCount}));
       }
     }
   }

@@ -54,6 +54,10 @@ export enum ActionTypes {
   ROOM_ADD_PARTICIPANT_SUCCESS = "[Room] add participant success",
   ROOM_ADD_PARTICIPANT_FAILURE = "[Room] add participant failure",
 
+  ROOM_GET_UNREAD = "[Room] get unread",
+  ROOM_GET_UNREAD_SUCCESS = "[Room] get unread success",
+  ROOM_GET_UNREAD_FAILURE = "[Room] get unread failure",
+
   //FOR CHAT
   CHAT_GET_AVAILABLE_ROOMS = "[Chat] get available rooms",
   CHAT_GET_AVAILABLE_ROOMS_SUCCESS = "[Chat] get available rooms success",

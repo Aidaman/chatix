@@ -21,16 +21,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
-  public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
-    switchMap((value) => {
-      if (!value) {
-
-        this.store.dispatch(chatGetAvailableRooms());
-      }
-      return this.store.select(allRoomsSelector);
-    }),
-  );
-
   constructor(private store: Store,
               private roomService: RoomService,
               private socketService: SocketService,

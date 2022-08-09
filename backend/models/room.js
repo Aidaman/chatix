@@ -26,6 +26,10 @@ const roomSchema = new Schema({
     isFavorites:{
         type:Boolean,
         default:false
+    },
+    unread:{
+        type:Number,
+        default:0
     }
 });
 module.exports = mongoose.model('Room',roomSchema);

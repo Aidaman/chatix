@@ -1,17 +1,22 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit, } from "@angular/core";
 import { IRoom } from "../../../shared/models/IRoom";
 import { SocketService } from "../../../shared/services/socket.service";
 import { ThemingService } from "../../../shared/services/theming.service";
-import { BehaviorSubject, lastValueFrom, Observable, take } from "rxjs";
+import {BehaviorSubject, concatMap, map, Observable, of, switchMap, take,} from "rxjs";
 import { RoomService } from "../../../shared/services/room.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialog-adding-room.component";
 import { Router } from "@angular/router";
 import { ChatService } from "../../../shared/services/chat.service";
 import { Store } from "@ngrx/store";
-import { chatSearchRoomsActions, roomSwitchAction } from "../../../store/room-chat/room-chat.actions";
+import {
+  chatGetAvailableRooms,
+  chatSearchRoomsActions,
+  roomGetUnreadAction,
+  roomSwitchAction
+} from "../../../store/room-chat/room-chat.actions";
 import { SnackBarNotificationService } from "../../../shared/services/snack-bar-notification.service";
-import { IMessage } from "../../../shared/models/IMessage";
+import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room-chat/room-chat.selectors";
 
 /*
 * Make tabs for rooms: admin, private, all
@@ -25,11 +30,17 @@ import { IMessage } from "../../../shared/models/IMessage";
   templateUrl: "./room-list.component.html",
   styleUrls: ["./room-list.component.scss"]
 })
-export class RoomListComponent implements OnInit{
-  @Input() rooms: IRoom[] = [];
+export class RoomListComponent implements OnInit {
+  public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
+    switchMap((value) => {
+      if (!value) {
+        this.store.dispatch(chatGetAvailableRooms());
+      }
+      return this.store.select(allRoomsSelector);
+    }),
+  );
 
-  //This object is structured like that: {roomId: amountOfUnread}
-  public unread: object = {};
+  public overallUnread: number = 0;
 
   public searchText: string = "";
   public isPublicRooms: boolean = false;
@@ -46,13 +57,18 @@ export class RoomListComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.countUnreadInRooms().then();
+    /*    KOSTYL!   */
+    // this.store.select(allRoomsSelector).pipe(
+    //   map((rooms) => {
+    //     rooms.forEach((room: IRoom) => {
+    //       if (room.unread === undefined) {
+    //         this.store.dispatch(roomGetUnreadAction({ roomId: room._id, unread: room.unread }));
+    //       } else return;});
+    //     return rooms;
+    //   }),
+    //   take(2),
+    // ).subscribe();
   }
-
-  private async countUnreadInRooms(): Promise<void> {
-
-  }
-
 
   public createRoom(): void {
     const newRoomDialogRef = this.matDialog.open(DialogAddingRoomComponent);
@@ -84,10 +100,11 @@ export class RoomListComponent implements OnInit{
   }
 
   public navigateRoom(roomId: string) {
-    this.chatService.getRoomUnreadContent(roomId).subscribe((value) => {
-      console.log(value);
-    });
     this.store.dispatch(roomSwitchAction({ roomId }));
     this.router.navigate(["/chat", roomId]);
+  }
+
+  logRoom(room: IRoom) {
+    console.log(room);
   }
 }

@@ -25,9 +25,9 @@ export class ChatService {
     return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
   }
 
-  public getRoomUnreadContent(id: string): Observable<any> {
-    if (id === "common" || id === "favorites") return EMPTY;
-    return this.http.get<any>(`${environment.API_URL}/roomUnreadContent/${id}`);
+  public getRoomUnreadContent(id: string): Observable<string> {
+    if (id === "common") return EMPTY;
+    return this.http.get<string>(`${environment.API_URL}/roomUnreadContent/${id}`);
   }
 
   public getRoomMessagesamount(id: string): Observable<string> {
@@ -55,6 +55,7 @@ export class ChatService {
     Object.values(this.unreadInRooms).forEach((item: any) => {
       this.overallUnreadMessages += item;
     });
+
   }
 
   public calculateUnread(messages: IMessage[]): number {

@@ -19,59 +19,12 @@ import { IUser } from "../models/IUser";
 import { IRoom } from "../models/IRoom";
 import { ChatService } from "./chat.service";
 import { IMessage } from "../models/IMessage";
+import {RoomService} from "./room.service";
 
 @Injectable({
   providedIn: "root"
 })
 export class SocketService {
-  // public webSocketSubject!: WebSocketSubject<any>;
-  // public messages$: Subject<any> = new Subject<any>();
-  // public readonly uri: string = environment.API_URL_WSS;
-  // public isConnected: boolean = false;
-  //
-  // constructor() {
-  // }
-  //
-  // public connect(): void {
-  //   this.webSocketSubject = webSocket(this.uri);
-  //   console.log(this.webSocketSubject)
-  //   // if (!this.isConnected) {
-  //   //
-  //   //
-  //   //   // const messages = this.webSocketSubject.pipe(
-  //   //   //   tap({
-  //   //   //     error: error => console.log(error),
-  //   //   //   }), catchError(_ => EMPTY));
-  //   //   // this.messages$.next(messages);
-  //   //
-  //   //   this.isConnected = true;
-  //   // } else {
-  //   //   console.error('---UNAUTHORIZED. SOCKET IS NOT CONNECTED');
-  //   // }
-  // }
-  //
-  // public emit(msg: any) {
-  //   this.webSocketSubject.next(msg);
-  // }
-  //
-  // // public emit(eventName: string, data: any): void {
-  // //
-  // // }
-  //
-  // public disconnect() {
-  //   this.webSocketSubject.complete();
-  // }
-  //
-  // // public listen(eventName: string): Observable<any> {
-  // //   return new Observable((subscriber) => {
-  // //     this.socket.on(eventName, (data) => {
-  // //       subscriber.next(data);
-  // //     });
-  // //   });
-  // // }
-  // //
-  // //
-
   public socket: any;
   public readonly uri: string = environment.API_URL;
   public isConnected: boolean = false;
@@ -81,6 +34,7 @@ export class SocketService {
   constructor(private localStorageService: LocalStorageService,
               private router: Router,
               private chatService: ChatService,
+              private roomService: RoomService,
               private snackBar: SnackBarNotificationService,
               private store: Store) {
   }
@@ -120,6 +74,10 @@ export class SocketService {
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
       map((value: { message: IMessage, room: string }) => {
+        // if (value.room === "common") {
+        //   const messagesInCommon = this.roomService.messagesInCommon.value;
+        //   this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
+        // }
         this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
         this.snackBar.openSnackBar("You receive new Message", []);
       }),
@@ -273,7 +231,11 @@ export class SocketService {
   * @description the logic of this listener described in the effect
   */
   public listenGetAllRooms(): Observable<any> {
-    return this.listen("allRooms").pipe(takeUntil(this.termination$));
+    return this.listen("allRooms").pipe(
+      // map((value) => {
+      //   console.log(value);
+      // }),
+      takeUntil(this.termination$));
   }
 
   /*

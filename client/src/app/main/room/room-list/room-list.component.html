@@ -18,27 +18,28 @@
            placeholder="Search room..."
            (input)="searchRooms()"
            [(ngModel)]="searchText">
-        <mat-slide-toggle class="searchToggle"
-                          (change)="toggleSearch()">
-          {{isPublicRooms ? 'Globally' : 'Locally'}}
-        </mat-slide-toggle>
-<!--    <mat-button-toggle-group name="roomCategories" aria-label="Room Categories">-->
-<!--      <mat-button-toggle value="Admin">Admin</mat-button-toggle>-->
-<!--      <mat-button-toggle value="Private">Private</mat-button-toggle>-->
-<!--      <mat-button-toggle value="Public">Public</mat-button-toggle>-->
-<!--    </mat-button-toggle-group>-->
+    <mat-slide-toggle class="searchToggle"
+                      (change)="toggleSearch()">
+      {{isPublicRooms ? 'Globally' : 'Locally'}}
+    </mat-slide-toggle>
+    <!--    <mat-button-toggle-group name="roomCategories" aria-label="Room Categories">-->
+    <!--      <mat-button-toggle value="Admin">Admin</mat-button-toggle>-->
+    <!--      <mat-button-toggle value="Private">Private</mat-button-toggle>-->
+    <!--      <mat-button-toggle value="Public">Public</mat-button-toggle>-->
+    <!--    </mat-button-toggle-group>-->
   </div>
   <div class="room-list">
     <mat-list>
       <mat-list-item class="room-list-item"
-                     *ngFor="let room of rooms | search: searchText"
+                     *ngFor="let room of (rooms$ | async) | updateRooms | search: searchText"
                      (click)="navigateRoom(room._id)">
+        <!--                     (click)="logRoom(room)">-->
         <mat-divider></mat-divider>
-        <!--        <div class="unread" *ngIf="unread[room._id] > 0"><span>{{unread[room._id]}}</span></div>-->
         <div class="room-title-wrapper">
-          <span class="room-title">{{room.title}}</span>
+          <span class="room-title">{{room.title}} </span>
           <small *ngIf="room._id !== 'common'">Last action: {{room.lastAction | date: 'HH:mm:ss - dd.MM.yy'}}</small>
         </div>
+        <div class="unread" *ngIf="room.unread > 0"><span>{{room.unread > 99? "99+" : room.unread}}</span></div>
       </mat-list-item>
     </mat-list>
   </div>
