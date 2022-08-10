@@ -13,17 +13,24 @@ export class ChatService {
   public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isMyMessage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  public unreadInRooms: any;
-  public overallUnreadMessages: number = 0;
-
   constructor(private http: HttpClient,
               private localStorageService: LocalStorageService) {}
 
+  /*
+  * @description A function for get the messages for the room
+  * @param id: id of the room that requesting the messages
+  * @param offset: offset to take messages
+  * @param limit: describes how many messages backend should send us
+  */
   public getRoomContent(id: string, offset?: number, limit?: number): Observable<IMessage[]> {
     if (id === "common") return EMPTY;
     return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
   }
 
+  /*
+  * @description A function for get the number of messages in the room
+  * @param id: id of the room that requesting this
+  */
   public getRoomMessagesamount(id: string): Observable<string> {
     return this.http.get<string>(`${environment.API_URL}/roomAmountOfMessage/${id}`);
   }
@@ -44,14 +51,10 @@ export class ChatService {
     });
   }
 
-  public recountUnread(): void {
-    this.overallUnreadMessages = 0;
-    Object.values(this.unreadInRooms).forEach((item: any) => {
-      this.overallUnreadMessages += item;
-    });
-
-  }
-
+  /*
+  * @description A function for calculate how many messages is unread in current room
+  * @param messages: an array of messages that being proceeded
+  */
   public calculateUnread(messages: IMessage[]): number {
     let amountOfUnread = 0;
     messages.forEach(message => {

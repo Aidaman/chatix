@@ -3,11 +3,6 @@ import { IRoomChatState } from "./room-chat.reducer";
 
 export const roomChatFeatureSelector = createFeatureSelector<IRoomChatState>("room");
 
-export const roomSelector = createSelector(
-  roomChatFeatureSelector,
-  (roomState: IRoomChatState) => roomState.selectedRoom
-);
-
 export const messagesSelector = createSelector(
   roomChatFeatureSelector,
   (roomState: IRoomChatState) => roomState.messages
@@ -35,7 +30,7 @@ export const allRoomsSelector = createSelector(
 
 export const roomByIdSelect = (id: string) => createSelector(
   roomChatFeatureSelector,
-  (chatState: IRoomChatState) => chatState.allRooms.find((value) => value._id === id),
+  (chatState: IRoomChatState) => chatState.allRooms.find((value) => value._id === id) ?? null,
 );
 
 export const currentRoomSelector = () => createSelector(

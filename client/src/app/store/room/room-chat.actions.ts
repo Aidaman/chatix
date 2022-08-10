@@ -5,7 +5,6 @@ import { IRoom } from "../../shared/models/IRoom";
 
 export const roomGetMessagesAction = createAction(
   ActionTypes.ROOM_GET_MESSAGES,
-  // props<{ roomId: string, offset: number}>(),
   props<{ roomId: string }>(),
 );
 
@@ -117,20 +116,6 @@ export const roomMessageRemoveFailureAction = createAction(
   ActionTypes.ROOM_REMOVE_MESSAGE_FAILURE,
 );
 
-// export const roomGetParticipantsAction = createAction(
-//   ActionTypes.ROOM_GET_PARTICIPANTS,
-//   props<{ roomId: string }>()
-// )
-//
-// export const roomGetParticipantsSuccesAction = createAction(
-//   ActionTypes.ROOM_GET_PARTICIPANTS_SUCCESS,
-//   props<{ participants: IUser[] }>()
-// )
-//
-// export const roomGetParticipantsFailureAction = createAction(
-//   ActionTypes.ROOM_GET_PARTICIPANTS_FAILURE,
-// )
-
 export const roomRemoveParticipantAction = createAction(
   ActionTypes.ROOM_REMOVE_PARTICIPANT,
   props<{ participantId: string }>()
@@ -159,20 +144,6 @@ export const roomAddParticipantSuccessAction = createAction(
 export const roomAddParticipantFailureAction = createAction(
   ActionTypes.ROOM_ADD_PARTICIPANT_FAILURE,
 );
-
-// export const roomInviteParticipant = createAction(
-//   ActionTypes.ROOM_INVITE_PARTICIPANT,
-//   props<{ participantId: string }>(),
-// )
-//
-// export const roomInviteParticipantSuccessAction = createAction(
-//   ActionTypes.ROOM_INVITE_PARTICIPANT_SUCCESS,
-//   props<{ participants: IUser[] }>(),
-// )
-//
-// export const roomInviteParticipantFailureAction = createAction(
-//   ActionTypes.ROOM_INVITE_PARTICIPANT_FAILURE,
-// )
 
 export const chatGetAvailableRooms = createAction(
   ActionTypes.CHAT_GET_AVAILABLE_ROOMS,

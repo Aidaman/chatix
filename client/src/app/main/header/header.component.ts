@@ -4,8 +4,8 @@ import { LocalStorageService } from "../../shared/services/local-storage.service
 import { Router } from "@angular/router";
 import { IUser } from "../../shared/models/IUser";
 import { ThemingService } from "../../shared/services/theming.service";
-import { BehaviorSubject, Observable } from "rxjs";
-import { userSelector } from "../../store/user/user.selectors";
+import { BehaviorSubject, Observable, of, switchMap } from "rxjs";
+import { hasUserValueSelector, userSelector } from "../../store/user/user.selectors";
 import { Store } from "@ngrx/store";
 import { userLogoutAction } from "../../store/user/user.actions";
 
@@ -15,7 +15,14 @@ import { userLogoutAction } from "../../store/user/user.actions";
     styleUrls: ["./header.component.scss"]
 })
 export class HeaderComponent{
-    public user: Observable<IUser | null> = this.store.select(userSelector);
+    public user: Observable<IUser | null> = this.store.select(hasUserValueSelector).pipe(
+      switchMap((value: boolean) => {
+        if (!value){
+          return of(null);
+        }
+        return this.store.select(userSelector);
+      })
+    );
     public theme: BehaviorSubject<string> = this.themingService.theme;
 
     constructor(private authService: AuthService,

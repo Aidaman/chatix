@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { EMOJI } from "../../shared/EMOJIS";
-import { ChatService } from "../../shared/services/chat.service";
 import { ThemingService } from "../../shared/services/theming.service";
 import { RoomService } from "../../shared/services/room.service";
 
@@ -19,7 +18,6 @@ export class EmojisComponent {
 
   public sendToInput(smile: string): void {
     this.roomService.emoji.next(smile);
-    // console.log(this.chatService.emoji.value)
   }
 
 }

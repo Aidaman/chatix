@@ -4,9 +4,6 @@ export enum ActionTypes {
   USER_AUTH_SUCCESS = "[User] authentication success",
   USER_AUTH_FAILURE = "[User] authentication failure",
 
-  USER_ACCEPT_INVITATION = "[User] invitation accepted",
-  USER_REJECT_INVITATION = "[User] invitation rejected",
-
   USER_LOG_OUT = "[User] logged out",
 
   //FOR ROOM
@@ -62,8 +59,4 @@ export enum ActionTypes {
   CHAT_SEARCH_ROOMS = "[Chat] search rooms",
   CHAT_SEARCH_ROOMS_SUCCESS = "[Chat] search rooms success",
   CHAT_SEARCH_ROOMS_FAILURE = "[Chat] search room failure",
-
-  CHAT_NEW_MESSAGE = "[Chat] new message",
-
-
 }

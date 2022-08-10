@@ -6,8 +6,11 @@ import { ThemingService } from "../../shared/services/theming.service";
 import { BehaviorSubject } from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
 
+/*
+* @description This component describes modal window for configuring the room
+*/
 @Component({
-  selector: "app-room-chat-settings",
+  selector: "app-room-settings",
   templateUrl: "./dialog-room-settings.component.html",
   styleUrls: ["./dialog-room-settings.component.scss"],
 })
@@ -28,7 +31,7 @@ export class DialogRoomSettingsComponent{
   }
 
   public onUpdate(): void {
-    // this.room-chat.title = this.title.nativeElement.innerText;
+    // this.room.title = this.title.nativeElement.innerText;
     this.dialogRef.close({
       ...this.room,
       newRoomTitle: this.newRoomTitle,

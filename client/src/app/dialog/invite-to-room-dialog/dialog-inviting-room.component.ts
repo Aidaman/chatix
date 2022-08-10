@@ -7,6 +7,9 @@ import { SocketService } from "../../shared/services/socket.service";
 import { IUser } from "../../shared/models/IUser";
 import { ChatService } from "../../shared/services/chat.service";
 
+/*
+* @description This component describes modal window for invite users to room
+*/
 @Component({
   selector: "app-invite-to-room-dialog-chat",
   templateUrl: "./dialog-inviting-room.component.html",

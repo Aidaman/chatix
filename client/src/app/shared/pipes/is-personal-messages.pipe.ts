@@ -8,7 +8,7 @@ import { IUser } from "../models/IUser";
 export class IsPersonalMessagePipePipe implements PipeTransform {
 
   transform(currentUser: string, room: IRoom): string {
-    if (room.users.length > 2 || !room.isPublic) return room.title;
+    if (room.users.length > 2 || room.isPublic) return room.title;
 
     const findResult: IUser | undefined = room.users.find((user) => user._id !== currentUser);
     return findResult === undefined? room.title : findResult.name;

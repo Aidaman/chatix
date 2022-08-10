@@ -9,6 +9,10 @@ import {
   Output
 } from "@angular/core";
 
+/*
+* @description this is an old directive to track weather the element is in the viewport,
+* @description documentation for this are here: https://www.npmjs.com/package/@thisissoon/angular-inviewport
+*/
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: "[snInViewport]",

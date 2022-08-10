@@ -7,9 +7,7 @@ import { ThemingService } from "../../shared/services/theming.service";
 import { BehaviorSubject, debounceTime, Subscription } from "rxjs";
 
 /*
-* This component represents modal window for creating new room-chat
-* It listen to "searchResult" event in the socket
-* And it emits "onSearch"
+* @description This component represents modal window for creating new room
 */
 @Component({
   selector: "app-new-room-dialog-chat",
@@ -83,7 +81,6 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
 
   //Searching users that can be invited
   public onSearch(): Subscription {
-    //Взагалі-то це повинно бути змінною, і пропихуватись у темплейт
     return this.newRoomForm.valueChanges
       .pipe(debounceTime((300)))
       .subscribe((changes) => {
@@ -118,7 +115,6 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
     return this.userIds.every(item => !!item) && this.userIds.length > 0;
   }
 
-  //Switching type of the room-chat
   public switchPrivate(): void {
     this.isPublic = !this.isPublic;
   }

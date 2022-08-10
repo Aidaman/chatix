@@ -1,10 +1,8 @@
 <div class="message-wrapper"
-     *ngIf="theme | async as theme"
      snInViewport (inViewportChange)="viewportChange($event)"
      [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage,
                  'foreign': message.creator?.id !== me && !message.isSystemMessage,
-                 'system': message.isSystemMessage,
-                 'dark': theme === 'dark', 'light': theme === 'light'}">
+                 'system': message.isSystemMessage}">
 
   <ng-container *ngIf="message.isSystemMessage; else notSystemMessage">
         <span class="sys-message">

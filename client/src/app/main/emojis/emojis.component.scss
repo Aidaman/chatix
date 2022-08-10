@@ -81,7 +81,7 @@
   }
 }
 
-.light {
+:host-context( body.light ) {
   transition: 0.3s;
   background-color: #e6e7f2;
 
@@ -99,7 +99,7 @@
   }
 }
 
-.dark {
+:host-context( body.dark ) {
   transition: 0.3s;
   background-color: #273038;
 

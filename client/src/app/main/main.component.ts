@@ -7,6 +7,11 @@ import { Subscription } from "rxjs";
 import { ThemingService } from "../shared/services/theming.service";
 import { Router } from "@angular/router";
 
+
+/*
+* @description This component just wraps another subcomponents
+* @description also it forms the module for being able to navigate
+*/
 @Component({
   selector: "app-main",
   templateUrl: "./main.component.html",

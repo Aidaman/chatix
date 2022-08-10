@@ -197,7 +197,7 @@ $screen-xl-min: 1200px;
   }
 }
 
-.light {
+:host-context( body.light ) {
   .sys-message {
     transition: 0.3s;
     background-color: rgba(0, 0, 0, 0.19);
@@ -246,7 +246,7 @@ $screen-xl-min: 1200px;
   }
 }
 
-.dark {
+:host-context( body.dark ){
   .sys-message {
     transition: 0.3s;
     background-color: rgba(251, 255, 253, 0.12);

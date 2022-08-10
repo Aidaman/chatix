@@ -8,9 +8,14 @@ import { BehaviorSubject, lastValueFrom, Observable, switchMap, tap } from "rxjs
 import { RoomService } from "../../shared/services/room.service";
 import { Store } from "@ngrx/store";
 import { userAuthAction } from "../../store/user/user.actions";
-import { allRoomsSelector, isAllRoomsHasValue } from "../../store/room-chat/room-chat.selectors";
-import { chatGetAvailableRooms } from "../../store/room-chat/room-chat.actions";
+import { allRoomsSelector, isAllRoomsHasValue } from "../../store/room/room-chat.selectors";
+import { chatGetAvailableRooms } from "../../store/room/room-chat.actions";
 
+/*
+* @description This is the component that wraps room and room-list components
+* @description It serves to listen to several socket events
+*              that can happen outside the room component (e.g. new message)
+*/
 @Component({
   selector: "app-chat",
   templateUrl: "./chat.component.html",
@@ -41,21 +46,16 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.socketService.listenNewRoom().subscribe();
     this.socketService.listenRoomDeleted().subscribe();
-    this.socketService.listenRoomRenamed().subscribe();
-    // this.socketService.listenUserLeft().subscribe()
+    this.socketService.listenRoomRenamed().subscribe()
   }
 
   ngOnDestroy(): void {
     this.socketService.disconnect();
   }
 
-  // public recountUnread(): void {
-  //   this.overallUnreadMessages = 0;
-  //   Object.values(this.unreadInRooms).forEach((item) => {
-  //     this.overallUnreadMessages += item;
-  //   });
-  // }
-
+  /*
+  * @description the function that opens modal window for invitation to the room
+  */
   private async openInvitation(data: any): Promise<void> {
     const invitationDialogRef = this.dialog.open(DialogInvitationComponent,
       { width: "450px", height: "200px", hasBackdrop: true, data });

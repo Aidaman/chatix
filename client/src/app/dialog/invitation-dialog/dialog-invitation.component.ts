@@ -4,6 +4,9 @@ import { IRoom } from "../../shared/models/IRoom";
 import { ThemingService } from "../../shared/services/theming.service";
 import { BehaviorSubject } from "rxjs";
 
+/*
+* @description This component describes modal window for the invitation
+*/
 @Component({
   selector: "app-invitation-dialog",
   templateUrl: "./dialog-invitation.component.html",

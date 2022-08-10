@@ -29,8 +29,8 @@ import { userReducer } from "./store/user/user.reducer";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { EffectsModule } from "@ngrx/effects";
 import { UserEffect } from "./store/user/user.effect";
-import { roomChatReducer } from "./store/room-chat/room-chat.reducer";
-import { RoomChatEffect } from "./store/room-chat/room-chat.effect";
+import { roomChatReducer } from "./store/room/room-chat.reducer";
+import { RoomChatEffect } from "./store/room/room-chat.effect";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({

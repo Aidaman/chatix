@@ -7,15 +7,16 @@ import { Component } from "@angular/core";
 export class AppComponent {}
 
 /*
-    @device TODO: MAKE ADAPTIVE TEMPLATE
+    @Device TODO: MAKE ADAPTIVE TEMPLATE
 
-    TODO: pop up for messages that will show who read it
-    TODO: scroll bar improve
-    TODO: Input field
+    @Scrollbar TODO: when new message being sent the chat should scroll to the down
+    @Scrollbar TODO: scrollbar should remember it's position in some room
+
+    @InputField TODO: improve it somehow...
 
     TODO: room list tabs:
           rooms where current user is admin, private rooms, public rooms
 
 
-    TODO: EXTRA Поприкалываться с нодой. что бы можно было пересылатьи отвечать на сообщения
+    @EXTRA TODO: make functionality to answer the messages and resend it to another chat
  */

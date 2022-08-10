@@ -1,6 +1,9 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { IRoom } from "../models/IRoom";
 
+/*
+* @description This is the pipe that sorts the given room list by date when last message was written here
+*/
 @Pipe({
   name: "updateRooms"
 })
@@ -10,6 +13,6 @@ export class UpdateRoomsPipe implements PipeTransform {
     rooms = rooms.slice().sort((prevRoom, nextRoom) => {
       return +new Date(prevRoom.lastAction) - +new Date(nextRoom.lastAction);
     });
-    return rooms;
+    return rooms.reverse();
   }
 }

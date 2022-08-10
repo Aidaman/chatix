@@ -35,7 +35,7 @@
 
 }
 
-.light {
+:host-context( body.dark ) {
     background: #e6e7f2;
     color: black;
 
@@ -44,7 +44,7 @@
     }
 }
 
-.dark {
+:host-context( body.dark ) {
     background: #273038;
     color: white;
 

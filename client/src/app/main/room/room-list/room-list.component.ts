@@ -1,8 +1,8 @@
-import { Component, OnInit, } from "@angular/core";
+import { Component, } from "@angular/core";
 import { IRoom } from "../../../shared/models/IRoom";
 import { SocketService } from "../../../shared/services/socket.service";
 import { ThemingService } from "../../../shared/services/theming.service";
-import { BehaviorSubject, concatMap, map, Observable, of, switchMap, take, } from "rxjs";
+import { BehaviorSubject, Observable, switchMap, } from "rxjs";
 import { RoomService } from "../../../shared/services/room.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialog-adding-room.component";
@@ -11,25 +11,22 @@ import { ChatService } from "../../../shared/services/chat.service";
 import { Store } from "@ngrx/store";
 import {
   chatGetAvailableRooms,
-  chatSearchRoomsActions,
   roomSwitchAction
-} from "../../../store/room-chat/room-chat.actions";
+} from "../../../store/room/room-chat.actions";
 import { SnackBarNotificationService } from "../../../shared/services/snack-bar-notification.service";
-import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room-chat/room-chat.selectors";
+import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room/room-chat.selectors";
 
 /*
-* Make tabs for rooms: admin, private, all
-*/
-
-/*
-  this component used to show list of rooms$ and allows user to switch current room-chat
+* @description This component is responsible to show the list of rooms available for users
+* @description It located in the mat drawer
+* @description Using this user can navigate through rooms
 */
 @Component({
   selector: "app-room-list",
   templateUrl: "./room-list.component.html",
   styleUrls: ["./room-list.component.scss"]
 })
-export class RoomListComponent implements OnInit {
+export class RoomListComponent  {
   public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
     switchMap((value) => {
       if (!value) {
@@ -38,6 +35,8 @@ export class RoomListComponent implements OnInit {
       return this.store.select(allRoomsSelector);
     }),
   );
+
+  public searchCondition: string = "public";
 
   public overallUnread: number = 0;
 
@@ -55,27 +54,14 @@ export class RoomListComponent implements OnInit {
               private themingService: ThemingService) {
   }
 
-  ngOnInit(): void {
-    /*    KOSTYL!   */
-    // this.store.select(allRoomsSelector).pipe(
-    //   map((rooms) => {
-    //     rooms.forEach((room: IRoom) => {
-    //       if (room.unread === undefined) {
-    //         this.store.dispatch(roomGetUnreadAction({ roomId: room._id, unread: room.unread }));
-    //       } else return;});
-    //     return rooms;
-    //   }),
-    //   take(2),
-    // ).subscribe();
-  }
-
+  /*
+  * @description Opens modal window for creating a room
+  */
   public createRoom(): void {
     const newRoomDialogRef = this.matDialog.open(DialogAddingRoomComponent);
     newRoomDialogRef.afterClosed().subscribe((value) => {
-      if (!value) {
-        this.snackBar.openSnackBar("Room has not been created", ["Ok"]);
-        return;
-      }
+      //if the value is false - it means that user declined to create the room
+      if (!value) return;
       const newRoom = {
         ...value,
         participants: [this.chatService.me, ...value.participants],
@@ -85,14 +71,16 @@ export class RoomListComponent implements OnInit {
   }
 
   public toggleSearch(): void {
-    this.isPublicRooms = !this.isPublicRooms;
-    this.searchRooms();
+    this.searchCondition = this.searchCondition.toLowerCase() === "public" ? "private" : "public";
+
+    // this.isPublicRooms = !this.isPublicRooms;
+    // this.searchRooms();
   }
 
-  public searchRooms() {
-    this.socketService.emit("searchRoom", { title: this.searchText });
-    this.store.dispatch(chatSearchRoomsActions());
-  }
+  // public searchRooms() {
+  //   this.socketService.emit("searchRoom", { title: this.searchText });
+  //   this.store.dispatch(chatSearchRoomsActions());
+  // }
 
   public closeList() {
     this.roomService.sideMenuOpened.next(false);
@@ -101,9 +89,5 @@ export class RoomListComponent implements OnInit {
   public navigateRoom(roomId: string) {
     this.store.dispatch(roomSwitchAction({ roomId }));
     this.router.navigate(["/chat", roomId]);
-  }
-
-  logRoom(room: IRoom) {
-    console.log(room);
   }
 }

@@ -245,7 +245,7 @@ $screen-xl-min: 1200px;
   }
 }
 
-.light {
+:host-context( body.light ) {
   .chat-menu {
     transition: 0.3s;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
@@ -366,7 +366,7 @@ $screen-xl-min: 1200px;
 }
 
 
-.dark {
+:host-context( body.dark ) {
   .chat-menu {
     transition: 0.3s;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);

@@ -15,47 +15,50 @@ import {
   isAllRoomsHasValue,
   messagesSelector,
   roomByIdSelect
-} from "../../store/room-chat/room-chat.selectors";
+} from "../../store/room/room-chat.selectors";
 import {
   chatGetAvailableRooms,
   roomGetAmountOfMessagesAction,
   roomGetMessagesAction,
   roomLoadMessagesAction, roomMessageRemoveAction, roomSwitchAction, roomUpdateMessageAction
-} from "../../store/room-chat/room-chat.actions";
+} from "../../store/room/room-chat.actions";
 import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import { IUser } from "../../shared/models/IUser";
-import { ScrollTrackDirective } from "../../shared/directives/scroll-track.directive";
 
+
+/*
+* @description This component is responsible for displaying the room and messages in it
+* @description By the most part this is the central component in the whole app
+*/
 @Component({
   selector: "app-room",
   templateUrl: "room.component.html",
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit, OnDestroy {
-  private isEditing = false;
-  private emojiSubscription!: Subscription;
   private lastSelectedMessage: IMessage | null = null;
+  private isEditing = false;
 
-  public me = this.chatService.me;
-  public theme: BehaviorSubject<string> = this.themingService.theme;
-
+  private emojiSubscription!: Subscription;
   public emoji$: Observable<string> = this.roomService.emoji.asObservable().pipe(
     map((value) => {
       this.message += value;
       return value;
     })
   );
+
+  public me = this.chatService.me;
+  public theme: BehaviorSubject<string> = this.themingService.theme;
   public message: string = "";
 
   public currentRoomUnreadCount: number = 0;
 
-  public room$: Observable<IRoom | undefined> = this.activeRoute.params.pipe(
+  public room$: Observable<IRoom | null> = this.activeRoute.params.pipe(
     switchMap(({ id }) => {
       return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
           if (!value) {
             this.store.dispatch(chatGetAvailableRooms());
-            // this.store.dispatch(roomSwitchAction({roomId: id}))
           }
           this.store.dispatch(roomSwitchAction({ roomId: id }));
           this.store.dispatch(roomGetMessagesAction({ roomId: id }));
@@ -109,7 +112,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.socketService.emit("searchRooms", {});
+    // this.socketService.emit("searchRooms", {});
     this.emojiSubscription = this.emoji$.subscribe();
 
     this.socketService.listenUserLeft().subscribe();
@@ -142,6 +145,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public sendMessage(event: any, room: IRoom): void {
     const msg = this.message.trim();
     if (event.code === "Enter") event.preventDefault();
+
     if (msg && this.isEditing) {
       const newMessage = { messageId: this.lastSelectedMessage?._id, newContent: msg, roomId: room._id, };
       const messageId = this.lastSelectedMessage?._id as string;
@@ -155,26 +159,31 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.isEditing = false;
   }
 
+  /*
+  * @description This event serves to detect weather user saw the message or not, if user saw, then it marks as read
+  */
   public onViewportChange(event: { inView: boolean, id: string }, room: IRoom, messages: IMessage[]) {
     if (room._id !== "common") {
       if (event.inView) {
         this.socketService.emit("readMessage", { messageId: event.id });
         this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
-        // this.store.dispatch(updateAmountOfUnreadAction({amount: currentRoomUnreadCount}));
       }
     }
   }
 
-  // public onMessageRightClick( e: MouseEventmessage: IMessage): void {
   public onMessageRightClick(message: IMessage): void {
     if (message.creator?._id === this.chatService.me) {
       this.lastSelectedMessage = message;
     }
   }
 
+  /*
+  * @description Opens modal window for configure room
+  */
   public async openSettings(room: IRoom): Promise<void> {
     const matDialogRef = this.matDialog.open(DialogRoomSettingsComponent, { data: room });
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
+      //If Value is false - then no changes were made
       if (!value) return;
       if (value.delete) {
         this.socketService.emit("roomDelete", { roomId: value.roomId });
@@ -197,6 +206,9 @@ export class RoomComponent implements OnInit, OnDestroy {
     await lastValueFrom(afterClosedSource$);
   }
 
+  /*
+  * @description opens modal window for invite users into room
+  */
   public async openInviteParticipantsDialog(room: IRoom): Promise<void> {
     const matDialogRef = this.matDialog.open(DialogInvitingRoomComponent,
       { height: "500px", width: "500px", data: room });
@@ -212,15 +224,18 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.socketService.emit("leaveRoom", { roomId: room._id });
   }
 
+  /*
+  * @description on the list of messages stands [scrollTrackDirective]
+  * @description if it emits event - it means that user is already scrolled almost to the top of the page
+  * @description so we need to load new messages if there is ones
+  */
   public onScroll(roomId: string) {
     this.store.dispatch(roomLoadMessagesAction({ roomId }));
   }
 
   public onOptionSelect(e: string) {
-    console.log(e);
     const messageId = this.lastSelectedMessage?._id as string;
     const roomId = this.lastSelectedMessage?.room as string;
-    console.log(this.lastSelectedMessage);
 
     if (e === "edit") {
       this.isEditing = true;

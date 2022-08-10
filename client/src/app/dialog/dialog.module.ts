@@ -16,6 +16,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatRippleModule } from "@angular/material/core";
 import { MatListModule } from "@angular/material/list";
 
+/*
+* @description This is the module that wraps all the modal-window components
+*/
 @NgModule({
   declarations: [
     DialogAddingRoomComponent,

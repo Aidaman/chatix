@@ -15,15 +15,6 @@ export const userAuthFailureAction = createAction(
   ActionTypes.USER_AUTH_FAILURE,
 );
 
-export const userAcceptInvitation = createAction(
-  ActionTypes.USER_ACCEPT_INVITATION,
-  props<{user: IUser}>(),
-);
-
-export const userRejectInvitation = createAction(
-  ActionTypes.USER_REJECT_INVITATION,
-);
-
 export const userLogoutAction = createAction(
   ActionTypes.USER_LOG_OUT,
 );

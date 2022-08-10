@@ -7,7 +7,7 @@ import { IOption } from "../../../shared/models/IOption";
 import { SocketService } from "../../../shared/services/socket.service";
 import { IRoom } from "../../../shared/models/IRoom";
 import { Store } from "@ngrx/store";
-import { currentRoomSelector } from "../../../store/room-chat/room-chat.selectors";
+import { currentRoomSelector } from "../../../store/room/room-chat.selectors";
 
 @Component({
   selector: "app-message-item",
@@ -17,8 +17,13 @@ import { currentRoomSelector } from "../../../store/room-chat/room-chat.selector
 export class MessageItemComponent  {
   @Input() message!: IMessage;
   @Output() viewChange: EventEmitter<{ inView: boolean, id: string }> = new EventEmitter<{ inView: boolean, id: string, }>();
+
   public theme: BehaviorSubject<string> = this.themeService.theme;
   public me = this.chatService.me;
+
+  /*
+  * @description This is the variable that generate list of who read the message
+  */
   public menuItems: Observable<IOption[] | null> = this.store.select(currentRoomSelector()).pipe(
     map((value) => {
       const newArr = value?.users.filter((user) => this.message.read.indexOf(user._id) !== -1).map((value) => {
@@ -39,8 +44,6 @@ export class MessageItemComponent  {
               private store: Store,
               private themeService: ThemingService,) {
   }
-
-
 
   public viewportChange(e: boolean): void {
     if (this.message.read.indexOf(this.me) === -1 && this.me !== this.message.creator?._id) {

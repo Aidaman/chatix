@@ -83,7 +83,7 @@ export class RoomChatEffect {
   switchRoom$ = createEffect(() => this.actions$.pipe(
     ofType(roomSwitchAction),
     switchMap(({ roomId }) => this.store.select(roomByIdSelect(roomId)).pipe(
-      map((value: IRoom | undefined) => roomSwitchSuccessAction({ room: value ?? null })),
+      map((value: IRoom | null) => roomSwitchSuccessAction({ room: value })),
       catchError(() => of(roomSwitchFailureAction())),
     )))
   );

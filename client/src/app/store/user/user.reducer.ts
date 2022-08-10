@@ -1,7 +1,9 @@
 import { IUser } from "../../shared/models/IUser";
 import {
-  userAcceptInvitation, userAuthAction, userAuthFailureAction, userAuthSuccessAction,
-  userLogoutAction, userRejectInvitation
+  userAuthAction,
+  userAuthFailureAction,
+  userAuthSuccessAction,
+  userLogoutAction
 } from "./user.actions";
 import { createReducer, on } from "@ngrx/store";
 
@@ -36,13 +38,6 @@ export const userReducer = createReducer(
       isLoading: false,
     })
   ),
-
-  on(userAcceptInvitation, (state) => ({
-    ...state,
-  })),
-  on(userRejectInvitation, (state) => ({
-    ...state,
-  })),
 
   on(userLogoutAction, () => ({
       user: null,

@@ -24,8 +24,6 @@
         </div>
       </div>
 
-<!--      <app-contact-list [room]="room"></app-contact-list>-->
-
       <mat-list *ngIf="checkIsCommon(room)" class="menu-items">
         <mat-list-item matRipple (click)="openInviteParticipantsDialog(room)">
           <!--     (click)="inviteUsers()"     -->
@@ -40,11 +38,6 @@
         <mat-divider vertical *ngIf="room.creator?._id | isCreatedByMe"></mat-divider>
       </mat-list>
     </div>
-
-    <!--        <perfect-scrollbar [config]="config" (psScrollY)="onScroll($event)">-->
-    <!--    <perfect-scrollbar #scrollbarComponent-->
-    <!--                       [config]="perfectScrollBarConfig"-->
-    <!--                       (psScrollY)="onScroll($event, room)">-->
 
     <div id="contextmenu-control"
          app-scroll-track
@@ -76,20 +69,12 @@
         </mat-list>
       </div>
     </div>
-    <!--    </perfect-scrollbar>-->
-
     <div class="input-area">
       <div class="input-message" dir="auto">
-        <!--        (emoji$ | async)?.length / 64 ?? 1-->
         <textarea class="composer_rich_textarea"
                   [rows]="message | calculateRowsPipe"
                   [(ngModel)]="message"
                   (keydown.enter)="sendMessage($event, room)"></textarea>
-        <!--        <div class="composer_rich_textarea"-->
-        <!--                  contenteditable="true"-->
-        <!--                  [textContent]="emoji"-->
-        <!--                  (input)="onInput($event)"-->
-        <!--                  (keydown.enter)="sendMessage($event, room)"></div>-->
       </div>
 
       <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary"

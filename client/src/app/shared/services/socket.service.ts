@@ -11,7 +11,7 @@ import {
   roomMessageRemoveAction,
   roomSwitchAction,
   roomUpdateMessageAction
-} from "../../store/room-chat/room-chat.actions";
+} from "../../store/room/room-chat.actions";
 import { Store } from "@ngrx/store";
 import { Router } from "@angular/router";
 import { SnackBarNotificationService } from "./snack-bar-notification.service";
@@ -139,10 +139,8 @@ export class SocketService {
         this.store.dispatch(chatGetAvailableRooms());
 
         if (value.user._id === this.chatService.me) {
-          this.store.dispatch(roomSwitchAction({ roomId: "common" }));
           this.router.navigate(["chat", "common"]);
         }
-        // else this.router.navigate(["chat", value.room._id]);
 
         this.snackBar.openSnackBar(value.user.name + " left the room " + value.room.title, []);
       }),

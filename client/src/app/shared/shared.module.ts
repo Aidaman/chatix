@@ -6,15 +6,15 @@ import { UpdateRoomsPipe } from "./pipes/update-rooms.pipe";
 import { PremiumNicknamePipe } from "./pipes/premium-nickname.pipe";
 import { CustomContextMenuComponent } from "./components/custom-context-menu/custom-context-menu.component";
 import { MatIconModule } from "@angular/material/icon";
-import { InputAreacalculationPipe } from "./pipes/input-areacalculation.pipe";
+import { InputareaCalculationPipe } from "./pipes/inputarea-calculation.pipe";
 import { ScrollTrackDirective } from "./directives/scroll-track.directive";
 import { MatDividerModule } from "@angular/material/divider";
 import { InViewPortDirective } from "./directives/in-view-port.directive";
-import { IsPersonalMessagePipePipe } from "./pipes/find-user-pipe.pipe";
+import { IsPersonalMessagePipePipe } from "./pipes/is-personal-messages.pipe";
 import { IsCreatedByMePipe } from "./pipes/is-created-by-me.pipe";
-import { PopUpComponent } from "./components/pop-up/pop-up.component";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
+import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
 
 @NgModule({
   declarations: [
@@ -24,11 +24,11 @@ import { MatButtonModule } from "@angular/material/button";
     UpdateRoomsPipe,
     PremiumNicknamePipe,
     IsPersonalMessagePipePipe,
-    InputAreacalculationPipe,
+    InputareaCalculationPipe,
     CustomContextMenuComponent,
     InViewPortDirective,
     IsCreatedByMePipe,
-    PopUpComponent,
+    FilterListByPipe,
   ],
   imports: [
     CommonModule,
@@ -37,18 +37,19 @@ import { MatButtonModule } from "@angular/material/button";
     MatCardModule,
     MatButtonModule
   ],
-  exports: [
-    ContextMenuDirective,
-    ScrollTrackDirective,
-    SearchPipe,
-    UpdateRoomsPipe,
-    PremiumNicknamePipe,
-    CustomContextMenuComponent,
-    InputAreacalculationPipe,
-    InViewPortDirective,
-    IsPersonalMessagePipePipe,
-    IsCreatedByMePipe,
-  ],
+    exports: [
+        ContextMenuDirective,
+        ScrollTrackDirective,
+        SearchPipe,
+        UpdateRoomsPipe,
+        PremiumNicknamePipe,
+        CustomContextMenuComponent,
+        InputareaCalculationPipe,
+        InViewPortDirective,
+        IsPersonalMessagePipePipe,
+        IsCreatedByMePipe,
+        FilterListByPipe,
+    ],
   providers: [
     { provide: Window, useValue: window }
   ]

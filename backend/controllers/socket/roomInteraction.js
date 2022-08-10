@@ -162,7 +162,8 @@ module.exports = {
             rooms.push({
                 _id: 'common',
                 title: 'Common',
-                users: usersOnline
+                users: usersOnline,
+                isPublic: true,
             });
 
             for (const room of rooms) {

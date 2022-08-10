@@ -3,14 +3,14 @@ import {
   Directive,
   ElementRef,
   EventEmitter,
-  HostListener, Input,
+  HostListener,
   Output
 } from "@angular/core";
-import { SocketService } from "../services/socket.service";
-import { map } from "rxjs";
-import { ChatService } from "../services/chat.service";
-import { IMessage } from "../models/IMessage";
 
+/*
+* @description This is a directive to track the scroll in the room
+* @description It fires an event to load new messages when the scroll is at the right position
+*/
 @Directive({
   selector: "[app-scroll-track]"
 })

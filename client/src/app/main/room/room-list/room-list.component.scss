@@ -177,8 +177,7 @@
   }
 }
 
-.light {
-
+:host-context( body.light ) {
   .list-title {
     transition: 0.3s;
     background: rgba(0, 0, 0, 0.39);
@@ -285,7 +284,7 @@
 
 }
 
-.dark {
+:host-context( body.dark ) {
 
   .list-title {
     transition: 0.3s;
@@ -395,12 +394,4 @@
 }
 .done-all{
   color: #2a529c;
-}
-
-.unread-roundel{
-  background: #2a529c;
-  color: white;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
 }
