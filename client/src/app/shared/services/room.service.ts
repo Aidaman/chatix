@@ -7,9 +7,19 @@ import { IMessage } from "../models/IMessage";
 })
 export class RoomService {
   public emoji: BehaviorSubject<string> = new BehaviorSubject<string>(" ");
-  public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
   public messagesInCommon: BehaviorSubject<IMessage[]> = new BehaviorSubject<IMessage[]>([]);
 
   constructor() {}
+
+  public editMessageInCommon(messageId: string, correction: string): void {
+    const newMessagesArray = this.messagesInCommon.value.map((message) => {
+      if (message._id === messageId) {
+        message = { ...message, content: correction };
+      }
+      return message;
+    });
+
+    this.messagesInCommon.next(newMessagesArray);
+  }
+
 }

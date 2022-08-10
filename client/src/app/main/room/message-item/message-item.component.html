@@ -14,8 +14,7 @@
   <ng-template #notSystemMessage>
     <div class="message-container">
       <div class="avatar" [ngClass]="{'online': message.creator?.isOnline && message.creator?._id !== me}">
-        <!--        *ngIf="emoji.creator?._id !== me"-->
-        <img alt="Here be dragons" [src]="message.creator?.avatar">
+        <img alt="none" [src]="message.creator?.avatar">
       </div>
       <div class="message-content">
         <span class="message-user">
@@ -23,12 +22,9 @@
                 <span class="online">Deleted</span>
             </ng-container>
             <ng-template #userExist>
-              <!--<span class="online" *ngIf="users[message.creator._id].online && message.creator._id === me">Online</span>-->
                 <span [ngClass]="{'premium': message.creator?.isPremium}">
                     {{message.creator?.name | premiumNickname: !!message.creator?.isPremium}}
                 </span>
-              <!--<span class="online" *ngIf="users[message.creator._id].online && message.creator._id !== me">Online</span>-->
-              <!--              <span class="online" *ngIf="message.creator?.isOnline && message.creator?._id !== me">Online</span>-->
             </ng-template>
         </span>
 
@@ -36,7 +32,6 @@
              [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage}"
              [matBadge]="message.read.length"
              matBadgePosition="above after">
-          <!--          (inViewportChange)="viewportChange($event)"-->
           <p>{{message.content}}</p>
           <button *ngIf="message.creator?._id === me"
                   [cdkMenuTriggerFor]="readers"

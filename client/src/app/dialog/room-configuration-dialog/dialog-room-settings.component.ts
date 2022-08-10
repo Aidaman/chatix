@@ -60,6 +60,8 @@ export class DialogRoomSettingsComponent{
   }
 
   public switchPrivate(): void {
-    this.isRoomPublic = !this.isRoomPublic;
+    if (this.room.isFavorites) return;
+
+    else this.isRoomPublic = !this.isRoomPublic;
   }
 }

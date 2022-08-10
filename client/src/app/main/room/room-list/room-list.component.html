@@ -1,8 +1,10 @@
 <div class="room-list-wrapper">
   <div class="list-title">
     <p>Main menu</p>
-    <button mat-button matRipple (click)="closeList()">
-      <mat-icon>arrow_back_ios</mat-icon>
+    <button (click)="closeList()" mat-button matRipple>
+      <mat-icon [matBadgeHidden]="(overallUnread | async) === 0"
+                [matBadge]="overallUnread | async"
+                matBadgePosition="above after">arrow_back_ios</mat-icon>
     </button>
   </div>
 

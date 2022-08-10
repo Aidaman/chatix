@@ -1,9 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, EMPTY, Observable } from "rxjs";
+import { BehaviorSubject, EMPTY, map, Observable } from "rxjs";
 import { IMessage } from "../models/IMessage";
 import { environment } from "../../../environments/environment";
 import { LocalStorageService } from "./local-storage.service";
+import { Store } from "@ngrx/store";
+import { allRoomsSelector } from "../../store/room/room-chat.selectors";
 
 @Injectable({
   providedIn: "root"
@@ -12,8 +14,16 @@ export class ChatService {
   public me: string = this.localStorageService.getUser()["id"] as string;
   public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isMyMessage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  public overallUnread = this.store.select(allRoomsSelector).pipe(
+    map((rooms) => {
+      return rooms.reduce((accumulator, room) => room._id !== "common"? accumulator + room.unread : accumulator, 0);
+    }),
+  );
 
   constructor(private http: HttpClient,
+              private store: Store,
               private localStorageService: LocalStorageService) {}
 
   /*

@@ -14,12 +14,12 @@ import {
 @Directive({
   selector: "[app-scroll-track]"
 })
-export class ScrollTrackDirective implements AfterViewInit {
+export class ScrollTrackDirective implements AfterViewInit{
   @Output() loadMessages = new EventEmitter<void>();
   private isEmitted: boolean = false;
   private scrollHeight: number = 0;
 
-  constructor(private el: ElementRef,) {
+  constructor(private el: ElementRef) {
   }
 
   public ngAfterViewInit(): void {

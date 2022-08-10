@@ -10,6 +10,7 @@ import { Store } from "@ngrx/store";
 import { userAuthAction } from "../../store/user/user.actions";
 import { allRoomsSelector, isAllRoomsHasValue } from "../../store/room/room-chat.selectors";
 import { chatGetAvailableRooms } from "../../store/room/room-chat.actions";
+import {ChatService} from "../../shared/services/chat.service";
 
 /*
 * @description This is the component that wraps room and room-list components
@@ -22,12 +23,11 @@ import { chatGetAvailableRooms } from "../../store/room/room-chat.actions";
   styleUrls: ["./chat.component.scss"]
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  public opened: BehaviorSubject<boolean> = this.roomService.sideMenuOpened;
-
+  public opened: BehaviorSubject<boolean> = this.chatService.sideMenuOpened;
   public theme: BehaviorSubject<string> = this.themingService.theme;
 
   constructor(private store: Store,
-              private roomService: RoomService,
+              private chatService: ChatService,
               private socketService: SocketService,
               private themingService: ThemingService,
               public dialog: MatDialog,) {

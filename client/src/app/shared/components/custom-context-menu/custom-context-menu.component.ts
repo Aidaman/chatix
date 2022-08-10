@@ -30,6 +30,7 @@ export class CustomContextMenuComponent implements OnInit{
   }
 
   public selectOption(optionId: string): void {
+    this.chatService.showContextMenu.next(false);
     this.optionSelect.emit(optionId);
   }
 

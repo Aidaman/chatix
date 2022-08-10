@@ -1,11 +1,11 @@
 <ng-container *ngIf="room$ | async as room">
-  <div class="room-wrapper"
-       *ngIf="theme | async as theme"
-       [ngClass]="{'dark': theme === 'dark', 'light': theme === 'light'}">
+  <div class="room-wrapper">
     <div class="chat-menu">
       <div class="room-info">
         <button mat-button (click)="toggleMatDrawer()">
-          <mat-icon>
+          <mat-icon [matBadgeHidden]="(overallUnread | async) === 0"
+                    [matBadge]="overallUnread | async"
+                    matBadgePosition="above after">
             vertical_split
           </mat-icon>
         </button>
@@ -16,7 +16,7 @@
           </mat-icon>
           <div class="room-title-text">
             {{me | isPersonalMessagePipe: room}}
-            <small>{{room.users.length}} participants</small>
+            <small *ngIf="!room.isFavorites">{{room.users.length}} participants</small>
           </div>
           <button mat-button (click)="openSettings(room)">
             <mat-icon>people_alt</mat-icon>

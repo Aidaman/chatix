@@ -1,13 +1,9 @@
 <div class="chat-wrapper">
-<!--  <ng-container *ngIf="listOfRooms">-->
     <mat-drawer-container autosize class="sidenav-wrapper">
       <mat-drawer class="sidenav-content"
                   [opened]="opened | async ">
-        <app-room-list>
-
-        </app-room-list>
+        <app-room-list></app-room-list>
       </mat-drawer>
       <app-room></app-room>
     </mat-drawer-container>
-<!--  </ng-container>-->
 </div>

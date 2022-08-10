@@ -6,10 +6,9 @@ import { LocalStorageService } from "./local-storage.service";
 import * as io from "socket.io-client";
 import {
   chatGetAvailableRooms,
-  roomGetMessagesAction, roomGetNewMessageAction,
+  roomGetNewMessageAction,
   roomMessageReadAction,
   roomMessageRemoveAction,
-  roomSwitchAction,
   roomUpdateMessageAction
 } from "../../store/room/room-chat.actions";
 import { Store } from "@ngrx/store";
@@ -74,10 +73,10 @@ export class SocketService {
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
       map((value: { message: IMessage, room: string }) => {
-        // if (value.room === "common") {
-        //   const messagesInCommon = this.roomService.messagesInCommon.value;
-        //   this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
-        // }
+        if (value.room === "common") {
+          const messagesInCommon = this.roomService.messagesInCommon.value;
+          this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
+        }
         this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
         this.snackBar.openSnackBar("You receive new Message", []);
       }),

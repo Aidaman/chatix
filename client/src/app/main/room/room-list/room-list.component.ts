@@ -38,7 +38,7 @@ export class RoomListComponent  {
 
   public searchCondition: string = "public";
 
-  public overallUnread: number = 0;
+  public overallUnread: Observable<number> = this.chatService.overallUnread;
 
   public searchText: string = "";
   public isPublicRooms: boolean = false;
@@ -83,7 +83,7 @@ export class RoomListComponent  {
   // }
 
   public closeList() {
-    this.roomService.sideMenuOpened.next(false);
+    this.chatService.sideMenuOpened.next(false);
   }
 
   public navigateRoom(roomId: string) {

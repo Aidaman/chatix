@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ThemingService } from "../../shared/services/theming.service";
 import { RoomService } from "../../shared/services/room.service";
 import { IRoom } from "../../shared/models/IRoom";
@@ -52,6 +52,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public message: string = "";
 
   public currentRoomUnreadCount: number = 0;
+  public overallUnread: Observable<number> = this.chatService.overallUnread;
 
   public room$: Observable<IRoom | null> = this.activeRoute.params.pipe(
     switchMap(({ id }) => {
@@ -80,7 +81,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           return this.store.select(messagesSelector);
         })
       );
-      return [];
+      return this.roomService.messagesInCommon.asObservable();
     }),
     tap((messages) => {
       this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
@@ -134,8 +135,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public toggleMatDrawer(): void {
-    const newValue = !this.roomService.sideMenuOpened.value;
-    this.roomService.sideMenuOpened.next(newValue);
+    const newValue = !this.chatService.sideMenuOpened.value;
+    this.chatService.sideMenuOpened.next(newValue);
   }
 
   public checkIsCommon(room: IRoom): boolean {
@@ -146,13 +147,18 @@ export class RoomComponent implements OnInit, OnDestroy {
     const msg = this.message.trim();
     if (event.code === "Enter") event.preventDefault();
 
-    if (msg && this.isEditing) {
-      const newMessage = { messageId: this.lastSelectedMessage?._id, newContent: msg, roomId: room._id, };
-      const messageId = this.lastSelectedMessage?._id as string;
-      this.socketService.emit("updateMessage", newMessage);
-      this.store.dispatch(roomUpdateMessageAction({ messageId, correction: msg }));
-    } else if (msg) {
-      this.socketService.emit("createMessage", { message: msg, room: room._id, });
+    const newMessage = { messageId: this.lastSelectedMessage?._id, newContent: msg, roomId: room._id, };
+    const messageId = this.lastSelectedMessage?._id as string;
+
+    if (msg) {
+      if (room._id === "common" && this.isEditing)
+        this.roomService.editMessageInCommon(messageId, msg);
+
+      else if (room._id !== "common" && this.isEditing) {
+        this.socketService.emit("updateMessage", newMessage);
+        this.store.dispatch(roomUpdateMessageAction({ messageId, correction: msg }));
+      }
+      else this.socketService.emit("createMessage", { message: msg, room: room._id, });
     }
 
     this.message = "";

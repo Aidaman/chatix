@@ -1,13 +1,21 @@
 <div class="dialog-wrapper">
   <div class="dialog-content-wrapper">
 
-    <h1 mat-dialog-title>
+    <h1 mat-dialog-title *ngIf="room.creator?._id === me; else nonEditableTitle">
       <input type="text" [(ngModel)]="newRoomTitle">
-<!--      <span contenteditable="true">{{room.title}}</span>-->
+      <!--      <span contenteditable="true">{{room.title}}</span>-->
       <mat-icon matRipple>edit</mat-icon>
     </h1>
 
-    <mat-slide-toggle [checked]="isRoomPublic" (change)="switchPrivate()">
+    <ng-template #nonEditableTitle>
+      <h1 mat-dialog-title>
+        <span>{{room.title}}</span>
+      </h1>
+    </ng-template>
+
+    <mat-slide-toggle *ngIf="room.creator?._id === me"
+                      [checked]="isRoomPublic"
+                      (change)="switchPrivate()">
       {{isRoomPublic ? 'Public' : 'Private'}}
     </mat-slide-toggle>
 
@@ -38,14 +46,16 @@
           clear
         </i>
       </button>
-      <button mat-button (click)="onUpdate()"
-              class="create-btn">Update</button>
+      <button *ngIf="room.creator?._id === me" mat-button (click)="onUpdate()"
+              class="create-btn">Update
+      </button>
       <button (click)="deleteConfirm()"
               *ngIf="room.creator?._id === me
               && room.title.toLowerCase() !== 'favorites'
               && room.title.toLowerCase() !== 'common'"
               class="create-btn"
-              mat-button>Delete</button>
+              mat-button>Delete
+      </button>
     </div>
     <div class="deleting-area" *ngIf="delete">
       <mat-form-field>
