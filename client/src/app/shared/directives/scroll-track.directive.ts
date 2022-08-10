@@ -38,4 +38,8 @@ export class ScrollTrackDirective implements AfterViewInit{
       this.isEmitted = false;
     }
   }
+
+  public scrollDown(): void{
+    this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
+  }
 }

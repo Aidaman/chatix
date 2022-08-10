@@ -33,13 +33,16 @@
     justify-content: space-between;
     align-content: space-between;
 
-    &::-webkit-scrollbar{
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
       width: 8px;
       border-radius: 6px;
       transition: 0.3s;
     }
-    &::-webkit-scrollbar-track{
-      background-color: rgba(255, 255, 255, 0.25);
+
+    &::-webkit-scrollbar-track {
+      background-color: rgba(203, 203, 203, 0.5);
       transition: 0.3s;
       border-radius: 6px;
 
@@ -47,13 +50,14 @@
         background-color: rgba(148, 148, 148, 0.25);
       }
     }
+
     &::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(255, 255, 255, 0.6);
       border-radius: 6px;
       transition: 0.3s;
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(148, 148, 148, 0.5);
       }
     }
 

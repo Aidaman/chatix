@@ -46,7 +46,7 @@ export class MessageItemComponent  {
   }
 
   public viewportChange(e: boolean): void {
-    if (this.message.read.indexOf(this.me) === -1 && this.me !== this.message.creator?._id) {
+    if (this.me !== this.message.creator?._id && !this.message.isSystemMessage && this.message.read.indexOf(this.me) === -1) {
       this.viewChange.emit({ inView: e, id: this.message._id, });
     }
   }

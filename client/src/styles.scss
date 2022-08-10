@@ -5,22 +5,30 @@
 @import url('https://fonts.googleapis.com/css?family=Julius+Sans+One&display=swap');
 
 html, body {
-    //height: 100%;
-    min-height: 100vh;
-    max-height: 100vh;
-    overflow: hidden !important;
+  //height: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden !important;
 }
-body { margin: 0; font-family: Roboto, "Noto Color Emoji" ,"Helvetica Neue", sans-serif; }
+
+body {
+  margin: 0;
+  font-family: Roboto, "Noto Color Emoji", "Helvetica Neue", sans-serif;
+}
 
 .mat-menu-panel {
-    background: #e6e7f2;
+  background: #e6e7f2;
 
-    .mat-icon {
-        color: black;
-    }
+  .mat-icon {
+    color: black;
+  }
 
-    .mat-menu-item {
-        font-family: 'Quicksand', "Noto Color Emoji" ,"Helvetica Neue", sans-serif;
-        font-weight: 500;
-    }
+  .mat-menu-item {
+    font-family: 'Quicksand', "Noto Color Emoji", "Helvetica Neue", sans-serif;
+    font-weight: 500;
+  }
+}
+
+.scrollbar {
+
 }

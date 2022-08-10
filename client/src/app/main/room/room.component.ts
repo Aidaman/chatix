@@ -24,7 +24,7 @@ import {
 } from "../../store/room/room-chat.actions";
 import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import { IUser } from "../../shared/models/IUser";
-
+import { ScrollTrackDirective } from "../../shared/directives/scroll-track.directive";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -36,6 +36,8 @@ import { IUser } from "../../shared/models/IUser";
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit, OnDestroy {
+  @ViewChild(ScrollTrackDirective) scrollBarTrack!: ScrollTrackDirective;
+
   private lastSelectedMessage: IMessage | null = null;
   private isEditing = false;
 
@@ -158,7 +160,10 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.socketService.emit("updateMessage", newMessage);
         this.store.dispatch(roomUpdateMessageAction({ messageId, correction: msg }));
       }
-      else this.socketService.emit("createMessage", { message: msg, room: room._id, });
+      else {
+        this.socketService.emit("createMessage", { message: msg, room: room._id, });
+        this.scrollBarTrack.scrollDown();
+      }
     }
 
     this.message = "";

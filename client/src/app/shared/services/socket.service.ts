@@ -105,6 +105,7 @@ export class SocketService {
   public listenUserJoined(): Observable<any> {
     return this.listen("userJoined").pipe(
       map((value: {user: IUser, room: IRoom}) => {
+        console.log("userJoined");
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
 
@@ -113,7 +114,6 @@ export class SocketService {
           return;
         }
         else {
-          this.snackBar.openSnackBar(value.user.name + " has joined " + value.room.title, []);
           if (value.user._id === this.chatService.me)
             this.router.navigate(["chat", value.room._id]);
           else return;
@@ -138,6 +138,7 @@ export class SocketService {
         this.store.dispatch(chatGetAvailableRooms());
 
         if (value.user._id === this.chatService.me) {
+          console.log("worked");
           this.router.navigate(["chat", "common"]);
         }
 

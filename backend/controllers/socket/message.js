@@ -53,7 +53,6 @@ module.exports = {
             if (!!message.read.find(i => String(i) === socket.decoded_token.id)) {
                 return console.log('message already read');
             }
-            console.log("(read message) message is read:", userInRoom);
 
             message.read.push(socket.decoded_token.id);
             await message.save();
@@ -75,11 +74,6 @@ module.exports = {
             }
             const content = crypto.AES.encrypt(validator.escape(params.newContent), MESSAGE_KEY).toString();
             await message.update({content});
-
-            console.log("Update sending: ", {
-                id: params.messageId, room: params.roomId,
-                newContent: params.newContent, createdAt: message.createdAt
-            });
 
             await message.save();
             return io.to(params.roomId).emit('messageUpdated', {

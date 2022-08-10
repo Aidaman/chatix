@@ -16,6 +16,26 @@ module.exports = {
                 socket.join(params.roomId);
                 io.to(socket.id).emit('newRoom', room);
 
+                const content = `${user.name} has joined the ${room.title} 😁`;
+                const contentEncrypted = crypto.AES.encrypt(validator.escape(content), MESSAGE_KEY).toString();
+
+                await Message.create({
+                    createdAt: Date.now(),
+                    room: params.roomId,
+                    content: contentEncrypted,
+                    isSystemMessage: true,
+                    creator: user
+                });
+
+                io.to(params.roomId).emit('newMessage', {
+                    message: {
+                        content,
+                        createdAt: Date.now(),
+                        isSystemMessage: true,
+                        creator: user
+                    }, room: params.roomId
+                });
+
                 return io.to(params.roomId).emit('userJoined', {user: user, room: room});
             }
             throw new Error('Not allowed');

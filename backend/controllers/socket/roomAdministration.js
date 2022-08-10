@@ -68,7 +68,6 @@ module.exports = {
             participants = participants.filter(user => {
                 let flag = false;
                 for (let roomUser of room.users) {
-                    console.log(String(user._id), String(roomUser), String(user._id) !== String(roomUser));
                     if (String(user._id) !== String(roomUser)) {
                         flag = true;
                     } else {
