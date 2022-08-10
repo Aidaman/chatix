@@ -12,7 +12,7 @@ import { ChatService } from "../../shared/services/chat.service";
 @Component({
   selector: "app-room-settings",
   templateUrl: "./dialog-room-settings.component.html",
-  styleUrls: ["./dialog-room-settings.component.scss"],
+  styleUrls: ["./dialog-room-settings.component.scss", "../common-dialog-styles.scss"],
 })
 export class DialogRoomSettingsComponent{
   public participants: IUser[] = this.room.users.filter(user => user._id !== this.me);

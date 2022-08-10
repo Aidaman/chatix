@@ -11,9 +11,9 @@ import { ChatService } from "../../shared/services/chat.service";
 * @description This component describes modal window for invite users to room
 */
 @Component({
-  selector: "app-invite-to-room-dialog-chat",
+  selector: "app-invite-to-room",
   templateUrl: "./dialog-inviting-room.component.html",
-  styleUrls: ["./dialog-inviting-room.component.scss"],
+  styleUrls: ["./dialog-inviting-room.component.scss", "../common-dialog-styles.scss"],
 })
 export class DialogInvitingRoomComponent implements OnInit, OnDestroy {
 

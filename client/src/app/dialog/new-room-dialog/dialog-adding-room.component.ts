@@ -12,7 +12,7 @@ import { BehaviorSubject, debounceTime, Subscription } from "rxjs";
 @Component({
   selector: "app-new-room-dialog-chat",
   templateUrl: "./dialog-adding-room.component.html",
-  styleUrls: ["./dialog-adding-room.component.scss"],
+  styleUrls: ["./dialog-adding-room.component.scss", "../common-dialog-styles.scss"],
 })
 export class DialogAddingRoomComponent implements OnInit, OnDestroy {
   private me = this.localStorageService.getUser()["id"] as string;
