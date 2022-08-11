@@ -87,6 +87,7 @@ export class RoomListComponent  {
   }
 
   public navigateRoom(roomId: string) {
+    this.closeList();
     this.store.dispatch(roomSwitchAction({ roomId }));
     this.router.navigate(["/chat", roomId]);
   }

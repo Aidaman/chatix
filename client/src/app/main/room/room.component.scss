@@ -30,6 +30,9 @@
     height: 100vh;
   }
   @include lg() {
+    height: 92.5vh;
+  }
+  @include xl(){
     height: 94.5vh;
   }
   overflow: hidden;
