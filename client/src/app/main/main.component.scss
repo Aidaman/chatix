@@ -1,14 +1,29 @@
-.main-wrapper{
+@import "../../assets/mixins.scss";
+
+.mobile-absent{
+  @include sm(){
+    display: none;
+  }
+  @include lg(){
+    display: block;
+  }
+}
+
+.main-wrapper {
+  @include sm(){
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    width: 100%;
+  }
+
+  @include lg(){
+    //display: grid;
+    //grid-template-rows: 6.5% 93.5%;
+  }
+}
+
+.body-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  //max-height: 97%;
-  //overflow-y: hidden;
-}
-.body-wrapper{
-  display: grid;
-  grid-template-columns: 70% 30%;
-  width: 100%;
-  //max-height: 95%;
-  //overflow-y: hidden;
 }

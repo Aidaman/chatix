@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { EMOJI } from "../../shared/EMOJIS";
 import { ThemingService } from "../../shared/services/theming.service";
 import { RoomService } from "../../shared/services/room.service";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: "app-emojis",
@@ -10,10 +11,9 @@ import { RoomService } from "../../shared/services/room.service";
 })
 export class EmojisComponent {
   public smiles: string[] = Object.values(EMOJI);
-  public theme = this.themeService.theme;
+  // public showEmoji: BehaviorSubject<boolean> = this.roomService.showEmoji;
 
-  constructor(public roomService: RoomService,
-              public themeService: ThemingService) {
+  constructor(public roomService: RoomService) {
   }
 
   public sendToInput(smile: string): void {

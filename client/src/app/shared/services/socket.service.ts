@@ -78,7 +78,11 @@ export class SocketService {
           this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
         }
         this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
-        this.snackBar.openSnackBar("You receive new Message", []);
+        this.snackBar.openSnackBar("You receive new Message", [], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 50,
+        });
       }),
       takeUntil(this.termination$));
   }
@@ -110,7 +114,11 @@ export class SocketService {
         this.store.dispatch(chatGetAvailableRooms());
 
         if (!value.room && value.user._id === this.chatService.me) {
-          this.snackBar.openSnackBar("welcome " + value.user.name, []);
+          this.snackBar.openSnackBar("welcome " + value.user.name, ["ok"], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 1000,
+          });
           return;
         }
         else {
@@ -142,7 +150,11 @@ export class SocketService {
           this.router.navigate(["chat", "common"]);
         }
 
-        this.snackBar.openSnackBar(value.user.name + " left the room " + value.room.title, []);
+        this.snackBar.openSnackBar(value.user.name + " left the room " + value.room.title, [], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 1000,
+        });
       }),
       takeUntil(this.termination$),
     );
@@ -158,7 +170,11 @@ export class SocketService {
     return this.listen("newRoom").pipe(
       map(() => {
         this.emit("getAllRooms", {});
-        this.snackBar.openSnackBar("Room has been created", ["Ok"]);
+        this.snackBar.openSnackBar("Room has been created", ["Ok"], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 2000,
+        });
         this.store.dispatch(chatGetAvailableRooms());
       }),
       takeUntil(this.termination$),
@@ -175,7 +191,11 @@ export class SocketService {
   public listenRoomDeleted(): Observable<any> {
     return this.listen("roomDeleted").pipe(
       map((data: { room: IRoom }) => {
-        this.snackBar.openSnackBar(data.room.title + " has been deleted", []);
+        this.snackBar.openSnackBar(data.room.title + " has been deleted", [], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 500,
+        });
 
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
@@ -193,7 +213,11 @@ export class SocketService {
   public listenRoomRenamed(): Observable<any> {
     return this.listen("roomRename").pipe(
       map(() => {
-        this.snackBar.openSnackBar("room has been renamed", []);
+        this.snackBar.openSnackBar("room has been renamed", [], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 500,
+        });
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -210,7 +234,11 @@ export class SocketService {
   public listenPrivacyChanged(): Observable<any> {
     return this.listen("privacyChanged").pipe(
       map(() => {
-        this.snackBar.openSnackBar("room privacy changed", ["Ok"]);
+        // this.snackBar.openSnackBar("room privacy changed", ["Ok"], {
+        //   horizontalPosition: "center",
+        //   verticalPosition: "top",
+        //   duration: 500,
+        // });
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
       }),
@@ -260,7 +288,11 @@ export class SocketService {
   public listenMessageUpdated(): Observable<any> {
     return this.listen("messageUpdated").pipe(
       map((value) => {
-        this.snackBar.openSnackBar("Message has been updated",["Ok"]);
+        this.snackBar.openSnackBar("Message has been updated",["Ok"], {
+          horizontalPosition: "center",
+          verticalPosition: "bottom",
+          duration: 2000,
+        });
         this.store.dispatch(roomUpdateMessageAction({ messageId: value.id, correction: value.newContent }));
       }),
       takeUntil(this.termination$));
@@ -275,7 +307,11 @@ export class SocketService {
   public listenMessageDeleted(): Observable<any> {
     return this.listen("messageDeleted").pipe(
       map((value) => {
-        this.snackBar.openSnackBar("Message has been deleted",["Ok", "Discard"]);
+        this.snackBar.openSnackBar("Message has been deleted",["Ok", "Discard"], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 2000,
+        });
         this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
       }),
       takeUntil(this.termination$));

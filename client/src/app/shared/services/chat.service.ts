@@ -15,6 +15,7 @@ export class ChatService {
   public showContextMenu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isMyMessage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public showEmoji: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public overallUnread = this.store.select(allRoomsSelector).pipe(
     map((rooms) => {

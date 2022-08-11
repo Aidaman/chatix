@@ -1,3 +1,5 @@
+@import "../../../assets/mixins";
+
 .chat-wrapper {
   //position: relative;
   display: flex;
@@ -20,12 +22,28 @@
     height: 100%;
   }
 
+  .sidenav-content.mobile-absent{
+    @include sm(){
+      display: none;
+    }
+    @include lg(){
+      display: block;
+    }
+  }
+
   .sidenav-content {
     display: flex;
-    height: 100%;
-    width: 300px;
     align-items: center;
     justify-content: center;
+    height: 100%;
+
+    @include sm(){
+      width: 100%;
+    }
+    @include lg(){
+      width: 300px;
+    }
+
   }
 
   .room-wrapper {

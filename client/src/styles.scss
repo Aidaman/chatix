@@ -29,6 +29,20 @@ body {
   }
 }
 
-.scrollbar {
+.mobile-present{
+  @include sm(){
+    display: block;
+  }
+  @include lg() {
+    display: none;
+  }
+}
 
+.mobile-absent{
+  @include sm(){
+    display: none;
+  }
+  @include lg(){
+    display: block;
+  }
 }

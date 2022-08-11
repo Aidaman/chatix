@@ -1,10 +1,10 @@
 <div class="dialog-wrapper">
   <div class="dialog-content-wrapper">
 
-    <h1 mat-dialog-title *ngIf="room.creator?._id === me; else nonEditableTitle">
+    <h1 mat-dialog-title class="" *ngIf="room.creator?._id === me; else nonEditableTitle">
+      <mat-icon matRipple>edit</mat-icon>
       <input type="text" [(ngModel)]="newRoomTitle">
       <!--      <span contenteditable="true">{{room.title}}</span>-->
-      <mat-icon matRipple>edit</mat-icon>
     </h1>
 
     <ng-template #nonEditableTitle>
@@ -41,10 +41,8 @@
     </div>
 
     <div mat-dialog-actions>
-      <button mat-button (click)="onNoClick()" class="close-btn">
-        <i class="material-icons">
-          clear
-        </i>
+      <button mat-icon-button (click)="onNoClick()" class="close-btn">
+        <mat-icon>close</mat-icon>
       </button>
       <button *ngIf="room.creator?._id === me" mat-button (click)="onUpdate()"
               class="create-btn">Update

@@ -3,9 +3,10 @@ import { ChatService } from "../shared/services/chat.service";
 import { AuthService } from "../shared/services/auth.service";
 import { SocketService } from "../shared/services/socket.service";
 import { LocalStorageService } from "../shared/services/local-storage.service";
-import { Subscription } from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 import { ThemingService } from "../shared/services/theming.service";
 import { Router } from "@angular/router";
+import {RoomService} from "../shared/services/room.service";
 
 
 /*

@@ -15,6 +15,7 @@ import { IsCreatedByMePipe } from "./pipes/is-created-by-me.pipe";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
+import {CustomMessageInputComponent} from "./components/custom-message-input/custom-control.component";
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
     InViewPortDirective,
     IsCreatedByMePipe,
     FilterListByPipe,
+    CustomMessageInputComponent,
   ],
   imports: [
     CommonModule,
@@ -37,19 +39,20 @@ import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
     MatCardModule,
     MatButtonModule
   ],
-    exports: [
-        ContextMenuDirective,
-        ScrollTrackDirective,
-        SearchPipe,
-        UpdateRoomsPipe,
-        PremiumNicknamePipe,
-        CustomContextMenuComponent,
-        InputareaCalculationPipe,
-        InViewPortDirective,
-        IsPersonalMessagePipePipe,
-        IsCreatedByMePipe,
-        FilterListByPipe,
-    ],
+  exports: [
+    ContextMenuDirective,
+    ScrollTrackDirective,
+    SearchPipe,
+    UpdateRoomsPipe,
+    PremiumNicknamePipe,
+    CustomContextMenuComponent,
+    InputareaCalculationPipe,
+    InViewPortDirective,
+    IsPersonalMessagePipePipe,
+    IsCreatedByMePipe,
+    FilterListByPipe,
+    CustomMessageInputComponent,
+  ],
   providers: [
     { provide: Window, useValue: window }
   ]

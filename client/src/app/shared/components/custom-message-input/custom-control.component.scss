@@ -1,0 +1,25 @@
+@import "src/assets/mixins";
+
+.composer_rich_textarea {
+  border: 0;
+  outline: none;
+  margin: 0;
+  line-height: 20px;
+  height: auto;
+  min-height: 40px;
+  max-height: 250px;
+  box-sizing: border-box;
+  font-family: 'Quicksand', "Noto Color Emoji" ,"Helvetica Neue", sans-serif;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  border-radius: 30px;
+
+  @include sm {
+    padding: 10px;
+  }
+
+  @include md {
+    padding: 10px 25px 10px 10px;
+  }
+}

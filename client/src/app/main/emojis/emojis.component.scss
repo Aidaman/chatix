@@ -1,3 +1,5 @@
+@import "../../../assets/mixins";
+
 .smiles-wrapper {
   user-select: none;
   display: flex;
@@ -5,89 +7,154 @@
   background: transparent;
   flex-direction: column;
 
-  .title {
-    padding: 0 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Montserrat Alternates', sans-serif;
-    align-items: center;
-    width: 100%;
-    color: white;
-    height: 48px;
-    min-height: 48px;
-    background: rgba(0, 0, 0, 0.51);
-
-    margin: 0;
-    font-weight: 400;
-    font-size: 30px;
-  }
-
-  .smiles-list {
-    max-height: 85.9vh;
-    overflow-y: auto;
-
-    display: flex;
-    flex-wrap: wrap;
-    padding: 10px;
-    justify-content: space-between;
-    align-content: space-between;
-
-    overflow-y: auto;
-
-    &::-webkit-scrollbar {
-      width: 8px;
-      border-radius: 6px;
-      transition: 0.3s;
+  @include sm() {
+    .title {
+      display: none;
     }
 
-    &::-webkit-scrollbar-track {
-      background-color: rgba(203, 203, 203, 0.5);
-      transition: 0.3s;
-      border-radius: 6px;
+    .smiles-list {
+      max-height: 40vh;
+      overflow-y: auto;
 
-      &:hover {
-        background-color: rgba(148, 148, 148, 0.25);
-      }
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.6);
-      border-radius: 6px;
-      transition: 0.3s;
-
-      &:hover {
-        background-color: rgba(148, 148, 148, 0.5);
-      }
-    }
-
-    .smile-item {
-      cursor: pointer;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 10px;
-      background: rgba(0, 0, 0, 0.51);
-      width: 65px;
-      height: 65px;
-      border-radius: 50px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-content: space-between;
 
-      &:hover {
-        .smile-img {
-          transform: scale(2);
+      &::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 6px;
+        transition: 0.3s;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: rgba(203, 203, 203, 0.5);
+        transition: 0.3s;
+        border-radius: 6px;
+
+        &:hover {
+          background-color: rgba(148, 148, 148, 0.25);
         }
       }
 
-      *{
-        transition: 0.175s;
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 6px;
+        transition: 0.3s;
+
+        &:hover {
+          background-color: rgba(148, 148, 148, 0.5);
+        }
       }
+    }
+  }
+
+  @include md() {
+    .smiles-list {
+      gap: 2px
+    }
+  }
+  @include lg() {
+    .smiles-list {
+      gap: 0
+    }
+  }
+
+  @include lg() {
+
+    .title {
+      padding: 0 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Montserrat Alternates', sans-serif;
+      align-items: center;
+      width: 100%;
+      color: white;
+      height: 48px;
+      min-height: 48px;
+      background: rgba(0, 0, 0, 0.51);
+
+      margin: 0;
+      font-weight: 400;
+      font-size: 30px;
+    }
+
+    .smiles-list {
+      max-height: 85.9vh;
+      overflow-y: auto;
+
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px;
+      justify-content: space-between;
+      align-content: space-between;
+
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+        border-radius: 6px;
+        transition: 0.3s;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: rgba(203, 203, 203, 0.5);
+        transition: 0.3s;
+        border-radius: 6px;
+
+        &:hover {
+          background-color: rgba(148, 148, 148, 0.25);
+        }
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 6px;
+        transition: 0.3s;
+
+        &:hover {
+          background-color: rgba(148, 148, 148, 0.5);
+        }
+      }
+    }
+  }
+
+  .smile-item {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.51);
+    height: 55px;
+
+    @include sm() {
+      width: 20%;
+      font-size: 20px;
+      margin-inline: 3px;
+    }
+    @include md() {
+      width: 15%;
+      font-size: 20px;
+      //margin-inline: 2px;
+    }
+    @include lg() {
+      width: 22%;
+      font-size: 25px;
+      margin-inline: 3px;
+    }
+    border-radius: 50px;
+
+    * {
+      transition: 0.175s;
     }
   }
 }
 
 :host-context( body.light ) {
   transition: 0.3s;
-  background-color: #e6e7f2;
+  background-color: #e6e7f2 !important;;
 
   .title {
     transition: .3s;
@@ -105,7 +172,7 @@
 
 :host-context( body.dark ) {
   transition: 0.3s;
-  background-color: #273038;
+  background-color: #273038 !important;
 
   .title {
     transition: .3s;
@@ -120,4 +187,3 @@
     }
   }
 }
-

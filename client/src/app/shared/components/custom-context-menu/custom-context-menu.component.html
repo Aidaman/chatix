@@ -1,9 +1,3 @@
-<!--<div *ngIf="isShown | async as displayed"
-         [style.display]="isShown? 'block' : 'none'">-->
-
-<!--*ngIf="contextMenuConfig | async as coords"
-    [style.top]="coords.top+'px'"
-    [style.left]="coords.left+'px'"-->
 <div *ngIf="isShown | async" class="container">
   <ul>
     <li (click)="selectOption(option.id)"

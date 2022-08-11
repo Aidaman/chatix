@@ -1,3 +1,17 @@
+@import "../../../../assets/mixins";
+
+.mobile-present{
+  @include sm(){
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+    margin: 16px 0;
+  }
+  @include lg() {
+    display: none;
+  }
+}
+
 .room-list-wrapper {
   height: 100%;
   width: 100%;
@@ -16,6 +30,15 @@
     width: 100%;
     height: auto;
     margin-bottom: 20px;
+
+    @include md {
+      align-self: center;
+      width: 65%;
+    }
+    @include lg {
+      align-self: normal;
+      width: 100%;
+    }
 
     span {
       font-weight: 300;
@@ -83,6 +106,16 @@
   .search-rooms {
     //box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 20px;
+    @include md {
+      padding: 0 25%;
+
+      display: flex;
+      flex-direction: column;
+    }
+    @include lg {
+      padding: 20px;
+      display: block;
+    }
 
     input {
       box-sizing: border-box;
@@ -126,6 +159,13 @@
   }
 
   .room-list {
+    @include md {
+      padding: 0 25%;
+    }
+    @include lg {
+      padding: 0;
+    }
+
     border-top: 1px solid rgba(0, 0, 0, 0.22);
     position: relative;
     height: calc(100vh - 349px);

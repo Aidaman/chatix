@@ -1,3 +1,5 @@
+@import "../../../assets/mixins";
+
 .center {
   justify-content: center !important;
 }
@@ -8,7 +10,10 @@
   //justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  border-bottom: 1px solid black;
+
+  @include lg {
+    border-bottom: 1px solid black;
+  }
 
   .brand-logo {
     user-select: none;
@@ -26,11 +31,11 @@
     }
   }
 
-
   .nav-links {
     display: flex;
     align-items: center;
-    padding: 7px 0;
+    padding: 2px 0;
+
     .c-white {
       display: flex;
       align-items: center;
@@ -42,19 +47,22 @@
         margin-right: 20px;
         border-radius: 50px;
 
-        min-width: 48px;
-        width: 48px;
-        height: 48px;
+        min-width: 38px;
 
-        //@include sm {
-        //    min-width: 43px;
-        //    width: 43px;
-        //    height: 43px;
-        //}
-        //
-        //@include md {
-        //
-        //}
+        @include sm {
+            width: 38px;
+            height: 38px;
+        }
+
+        @include md {
+          width: 42px;
+          height: 42px;
+        }
+
+        @include lg {
+          width: 48px;
+          height: 48px;
+        }
 
         img {
           border-radius: 50px;

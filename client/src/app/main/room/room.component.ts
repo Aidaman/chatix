@@ -25,6 +25,7 @@ import {
 import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import { IUser } from "../../shared/models/IUser";
 import { ScrollTrackDirective } from "../../shared/directives/scroll-track.directive";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -35,23 +36,20 @@ import { ScrollTrackDirective } from "../../shared/directives/scroll-track.direc
   templateUrl: "room.component.html",
   styleUrls: ["room.component.scss"],
 })
-export class RoomComponent implements OnInit, OnDestroy {
+export class RoomComponent implements OnInit {
   @ViewChild(ScrollTrackDirective) scrollBarTrack!: ScrollTrackDirective;
 
   private lastSelectedMessage: IMessage | null = null;
   private isEditing = false;
 
-  private emojiSubscription!: Subscription;
-  public emoji$: Observable<string> = this.roomService.emoji.asObservable().pipe(
-    map((value) => {
-      this.message += value;
-      return value;
-    })
-  );
+  public emojiExpanded: BehaviorSubject<boolean> = this.chatService.showEmoji;
+
+  public messageForm: FormGroup = this.fb.group({
+    message: [null, [Validators.required]]
+  });
 
   public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themingService.theme;
-  public message: string = "";
 
   public currentRoomUnreadCount: number = 0;
   public overallUnread: Observable<number> = this.chatService.overallUnread;
@@ -109,6 +107,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               private chatService: ChatService,
               private matDialog: MatDialog,
               private router: Router,
+              private fb: FormBuilder,
               private activeRoute: ActivatedRoute,
               private roomService: RoomService,
               private store: Store) {
@@ -116,7 +115,6 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // this.socketService.emit("searchRooms", {});
-    this.emojiSubscription = this.emoji$.subscribe();
 
     this.socketService.listenUserLeft().subscribe();
     this.socketService.listenPrivacyChanged().subscribe();
@@ -125,10 +123,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.socketService.listenMessageRead().subscribe();
 
     this.socketService.listenUserJoined().subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.emojiSubscription.unsubscribe();
   }
 
   private deleteMessage(messageId: string, roomId: string) {
@@ -141,12 +135,17 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.chatService.sideMenuOpened.next(newValue);
   }
 
+  public toggleEmojis() {
+    const newValue = !this.chatService.showEmoji.value;
+    this.chatService.showEmoji.next(newValue);
+  }
+
   public checkIsCommon(room: IRoom): boolean {
     return (room._id !== "common" || room.isFavorites);
   }
 
   public sendMessage(event: any, room: IRoom): void {
-    const msg = this.message.trim();
+    const msg = this.messageForm.get("message")?.value.trim() ?? "";
     if (event.code === "Enter") event.preventDefault();
 
     const newMessage = { messageId: this.lastSelectedMessage?._id, newContent: msg, roomId: room._id, };
@@ -159,14 +158,13 @@ export class RoomComponent implements OnInit, OnDestroy {
       else if (room._id !== "common" && this.isEditing) {
         this.socketService.emit("updateMessage", newMessage);
         this.store.dispatch(roomUpdateMessageAction({ messageId, correction: msg }));
-      }
-      else {
+      } else {
         this.socketService.emit("createMessage", { message: msg, room: room._id, });
         this.scrollBarTrack.scrollDown();
       }
     }
 
-    this.message = "";
+    this.messageForm.get("message")?.setValue("");
     this.isEditing = false;
   }
 
@@ -250,7 +248,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     if (e === "edit") {
       this.isEditing = true;
-      this.message = this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "";
+
+      this.messageForm.get("message")?.setValue(this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "");
     } else if (e === "delete") {
       this.deleteMessage(messageId, roomId);
     }

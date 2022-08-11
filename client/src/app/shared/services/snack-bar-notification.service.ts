@@ -8,11 +8,7 @@ export class SnackBarNotificationService {
 
   constructor(private _snackBar: MatSnackBar) { }
 
-  openSnackBar(message: string, actions: string[]) {
-    this._snackBar.open( message, actions[0],{
-      horizontalPosition: "center",
-      verticalPosition: "top",
-      duration: 2000,
-    });
+  openSnackBar(message: string, actions: string[], config: any) {
+    this._snackBar.open( message, actions[0], config);
   }
 }

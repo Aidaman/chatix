@@ -1,9 +1,16 @@
+@import "../../../../../assets/mixins";
+
 .theme-chooser {
   width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
   margin-bottom: 20px;
+
+  @include md {
+    justify-content: space-evenly;
+    align-self: center;
+  }
 
   mat-icon {
     width: 30px;

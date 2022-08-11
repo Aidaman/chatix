@@ -10,7 +10,8 @@
           </mat-icon>
         </button>
         <div class="room-title">
-          <mat-icon [matBadge]="currentRoomUnreadCount"
+          <mat-icon class="mobile-absent"
+                    [matBadge]="currentRoomUnreadCount"
                     matBadgePosition="above after"
                     [matBadgeHidden]="currentRoomUnreadCount === 0">meeting_room
           </mat-icon>
@@ -21,14 +22,15 @@
           <button mat-button (click)="openSettings(room)">
             <mat-icon>people_alt</mat-icon>
           </button>
+          <button mat-button (click)="openInviteParticipantsDialog(room)">
+            <!--     (click)="inviteUsers()"     -->
+            <mat-icon>person_add</mat-icon>
+          </button>
         </div>
       </div>
 
       <mat-list *ngIf="checkIsCommon(room)" class="menu-items">
-        <mat-list-item matRipple (click)="openInviteParticipantsDialog(room)">
-          <!--     (click)="inviteUsers()"     -->
-          <mat-icon>person_add</mat-icon>
-        </mat-list-item>
+
         <mat-divider vertical></mat-divider>
 
         <mat-list-item matRipple (click)="exitRoom(room)">
@@ -69,19 +71,32 @@
         </mat-list>
       </div>
     </div>
-    <div class="input-area">
-      <div class="input-message" dir="auto">
-        <textarea class="composer_rich_textarea"
-                  [rows]="message | calculateRowsPipe"
-                  [(ngModel)]="message"
-                  (keydown.enter)="sendMessage($event, room)"></textarea>
+
+    <div class="input-area" [formGroup]="messageForm">
+      <button class="input-send" (click)="toggleEmojis()" mat-fab color="primary">
+        <mat-icon>face</mat-icon>
+      </button>
+
+<!--      <div class="input-message" dir="auto">-->
+<!--        <textarea class="composer_rich_textarea"-->
+<!--                  [rows]="message | calculateRowsPipe"-->
+<!--                  [(ngModel)]="message"-->
+<!--                  (keydown.enter)="sendMessage($event, room)"></textarea>-->
+<!--      </div>-->
+      <div class="input-message">
+        <app-custom-message-input formControlName="message" dir="auto"></app-custom-message-input>
       </div>
 
-      <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary"
-              aria-label="Example icon button with a delete icon">
+      <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary">
         <mat-icon>send</mat-icon>
       </button>
     </div>
+
+    <mat-accordion class="mobile-present">
+      <mat-expansion-panel hideToggle [expanded]="emojiExpanded | async">
+        <app-emojis></app-emojis>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
 
 </ng-container>

@@ -25,6 +25,7 @@ import {ChatService} from "../../shared/services/chat.service";
 export class ChatComponent implements OnInit, OnDestroy {
   public opened: BehaviorSubject<boolean> = this.chatService.sideMenuOpened;
   public theme: BehaviorSubject<string> = this.themingService.theme;
+  public showEmojis: BehaviorSubject<boolean> = this.chatService.showEmoji;
 
   constructor(private store: Store,
               private chatService: ChatService,

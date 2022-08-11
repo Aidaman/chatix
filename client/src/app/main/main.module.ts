@@ -14,7 +14,7 @@ import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { MatRippleModule } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { SharedModule } from "../shared/shared.module";
 import { HeaderComponent } from "./header/header.component";
 import { DialogModule } from "../dialog/dialog.module";
@@ -22,6 +22,7 @@ import { MainRoutingModule } from "./main-routing.module";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { CdkMenuModule } from "@angular/cdk/menu";
+import {MatExpansionModule} from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,8 @@ import { CdkMenuModule } from "@angular/cdk/menu";
         MatBadgeModule,
         MatButtonToggleModule,
         CdkMenuModule,
+        MatExpansionModule,
+        ReactiveFormsModule,
     ],
 })
 export class MainModule {

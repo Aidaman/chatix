@@ -1,29 +1,20 @@
-$screen-sm-min: 320px;
-$screen-md-min: 768px;
-$screen-lg-min: 992px;
-$screen-xl-min: 1200px;
+@import "../../../assets/mixins";
 
-@mixin sm {
-  @media (min-width: #{$screen-sm-min}) {
-    @content;
+.mobile-present {
+  @include sm() {
+    display: block;
+  }
+  @include lg() {
+    display: none;
   }
 }
 
-@mixin md {
-  @media (min-width: #{$screen-md-min}) {
-    @content;
+.mobile-absent {
+  @include sm() {
+    display: none;
   }
-}
-
-@mixin lg {
-  @media (min-width: #{$screen-lg-min}) {
-    @content;
-  }
-}
-
-@mixin xl {
-  @media (min-width: #{$screen-xl-min}) {
-    @content;
+  @include lg() {
+    display: block;
   }
 }
 
@@ -35,7 +26,12 @@ $screen-xl-min: 1200px;
   flex-direction: column;
   //max-height: 93vh;
   //min-height: 93vh;
-  height: 93vh;
+  @include sm() {
+    height: 100vh;
+  }
+  @include lg() {
+    height: 94.5vh;
+  }
   overflow: hidden;
 
   mat-icon {
@@ -105,7 +101,12 @@ $screen-xl-min: 1200px;
 
       .room-title {
         mat-icon {
-          font-size: 28px;
+          @include sm {
+            font-size: 20px;
+          }
+          @include md {
+            font-size: 28px;
+          }
         }
 
         display: flex;
@@ -123,6 +124,12 @@ $screen-xl-min: 1200px;
         }
 
         .room-title-text {
+          @include sm {
+            display: flex;
+            flex-direction: column;
+            text-wrap: none;
+            margin: 0 10px;
+          }
           margin: 0 20px;
           display: flex;
           flex-direction: column;
@@ -156,47 +163,76 @@ $screen-xl-min: 1200px;
     display: flex;
     height: auto;
     padding: 10px;
-    justify-content: space-between;
+
+    @include sm{
+      justify-content: space-between;
+    }
+    @include md {
+      justify-content: space-around;
+    }
     align-items: flex-end;
+    //align-items: flex-end;
 
     .input-message {
       transition: 0.5s;
-      display: flex;
       height: auto;
-      font-size: 19px;
-      box-sizing: border-box;
-
-      width: 90%;
-      padding-right: 7px;
       border-radius: 30px;
+      width: 80%;
+      max-width: 80%;
     }
 
-    .input-send {
-      background: #333;
+    //.composer_rich_textarea {
+    //  border: 0;
+    //  outline: none;
+    //  margin: 0;
+    //  line-height: 20px;
+    //  height: auto;
+    //  min-height: 40px;
+    //  max-height: 250px;
+    //  box-sizing: border-box;
+    //  font-family: 'Quicksand', "Noto Color Emoji" ,"Helvetica Neue", sans-serif;
+    //  width: 100%;
+    //  border-radius: 30px;
+    //
+    //  @include sm {
+    //    padding: 10px 0 10px 20px;
+    //  }
+    //
+    //  @include md {
+    //    padding: 10px 25px 10px 20px;
+    //  }
+    //}
 
-      &:hover {
-        background: #555;
+    .input-send {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @include sm {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+      }
+
+      @include md {
+        width: 45px;
+        height: 45px;
+        font-size: 24px;
       }
     }
 
-    .composer_rich_textarea {
-      border: none;
-      outline: none;
-      margin: 0;
-      line-height: 20px;
-      height: auto;
-      min-height: 40px;
-      max-height: 250px;
-      box-sizing: border-box;
-      font-family: 'Quicksand', "Noto Color Emoji", "Helvetica Neue", sans-serif;
-      width: 100%;
-      padding: 10px 25px 10px 20px;
-
-      border-radius: 30px;
-    }
 
     * {
       transition: 0.5s;
+    }
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    @include sm() {
+      padding: 8px 8px 16px !important;
+    }
+    @include md() {
+      padding: 10px 10px 16px !important;
     }
   }
 }
@@ -246,6 +282,24 @@ $screen-xl-min: 1200px;
 }
 
 :host-context( body.light ) {
+  ::ng-deep .mat-expansion-panel-body {
+    transition: 0.3s;
+    background-color: #e6e7f2 !important;;
+
+    .title {
+      transition: .3s;
+      background: rgba(0, 0, 0, 0.37);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      color: black;
+    }
+
+    .smiles-list {
+      .smile-item {
+        background: rgba(0, 0, 0, 0.37);
+      }
+    }
+  }
+
   .chat-menu {
     transition: 0.3s;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
@@ -324,14 +378,11 @@ $screen-xl-min: 1200px;
   .input-area {
     border-top: 2px solid rgba(0, 0, 0, 0.22);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.31);
-    //background: rgba(0, 0, 0, 0.08);
-    .input-message {
-      background-color: rgb(247, 255, 252);
+    background: rgba(0, 0, 0, 0.08);
 
-      &:focus {
-        transition: 0.5s;
-        box-shadow: 0 0 15px rgb(0, 0, 0);
-      }
+    .input-send{
+      background: rgba(0, 0, 0, 0.18);
+      color: #16181b;
     }
 
     .wrap-btn {
@@ -365,8 +416,25 @@ $screen-xl-min: 1200px;
   }
 }
 
-
 :host-context( body.dark ) {
+  ::ng-deep .mat-expansion-panel-body {
+    transition: 0.3s;
+    background-color: #273038 !important;
+
+    .title {
+      transition: .3s;
+      background: rgba(0, 0, 0, 0.51);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      color: white;
+    }
+
+    .smiles-list {
+      .smile-item {
+        background: rgba(0, 0, 0, 0.51);
+      }
+    }
+  }
+
   .chat-menu {
     transition: 0.3s;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
@@ -426,6 +494,14 @@ $screen-xl-min: 1200px;
       &:focus {
         transition: 0.5s;
         box-shadow: 0 0 15px rgb(255, 255, 255);
+      }
+    }
+
+    .input-send{
+      background: #333;
+
+      &:hover {
+        background: #555;
       }
     }
 
@@ -495,7 +571,7 @@ $screen-xl-min: 1200px;
 #contextmenu-control {
   width: 100%;
   max-height: 100%;
-  height: 93vh;
+  height: 94vh;
 
   overflow-y: auto;
 

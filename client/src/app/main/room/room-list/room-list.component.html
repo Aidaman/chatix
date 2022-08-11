@@ -8,6 +8,8 @@
     </button>
   </div>
 
+  <app-header class="mobile-present"></app-header>
+
   <div class="search-rooms">
     <app-theming></app-theming>
     <div class="add-btn" (click)="createRoom()" matRipple>
@@ -18,11 +20,11 @@
     <input matInput
            placeholder="Search room..."
            [(ngModel)]="searchText">
-<!--    (input)="searchRooms()"-->
     <mat-slide-toggle class="searchToggle"
                       (change)="toggleSearch()">
       {{(searchCondition | lowercase) === 'public' ? 'Public' : 'Private'}}
     </mat-slide-toggle>
+<!--    (input)="searchRooms()"-->
     <!--    <mat-button-toggle-group name="roomCategories" aria-label="Room Categories">-->
     <!--      <mat-button-toggle value="Admin">Admin</mat-button-toggle>-->
     <!--      <mat-button-toggle value="Private">Private</mat-button-toggle>-->
