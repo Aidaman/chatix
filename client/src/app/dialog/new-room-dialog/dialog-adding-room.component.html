@@ -31,15 +31,15 @@
             </mat-autocomplete>
           </mat-form-field>
           <mat-icon *ngIf="userIds[pointIndex]" class="done">done</mat-icon>
-          <button type="button" mat-button (click)="deleteParticipant(pointIndex)">
+          <button type="button" class="delete-btn" mat-button (click)="deleteParticipant(pointIndex)">
             <i class="material-icons">delete</i>
           </button>
         </div>
       </div>
     </form>
-    <div mat-dialog-actions>
-      <button mat-button (click)="onCloseClick()" class="close-btn">
-        <mat-icon>clear</mat-icon>
+    <div mat-dialog-actions>  
+      <button mat-button class="close-btn" (click)="onCloseClick()" class="close-btn">
+        <i class="material-icons">clear</i>
       </button>
       <button mat-button (click)="onCreate()"
               class="create-btn"

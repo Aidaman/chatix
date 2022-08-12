@@ -220,7 +220,7 @@ export class RoomComponent implements OnInit {
   */
   public async openInviteParticipantsDialog(room: IRoom): Promise<void> {
     const matDialogRef = this.matDialog.open(DialogInvitingRoomComponent,
-      { height: "500px", width: "500px", data: room });
+      { data: room });
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
       if (!value) return;
       else this.socketService.emit("inviteUsers", { roomId: value.roomId, participants: value.participants });

@@ -59,7 +59,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   */
   private async openInvitation(data: any): Promise<void> {
     const invitationDialogRef = this.dialog.open(DialogInvitationComponent,
-      { width: "450px", height: "200px", hasBackdrop: true, data });
+      { height: "200px", hasBackdrop: true, data });
 
     const invitationResultSource$ = invitationDialogRef.afterClosed().pipe(tap((response) => {
       if (response) {

@@ -6,16 +6,6 @@
 }
 
 .dialog-wrapper {
-  position: relative;
-  @include sm{
-    height: 100%;
-    width: 100%;
-  }
-
-  padding: 24px;
-  box-sizing: border-box;
-  //height: 100%;
-
   mat-slide-toggle {
     margin-bottom: 20px;
   }
@@ -43,26 +33,21 @@
   }
 
   h1 {
+    display: flex;
+    justify-content: space-around;
+
+    @include sm{
+      font-size: 20px;
+    }
+
+    @include md{
+      max-width: 300px;
+      min-width: 300px;
+      font-size: 28px;
+    }
 
     font-family: "Montserrat Alternates", sans-serif;
     //text-align: center;
-    font-size: 28px;
-
-    input {
-      background: transparent;
-      color: white;
-      border: none;
-      @include sm{
-        font-size: 20px;
-      }
-      @include md{
-        font-size: 28px;
-      }
-      box-sizing: border-box;
-      outline: none;
-      text-decoration: none;
-      margin-right: 25px;
-    }
 
     mat-icon {
       cursor: pointer;
@@ -119,17 +104,6 @@
     }
   }
 
-  .close-btn {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: transparent !important;
-
-    i {
-      font-size: 30px;
-    }
-  }
-
   .part-input {
     margin-right: 30px;
   }
@@ -160,9 +134,9 @@
     border-radius: 50px;
   }
 
-  ::ng-deep .mat-form-field-infix {
-    width: 310px;
-  }
+  // ::ng-deep .mat-form-field-infix {
+    // width: 310px;
+  // }
 
   ::ng-deep .mat-button, .mat-flat-button, .mat-icon-button, .mat-stroked-button {
     border-radius: 50px;

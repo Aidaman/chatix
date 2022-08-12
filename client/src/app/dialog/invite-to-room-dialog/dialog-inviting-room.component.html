@@ -1,4 +1,4 @@
-<div class="dialog-wrapper scroll">
+<div class="dialog-wrapper">
   <div class="dialog-content-wrapper">
     <h1 mat-dialog-title>Invitations to {{room.title}}</h1>
 
@@ -11,7 +11,7 @@
       </div>
 
       <div class="user-list" formArrayName="participants">
-        <div *ngFor="let item of participants.controls; let pointIndex=index" [formGroupName]="pointIndex.toString()">
+        <div class="list-items" *ngFor="let item of participants.controls; let pointIndex=index" [formGroupName]="pointIndex.toString()">
           <mat-form-field class="part-input">
             <label>
               <input matInput [placeholder]="'Participant - ' + (pointIndex + 1)"
@@ -29,7 +29,7 @@
             </mat-autocomplete>
           </mat-form-field>
           <mat-icon *ngIf="userIds[pointIndex]" class="done">done</mat-icon>
-          <button type="button" mat-button (click)="deleteParticipant(pointIndex)">
+          <button type="button" class="delete-btn" mat-button (click)="deleteParticipant(pointIndex)">
             <i class="material-icons">delete</i>
           </button>
         </div>
@@ -37,7 +37,7 @@
     </form>
 
     <div mat-dialog-actions>
-      <button mat-button (click)="onNoClick()" class="close-btn">
+      <button mat-button class="close-btn" (click)="onNoClick()">
         <i class="material-icons">clear</i>
       </button>
       <button mat-button (click)="onInvite()" class="create-btn" [disabled]="!addUsersForm.valid

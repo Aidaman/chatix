@@ -15,6 +15,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatRippleModule } from "@angular/material/core";
 import { MatListModule } from "@angular/material/list";
+import { SharedModule } from "../shared/shared.module";
 
 /*
 * @description This is the module that wraps all the modal-window components
@@ -28,6 +29,8 @@ import { MatListModule } from "@angular/material/list";
   ],
   imports: [
     CommonModule,
+    SharedModule,
+
     MatAutocompleteModule,
     MatFormFieldModule,
     MatIconModule,

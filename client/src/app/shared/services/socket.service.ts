@@ -252,7 +252,7 @@ export class SocketService {
 
   /*
   * @description socket event listener that used in the effect for update the rooms
-  * @description usually this event generates when "get all rooms" event was emited
+  * @description usually this event generates when "get all rooms" event was emitted
   *
   * @description the logic of this listener described in the effect
   */

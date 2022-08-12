@@ -18,6 +18,7 @@ export class ScrollTrackDirective implements AfterViewInit{
   @Output() loadMessages = new EventEmitter<void>();
   private isEmitted: boolean = false;
   private scrollHeight: number = 0;
+  private memorisedScrollTop: number = 0;
 
   constructor(private el: ElementRef) {
   }
@@ -31,9 +32,13 @@ export class ScrollTrackDirective implements AfterViewInit{
     //@ts-ignore
     if (event?.srcElement.scrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
+      this.memorisedScrollTop = this.el.nativeElement.scrollTop;
       this.loadMessages.emit();
       this.isEmitted = true;
     }
+    // if (this.isEmitted) {
+    //   this.el.nativeElement.scrollTop = this.memorisedScrollTop;
+    // }
     if (this.scrollHeight !== this.el.nativeElement.scrollHeight) {
       this.isEmitted = false;
     }

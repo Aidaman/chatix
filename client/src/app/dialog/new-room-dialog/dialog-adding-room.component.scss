@@ -1,3 +1,6 @@
+@import "../../../assets/mixins";
+
+
 ::ng-deep .mat-dialog-container {
     padding: 0;
 }
@@ -12,11 +15,6 @@
 }
 
 .dialog-wrapper {
-    padding: 24px;
-    position: relative;
-    height: 100%;
-    box-sizing: border-box;
-
     mat-slide-toggle {
         margin-bottom: 20px;
     }
@@ -54,17 +52,6 @@
         }
     }
 
-    //.close-btn {
-    //    position: absolute;
-    //    right: 0;
-    //    top: 0;
-    //    background: transparent !important;
-    //
-    //    i {
-    //        font-size: 30px;
-    //    }
-    //}
-
     .part-input {
         margin-right: 30px;
     }
@@ -89,7 +76,16 @@
     }
 
     ::ng-deep .mat-form-field-infix {
-        width: 310px;
+        @include sm(){
+            font-size: 14px;
+            max-width: 125px;
+            min-width: 125px;
+          }
+          @include md(){
+            font-size: 20px;
+            max-width: 250px;
+            min-width: 250px;
+          }
     }
 
     ::ng-deep .mat-button, .mat-flat-button, .mat-icon-button, .mat-stroked-button {

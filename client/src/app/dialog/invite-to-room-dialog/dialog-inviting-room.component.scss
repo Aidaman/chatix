@@ -1,15 +1,10 @@
+@import "src/assets/mixins";
+
 ::ng-deep .mat-dialog-container {
   padding: 0;
 }
 
 .dialog-wrapper {
-  position: relative;
-  padding: 24px;
-  box-sizing: border-box;
-  height: 100%;
-
-  overflow-y: auto;
-
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -42,10 +37,12 @@
     padding: 20px;
   }
 
-  h1 {
+   h1{
     font-family: "Montserrat Alternates", sans-serif;
     text-align: center;
-    font-size: 28px;
+
+    font-size: 20px;
+  
   }
 
   .part-wrapper {
@@ -86,16 +83,33 @@
 
   ::ng-deep .mat-button, .mat-flat-button, .mat-icon-button, .mat-stroked-button {
     padding: 0 10px;
-    min-width: 20px;
-    min-height: 0;
-    border-radius: 50px;
+    @include sm(){
+      font-size: 14px;
+      min-width: 10px;
+      min-height: 10px;
+    }
+    @include md(){
+      font-size: 20px;
+      min-width: 20px;
+      min-height: 20px;
+    }
   }
 
   ::ng-deep .mat-form-field-infix {
-    width: 310px;
+    @include sm(){
+      font-size: 14px;
+      max-width: 125px;
+      min-width: 125px;
+    }
+    @include md(){
+      font-size: 20px;
+      max-width: 250px;
+      min-width: 250px;
+    }
   }
 
   ::ng-deep .mat-button, .mat-flat-button, .mat-icon-button, .mat-stroked-button {
     border-radius: 50px;
   }
+
 }

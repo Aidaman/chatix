@@ -7,7 +7,7 @@ import { Component } from "@angular/core";
 export class AppComponent {}
 
 /*
-    @Scrollbar TODO: scrollbar should remember it's position in some room
+    TODO: scrollbar should remember it's position in some room
 
-    @EXTRA TODO: make functionality to answer the messages and resend it to another chat
+    TODO: EXTRA make functionality to answer the messages and resend it to another chat
  */

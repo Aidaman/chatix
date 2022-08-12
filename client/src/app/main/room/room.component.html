@@ -16,7 +16,7 @@
                     [matBadgeHidden]="currentRoomUnreadCount === 0">meeting_room
           </mat-icon>
           <div class="room-title-text">
-            {{me | isPersonalMessagePipe: room}}
+            <span class="room-name">{{me | isPersonalMessagePipe: room}}</span>
             <small *ngIf="!room.isFavorites">{{room.users.length}} participants</small>
           </div>
           <button mat-button (click)="openSettings(room)">
@@ -77,12 +77,6 @@
         <mat-icon>face</mat-icon>
       </button>
 
-<!--      <div class="input-message" dir="auto">-->
-<!--        <textarea class="composer_rich_textarea"-->
-<!--                  [rows]="message | calculateRowsPipe"-->
-<!--                  [(ngModel)]="message"-->
-<!--                  (keydown.enter)="sendMessage($event, room)"></textarea>-->
-<!--      </div>-->
       <div class="input-message">
         <app-custom-message-input formControlName="message" dir="auto"></app-custom-message-input>
       </div>

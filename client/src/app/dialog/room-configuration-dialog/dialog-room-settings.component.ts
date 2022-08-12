@@ -5,6 +5,7 @@ import { IUser } from "../../shared/models/IUser";
 import { ThemingService } from "../../shared/services/theming.service";
 import { BehaviorSubject } from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
+import { FormBuilder, Validators } from "@angular/forms";
 
 /*
 * @description This component describes modal window for configuring the room
@@ -17,9 +18,16 @@ import { ChatService } from "../../shared/services/chat.service";
 export class DialogRoomSettingsComponent{
   public participants: IUser[] = this.room.users.filter(user => user._id !== this.me);
   public isRoomPublic: boolean = this.room.isPublic;
-  public newRoomTitle: string = this.room.title;
   public removedUsers: IUser[] = [];
   public delete: boolean = false;
+  public isEdit: boolean = false;
+
+  public dialogForm = this.fb.group({
+    title: [this.room.title, [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(20)]],
+  })
 
   public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themeService.theme;
@@ -27,14 +35,16 @@ export class DialogRoomSettingsComponent{
   constructor(public dialogRef: MatDialogRef<DialogRoomSettingsComponent>,
               public chatService: ChatService,
               private themeService: ThemingService,
+              private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public room: IRoom) {
   }
 
   public onUpdate(): void {
     // this.room.title = this.title.nativeElement.innerText;
+    const title = this.dialogForm.get("title")?.value;
     this.dialogRef.close({
       ...this.room,
-      newRoomTitle: this.newRoomTitle,
+      newRoomTitle: title,
       newIsPublic: this.isRoomPublic,
       deletedUsers: this.removedUsers });
   }
@@ -61,7 +71,10 @@ export class DialogRoomSettingsComponent{
 
   public switchPrivate(): void {
     if (this.room.isFavorites) return;
-
     else this.isRoomPublic = !this.isRoomPublic;
+  }
+
+  public toggleEdit(): void{
+    this.isEdit = !this.isEdit;
   }
 }

@@ -5,11 +5,11 @@
 }
 
 .nav-wrapper {
-  //height: 100%;
+  height: 7,9vh;
   display: flex;
   //justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 2px 20px;
 
   @include lg {
     border-bottom: 1px solid black;
@@ -47,21 +47,16 @@
         margin-right: 20px;
         border-radius: 50px;
 
-        min-width: 38px;
+        // min-width: 38px;
 
         @include sm {
             width: 38px;
             height: 38px;
         }
 
-        @include md {
-          width: 42px;
-          height: 42px;
-        }
-
         @include lg {
-          width: 48px;
-          height: 48px;
+          height: 6vh;
+          width: 6vh;
         }
 
         img {
@@ -82,7 +77,7 @@
       display: flex;
       justify-content: center;
       border-radius: 50px;
-      padding: 5px 10px;
+      padding: 2.5px 5px;
       background-color: rgba(0, 0, 0, 0.33);
       color: white;
       font-size: 16px;

@@ -1,0 +1,78 @@
+@import "src/assets/mixins";
+
+.input {
+  background: transparent;
+  border: none;
+  text-align: center;
+
+  @include sm{
+    font-size: 20px;
+    max-width: 225px;
+    min-width: 100px;
+  }
+
+  @include md{
+    font-size: 28px;
+    max-width: 200px;
+    min-width: 200px;
+  }
+
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+    border-radius: 6px;
+    transition: 0.3s;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(203, 203, 203, 0.5);
+    transition: 0.3s;
+    border-radius: 6px;
+  
+    &:hover {
+      background-color: rgba(148, 148, 148, 0.25);
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    transition: 0.3s;
+  
+    &:hover {
+      background-color: rgba(148, 148, 148, 0.5);
+    }
+  }
+
+  min-height: 35px;
+  max-height: 80px;
+
+  line-height: 35px;
+
+  box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  margin-right: 25px;
+}
+
+:host-context( body.dark ){
+  .edit-mode{
+    border-bottom: 2px solid #ff6162;
+  }
+
+  .input{
+    color: white;
+  }
+}
+
+:host-context( body.light ){
+  .edit-mode{
+    border-bottom: 2px solid #3071c2;
+  }
+
+  .input{
+    color: black;
+  }
+}

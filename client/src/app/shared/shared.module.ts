@@ -16,6 +16,8 @@ import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
 import {CustomMessageInputComponent} from "./components/custom-message-input/custom-control.component";
+import { CustomRoomConfigInputComponent } from './components/custom-room-config-input/custom-room-config-input.component';
+import { SlicePipe } from './pipes/slice.pipe';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import {CustomMessageInputComponent} from "./components/custom-message-input/cus
     IsCreatedByMePipe,
     FilterListByPipe,
     CustomMessageInputComponent,
+    CustomRoomConfigInputComponent,
+    SlicePipe,
   ],
   imports: [
     CommonModule,
@@ -52,6 +56,7 @@ import {CustomMessageInputComponent} from "./components/custom-message-input/cus
     IsCreatedByMePipe,
     FilterListByPipe,
     CustomMessageInputComponent,
+    CustomRoomConfigInputComponent,
   ],
   providers: [
     { provide: Window, useValue: window }

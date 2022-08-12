@@ -1,17 +1,14 @@
-<div class="dialog-wrapper">
+<div class="dialog-wrapper" [formGroup]="dialogForm">
+  <h1 mat-dialog-title>
+    <mat-icon *ngIf="me === room.creator?._id" 
+              matRipple (click)="toggleEdit()">edit</mat-icon>
+    <app-custom-room-config-input formControlName="title"
+                                  [isContentEditable]="me === room.creator?._id && isEdit"
+                                  [title]="room.title"></app-custom-room-config-input>
+    <!--      <span contenteditable="true">{{room.title}}</span>-->
+  </h1>
+
   <div class="dialog-content-wrapper">
-
-    <h1 mat-dialog-title class="" *ngIf="room.creator?._id === me; else nonEditableTitle">
-      <mat-icon matRipple>edit</mat-icon>
-      <input type="text" [(ngModel)]="newRoomTitle">
-      <!--      <span contenteditable="true">{{room.title}}</span>-->
-    </h1>
-
-    <ng-template #nonEditableTitle>
-      <h1 mat-dialog-title>
-        <span>{{room.title}}</span>
-      </h1>
-    </ng-template>
 
     <mat-slide-toggle *ngIf="room.creator?._id === me"
                       [checked]="isRoomPublic"
@@ -24,49 +21,47 @@
       <h2 mat-dialog-title>Participants</h2>
     </div>
 
-    <div class="scrollable">
-      <div class="part-list" *ngFor="let user of participants">
-        <div class="user-container">
-          <div class="avatar">
-            <img [src]="user.avatar" alt="">
-          </div>
-          <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
+    <div class="part-list" *ngFor="let user of participants">
+      <div class="user-container">
+        <div class="avatar">
+          <img [src]="user.avatar" alt="">
         </div>
-        <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
-          <i class="material-icons">
-            delete
-          </i>
-        </button>
+        <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
       </div>
+      <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
+        <i class="material-icons">
+          delete
+        </i>
+      </button>
     </div>
 
     <div mat-dialog-actions>
-      <button mat-icon-button (click)="onNoClick()" class="close-btn">
-        <mat-icon>close</mat-icon>
+      <button mat-button (click)="onNoClick()" class="close-btn">
+        <i class="material-icons">clear</i>
       </button>
-      <button *ngIf="room.creator?._id === me" mat-button (click)="onUpdate()"
+      <button *ngIf="room.creator?._id === me" mat-button 
+              [disabled]="!dialogForm.valid"
+              (click)="onUpdate()"
               class="create-btn">Update
       </button>
       <button (click)="deleteConfirm()"
               *ngIf="room.creator?._id === me
               && room.title.toLowerCase() !== 'favorites'
               && room.title.toLowerCase() !== 'common'"
-              class="create-btn"
-              mat-button>Delete
+              mat-button
+              class="create-btn">Delete
       </button>
     </div>
     <div class="deleting-area" *ngIf="delete">
       <mat-form-field>
         <input matInput type="text" [placeholder]="'Enter title of room to confirm'" #input>
       </mat-form-field>
-      <button type="button" mat-button [disabled]="input.value !== room.title" (click)="onDelete()">
+      <button type="button" 
+              class="close-btn" 
+              mat-button [disabled]="input.value !== room.title" 
+              (click)="onDelete()">
         <i class="material-icons">
           check
-        </i>
-      </button>
-      <button type="button" mat-button (click)="deleteConfirm()">
-        <i class="material-icons">
-          close
         </i>
       </button>
     </div>
