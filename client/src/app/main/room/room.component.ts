@@ -160,7 +160,6 @@ export class RoomComponent implements OnInit {
         this.store.dispatch(roomUpdateMessageAction({ messageId, correction: msg }));
       } else {
         this.socketService.emit("createMessage", { message: msg, room: room._id, });
-        this.scrollBarTrack.scrollDown();
       }
     }
 
