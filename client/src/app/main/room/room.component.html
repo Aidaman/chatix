@@ -77,8 +77,9 @@
         <mat-icon>face</mat-icon>
       </button>
 
-      <div class="input-message">
-        <app-custom-message-input formControlName="message" dir="auto"></app-custom-message-input>
+      <div class="input-message" (keydown.enter)="sendMessage($event, room)">
+        <app-custom-message-input formControlName="message" 
+                                  dir="auto"></app-custom-message-input>
       </div>
 
       <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary">
