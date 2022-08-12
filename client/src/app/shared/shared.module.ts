@@ -6,7 +6,6 @@ import { UpdateRoomsPipe } from "./pipes/update-rooms.pipe";
 import { PremiumNicknamePipe } from "./pipes/premium-nickname.pipe";
 import { CustomContextMenuComponent } from "./components/custom-context-menu/custom-context-menu.component";
 import { MatIconModule } from "@angular/material/icon";
-import { InputareaCalculationPipe } from "./pipes/inputarea-calculation.pipe";
 import { ScrollTrackDirective } from "./directives/scroll-track.directive";
 import { MatDividerModule } from "@angular/material/divider";
 import { InViewPortDirective } from "./directives/in-view-port.directive";
@@ -17,7 +16,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
 import {CustomMessageInputComponent} from "./components/custom-message-input/custom-control.component";
 import { CustomRoomConfigInputComponent } from './components/custom-room-config-input/custom-room-config-input.component';
-import { SlicePipe } from './pipes/slice.pipe';
 
 @NgModule({
   declarations: [
@@ -27,14 +25,12 @@ import { SlicePipe } from './pipes/slice.pipe';
     UpdateRoomsPipe,
     PremiumNicknamePipe,
     IsPersonalMessagePipePipe,
-    InputareaCalculationPipe,
     CustomContextMenuComponent,
     InViewPortDirective,
     IsCreatedByMePipe,
     FilterListByPipe,
     CustomMessageInputComponent,
     CustomRoomConfigInputComponent,
-    SlicePipe,
   ],
   imports: [
     CommonModule,
@@ -50,7 +46,6 @@ import { SlicePipe } from './pipes/slice.pipe';
     UpdateRoomsPipe,
     PremiumNicknamePipe,
     CustomContextMenuComponent,
-    InputareaCalculationPipe,
     InViewPortDirective,
     IsPersonalMessagePipePipe,
     IsCreatedByMePipe,
