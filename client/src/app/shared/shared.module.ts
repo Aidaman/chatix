@@ -14,8 +14,8 @@ import { IsCreatedByMePipe } from "./pipes/is-created-by-me.pipe";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { FilterListByPipe } from "./pipes/filter-list-by.pipe";
-import {CustomMessageInputComponent} from "./components/custom-message-input/custom-control.component";
-import { CustomRoomConfigInputComponent } from './components/custom-room-config-input/custom-room-config-input.component';
+import { CustomMessageInputComponent } from "./components/custom-message-input/custom-control.component";
+import { CustomRoomConfigInputComponent } from "./components/custom-room-config-input/custom-room-config-input.component";
 
 @NgModule({
   declarations: [

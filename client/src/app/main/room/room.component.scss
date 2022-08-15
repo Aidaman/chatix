@@ -30,7 +30,7 @@
     height: 100vh;
   }
   @include lg() {
-    height: 92vh;
+    height: 91.9vh;
   }
   overflow: hidden;
 
@@ -100,15 +100,6 @@
       }
 
       .room-title {
-        mat-icon {
-          @include sm {
-            font-size: 20px;
-          }
-          @include md {
-            font-size: 24px;
-          }
-        }
-
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -123,11 +114,19 @@
           margin-left: 20px;
         }
 
+        mat-icon {
+          @include sm {
+            font-size: 20px;
+          }
+          @include md {
+            font-size: 24px;
+          }
+        }
+
         .room-title-text {
           display: flex;
           flex-direction: column;
           display: flex;
-          flex-direction: column;
           align-items: flex-start;
           text-overflow: ellipsis;
 
@@ -142,12 +141,11 @@
             @include sm {
               min-height: 24px;
               max-height: 24px;
-              min-width: 100px;
               max-width: 100px;
             }
             @include md {
-              min-height: 30px;
-              max-height: 30px;
+              min-height: 28px;
+              max-height: 28px;
               max-width: 300px;
             }
           }

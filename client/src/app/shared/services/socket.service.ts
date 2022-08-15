@@ -69,20 +69,22 @@ export class SocketService {
   * @description usually this event occurs when backend update room messages
   *
   * @description the logic described in the reducer and effect
+  * @params isInChatComponent - a parameter that needed for track weather this listener is in the chat Component
   */
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
       map((value: { message: IMessage, room: string }) => {
-        if (value.room === "common") {
-          const messagesInCommon = this.roomService.messagesInCommon.value;
-          this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
-        }
-        this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
-        this.snackBar.openSnackBar("You receive new Message", [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 50,
-        });
+          if (value.room === "common") {
+            const messagesInCommon = this.roomService.messagesInCommon.value;
+            this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
+          }
+          this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
+          this.snackBar.openSnackBar("You receive new Message", [], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 50,
+          });
+          return value;
       }),
       takeUntil(this.termination$));
   }

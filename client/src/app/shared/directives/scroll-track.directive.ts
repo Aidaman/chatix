@@ -1,11 +1,10 @@
 import {
-  AfterViewInit,
-  Directive,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Output
+  AfterViewInit,  Directive,  ElementRef,  EventEmitter,
+  HostListener,   OnInit,  Output
 } from "@angular/core";
+import { delay, tap } from "rxjs";
+import { LocalStorageService } from "../services/local-storage.service";
+import { ScrollService } from "../services/scroll.service";
 
 /*
 * @description This is a directive to track the scroll in the room
@@ -14,37 +13,69 @@ import {
 @Directive({
   selector: "[app-scroll-track]"
 })
-export class ScrollTrackDirective implements AfterViewInit{
+export class ScrollTrackDirective implements OnInit, AfterViewInit{
   @Output() loadMessages = new EventEmitter<void>();
-  private isEmitted: boolean = false;
   private scrollHeight: number = 0;
+  private isEmitted: boolean = false;
   private memorisedScrollTop: number = 0;
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef,
+              private scrollService: ScrollService,
+              private localStorageService: LocalStorageService,) {}
+
+  public ngOnInit(): void {
+    this.scrollService.scrollDown$.pipe(
+      delay(50),
+      tap((value: boolean) => {
+        if (value || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) this.setScroll(null);
+      }),
+    ).subscribe();
+
+    this.scrollService.roomSwitched.pipe(
+      tap(({ roomId }) => {
+        if (roomId === "common") return;
+        //save scroll position for previous room
+        if (this.el.nativeElement.scrollTop > 500)
+          this.localStorageService.setScrollPosition(this.scrollService.previousRoomId.value, this.scrollHeight - this.el.nativeElement.scrollTop);
+
+        //get scroll for current room
+        const scroll: number = +this.localStorageService.getScrollPosition(roomId);
+        console.log(scroll);
+
+        //set scroll for current room
+        if (scroll && scroll > 500)
+          this.setScroll(scroll);
+        else this.setScroll(null);
+      }),
+    ).subscribe();
   }
 
-  public ngAfterViewInit(): void {
+  ngAfterViewInit(): void {
     this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
   }
 
-  @HostListener("scroll", ["$event"])
-  public scrollIt() {
-    //@ts-ignore
-    if (event?.srcElement.scrollTop < 500 && !this.isEmitted) {
+  private emit(eventScrollTop: number){
+    if (eventScrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
       this.memorisedScrollTop = this.el.nativeElement.scrollTop;
       this.loadMessages.emit();
       this.isEmitted = true;
     }
-    // if (this.isEmitted) {
-    //   this.el.nativeElement.scrollTop = this.memorisedScrollTop;
-    // }
     if (this.scrollHeight !== this.el.nativeElement.scrollHeight) {
       this.isEmitted = false;
     }
   }
 
-  public scrollDown(): void{
-    this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
+  @HostListener("scroll", ["$event"])
+  public scrollIt() {
+    //@ts-ignore
+    this.emit(event?.srcElement.scrollTop);
+  }
+
+  public setScroll(newScrollPosition: number | null): void{
+    this.scrollHeight = this.el.nativeElement.scrollHeight;
+
+    if (!newScrollPosition) this.el.nativeElement.scrollTop = this.scrollHeight;
+    else this.el.nativeElement.scrollTop = newScrollPosition;
   }
 }

@@ -249,11 +249,9 @@
       color: black;
       border-bottom: 2px solid #3071c2;
     }
-
-    .selected {
-      color: #444;
-      border-bottom: 2px solid #3071c2;
-    }
+  }
+  .selected {
+    color: #3071c2 !important;
   }
 
   .room-title-wrapper {
@@ -358,11 +356,9 @@
       color: white;
       border-bottom: 2px solid #f44336;
     }
-
-    .selected {
-      color: #aaa;
-      border-bottom: 2px solid #f44336;
-    }
+  }
+  .selected {
+    color: #f44336;
   }
 
   .room-title-wrapper {

@@ -2,10 +2,9 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { IMessage } from "../../../shared/models/IMessage";
 import { ChatService } from "../../../shared/services/chat.service";
 import { ThemingService } from "../../../shared/services/theming.service";
-import { BehaviorSubject, map, Observable, of, switchAll, switchMap, take } from "rxjs";
+import { BehaviorSubject, map, Observable,  } from "rxjs";
 import { IOption } from "../../../shared/models/IOption";
 import { SocketService } from "../../../shared/services/socket.service";
-import { IRoom } from "../../../shared/models/IRoom";
 import { Store } from "@ngrx/store";
 import { currentRoomSelector } from "../../../store/room/room-chat.selectors";
 

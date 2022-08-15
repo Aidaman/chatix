@@ -1,8 +1,6 @@
 import { Component } from "@angular/core";
 import { EMOJI } from "../../shared/EMOJIS";
-import { ThemingService } from "../../shared/services/theming.service";
 import { RoomService } from "../../shared/services/room.service";
-import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: "app-emojis",

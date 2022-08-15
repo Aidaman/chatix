@@ -1,10 +1,10 @@
-import { Component, Input} from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, Input } from "@angular/core";
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 @Component({
-  selector: 'app-custom-room-config-input',
-  templateUrl: './custom-room-config-input.component.html',
-  styleUrls: ['./custom-room-config-input.component.scss'],
+  selector: "app-custom-room-config-input",
+  templateUrl: "./custom-room-config-input.component.html",
+  styleUrls: ["./custom-room-config-input.component.scss"],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

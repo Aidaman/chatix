@@ -16,6 +16,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatRippleModule } from "@angular/material/core";
 import { MatListModule } from "@angular/material/list";
 import { SharedModule } from "../shared/shared.module";
+import { RoomSelectDialogComponent } from "./room-select-dialog/room-select-dialog.component";
 
 /*
 * @description This is the module that wraps all the modal-window components
@@ -26,6 +27,7 @@ import { SharedModule } from "../shared/shared.module";
     DialogInvitationComponent,
     DialogInvitingRoomComponent,
     DialogRoomSettingsComponent,
+    RoomSelectDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -50,6 +52,7 @@ import { SharedModule } from "../shared/shared.module";
     DialogInvitationComponent,
     DialogInvitingRoomComponent,
     DialogRoomSettingsComponent,
+    RoomSelectDialogComponent,
   ],
   providers: [
     {

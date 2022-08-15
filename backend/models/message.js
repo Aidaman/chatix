@@ -17,6 +17,10 @@ const messageSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isForwardedMessage:{
+        type: Boolean,
+        default: false
+    },
     read: [{
         type:Schema.Types.ObjectId,
         ref:'User'

@@ -1,10 +1,10 @@
-import {Injectable} from "@angular/core";
-import {AuthService} from "../services/auth.service";
-import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {Observable, throwError} from "rxjs";
-import {catchError} from "rxjs/operators";
-import {Router} from "@angular/router";
-import {LocalStorageService} from "../services/local-storage.service";
+import { Injectable } from "@angular/core";
+import { AuthService } from "../services/auth.service";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { Router } from "@angular/router";
+import { LocalStorageService } from "../services/local-storage.service";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {

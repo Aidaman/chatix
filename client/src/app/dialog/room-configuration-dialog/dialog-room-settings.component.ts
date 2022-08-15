@@ -27,7 +27,7 @@ export class DialogRoomSettingsComponent{
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(20)]],
-  })
+  });
 
   public me = this.chatService.me;
   public theme: BehaviorSubject<string> = this.themeService.theme;

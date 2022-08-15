@@ -1,8 +1,8 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ThemingService } from "../../shared/services/theming.service";
 import { RoomService } from "../../shared/services/room.service";
 import { IRoom } from "../../shared/models/IRoom";
-import { BehaviorSubject, filter, lastValueFrom, map, Observable, Subscription, switchMap, tap } from "rxjs";
+import { BehaviorSubject, filter, lastValueFrom, Observable, switchMap, tap } from "rxjs";
 import { IMessage } from "../../shared/models/IMessage";
 import { SocketService } from "../../shared/services/socket.service";
 import { IOption } from "../../shared/models/IOption";
@@ -24,8 +24,8 @@ import {
 } from "../../store/room/room-chat.actions";
 import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import { IUser } from "../../shared/models/IUser";
-import { ScrollTrackDirective } from "../../shared/directives/scroll-track.directive";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { RoomSelectDialogComponent } from "src/app/dialog/room-select-dialog/room-select-dialog.component";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -37,10 +37,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit {
-  @ViewChild(ScrollTrackDirective) scrollBarTrack!: ScrollTrackDirective;
-
   private lastSelectedMessage: IMessage | null = null;
-  private isEditing = false;
+  private isEditing: boolean = false;
+  private isReplying: boolean = false;
 
   public emojiExpanded: BehaviorSubject<boolean> = this.chatService.showEmoji;
 
@@ -99,6 +98,16 @@ export class RoomComponent implements OnInit {
       id: "delete",
       title: "Delete Message",
       icon: "delete"
+    },
+    {
+      id: "forward",
+      title: "Forward Message",
+      icon: "redo"
+    },
+    {
+      id: "reply",
+      title: "Reply Message",
+      icon: "reply"
     },
   ];
 
@@ -245,12 +254,25 @@ export class RoomComponent implements OnInit {
     const messageId = this.lastSelectedMessage?._id as string;
     const roomId = this.lastSelectedMessage?.room as string;
 
-    if (e === "edit") {
-      this.isEditing = true;
+    switch (e) {
+      case("edit"): {
+        this.isEditing = true;
+        this.messageForm.get("message")?.setValue(this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "");
+        break;
+      }
+      case("delete"): {
+        this.deleteMessage(messageId, roomId);
+        break;
+      }
+      case("forward"): {
+        this.matDialog.open(RoomSelectDialogComponent, {data: this.lastSelectedMessage});
+        break;
+      }
+      case("reply"): {
+        // this.isReplying = true;
 
-      this.messageForm.get("message")?.setValue(this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "");
-    } else if (e === "delete") {
-      this.deleteMessage(messageId, roomId);
+        break;
+      }
     }
     this.chatService.showContextMenu.next(false);
   }

@@ -32,13 +32,14 @@ import {
   roomUpdateMessageFailureAction,
   roomUpdateMessageSuccessAction
 } from "./room-chat.actions";
-import { concatMap, map, mergeMap, of, switchMap, take, } from "rxjs";
+import { map, of, switchMap, tap, } from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
 import { catchError } from "rxjs/operators";
 import { SocketService } from "../../shared/services/socket.service";
 import { hasRoomValueSelector, offsetSelector, roomByIdSelect } from "./room-chat.selectors";
 import { SnackBarNotificationService } from "../../shared/services/snack-bar-notification.service";
 import { IRoom } from "../../shared/models/IRoom";
+import { ScrollService } from "../../shared/services/scroll.service";
 
 @Injectable()
 export class RoomChatEffect {
@@ -83,7 +84,10 @@ export class RoomChatEffect {
   switchRoom$ = createEffect(() => this.actions$.pipe(
     ofType(roomSwitchAction),
     switchMap(({ roomId }) => this.store.select(roomByIdSelect(roomId)).pipe(
-      map((value: IRoom | null) => roomSwitchSuccessAction({ room: value })),
+      map((value: IRoom | null) => {
+        this.scrollService.roomSwitched.next({ roomId: value?._id ?? "common" });
+        return roomSwitchSuccessAction({ room: value });
+      }),
       catchError(() => of(roomSwitchFailureAction())),
     )))
   );
@@ -114,6 +118,11 @@ export class RoomChatEffect {
     ofType(roomGetNewMessageAction),
     switchMap(({ roomId, message }) => this.store.select(hasRoomValueSelector).pipe(
       map(() => roomGetNewMessageSuccessAction({ message, roomId })),
+      tap(() => {
+        if (message.creator?._id === this.chatService.me)
+          this.scrollService.scrollDown$.next(true);
+        else this.scrollService.scrollDown$.next(false);
+      }),
       catchError(() => of(roomGetNewMessageFailureAction()))))
   ));
 
@@ -139,6 +148,7 @@ export class RoomChatEffect {
               private chatService: ChatService,
               private snackBar: SnackBarNotificationService,
               private socketService: SocketService,
+              private scrollService: ScrollService,
               private store: Store) {
   }
 }

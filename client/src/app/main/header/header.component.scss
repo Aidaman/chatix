@@ -5,7 +5,7 @@
 }
 
 .nav-wrapper {
-  height: 7,9vh;
+  height: 7.6vh;
   display: flex;
   //justify-content: space-between;
   align-items: center;
@@ -50,13 +50,13 @@
         // min-width: 38px;
 
         @include sm {
-            width: 38px;
-            height: 38px;
+          width: 38px;
+          height: 38px;
         }
 
         @include lg {
-          height: 6vh;
-          width: 6vh;
+          height: 5vh;
+          width: 5vh;
         }
 
         img {

@@ -29,8 +29,13 @@ module.exports = {
                 }
             }
             io.to(params.room).emit('newMessage', {
-                message:
-                    {content: params.message, createdAt, _id: messId, creator, isSystemMessage: false, read: []},
+                message: {
+                    content: params.message,
+                    createdAt, _id: messId,
+                    creator,
+                    isSystemMessage: false,
+                    isForwardedMessage: params.isForwarded,
+                    read: []},
                 room: params.room
             })
         } catch (e) {
@@ -100,5 +105,5 @@ module.exports = {
             console.log(e);
             io.to(socket.id).emit('error', {error: {type: e.message}});
         }
-    }
+    },
 };

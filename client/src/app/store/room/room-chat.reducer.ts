@@ -106,7 +106,7 @@ export const roomChatReducer = createReducer(
   on(roomGetNewMessageSuccessAction, (state, action) => {
     const rooms = state.allRooms.slice().map((room: IRoom) => {
       if (room._id === action.roomId && action.message.creator?._id !== room.creator?._id && !action.message.isSystemMessage)
-        room = { ...room, unread: 1 + room.unread < 0? 0 : 1 + room.unread  };
+        room = { ...room, unread: room.unread + 1 < 0? 0 : room.unread + 1 };
       return room;
     });
     if (!state.selectedRoom || action.roomId === state.selectedRoom?._id) {
@@ -136,7 +136,7 @@ export const roomChatReducer = createReducer(
 
     const rooms = [...state.allRooms].map((room: IRoom) => {
       if (state.selectedRoom !== null && room._id === state.selectedRoom._id)
-        room = { ...room, unread: room.unread - 1 };
+        room = { ...room, unread: room.unread - 1 > 0? room.unread - 1 : 0 };
       return room;
     });
 

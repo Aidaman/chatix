@@ -7,5 +7,6 @@ export interface IMessage {
     room: string;
     _id: string;
     isSystemMessage: boolean;
+    isForwardedMessage: boolean;
     read: string[];
 }

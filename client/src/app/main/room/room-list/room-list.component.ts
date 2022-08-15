@@ -1,20 +1,15 @@
 import { Component, } from "@angular/core";
 import { IRoom } from "../../../shared/models/IRoom";
 import { SocketService } from "../../../shared/services/socket.service";
-import { ThemingService } from "../../../shared/services/theming.service";
-import { BehaviorSubject, Observable, switchMap, } from "rxjs";
-import { RoomService } from "../../../shared/services/room.service";
+import { Observable, of, switchMap } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialog-adding-room.component";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ChatService } from "../../../shared/services/chat.service";
 import { Store } from "@ngrx/store";
-import {
-  chatGetAvailableRooms,
-  roomSwitchAction
-} from "../../../store/room/room-chat.actions";
-import { SnackBarNotificationService } from "../../../shared/services/snack-bar-notification.service";
+import { chatGetAvailableRooms } from "../../../store/room/room-chat.actions";
 import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room/room-chat.selectors";
+import { ScrollService } from "../../../shared/services/scroll.service";
 
 /*
 * @description This component is responsible to show the list of rooms available for users
@@ -26,7 +21,10 @@ import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room/room-c
   templateUrl: "./room-list.component.html",
   styleUrls: ["./room-list.component.scss"]
 })
-export class RoomListComponent  {
+export class RoomListComponent {
+  public currentRoomId$: Observable<string> = this.activeRoute.params.pipe(
+    switchMap(({ id }) => of(String(id))));
+
   public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
     switchMap((value) => {
       if (!value) {
@@ -41,17 +39,14 @@ export class RoomListComponent  {
   public overallUnread: Observable<number> = this.chatService.overallUnread;
 
   public searchText: string = "";
-  public isPublicRooms: boolean = false;
-  public theme: BehaviorSubject<string> = this.themingService.theme;
 
   constructor(private socketService: SocketService,
-              private roomService: RoomService,
               private router: Router,
+              private activeRoute: ActivatedRoute,
               private chatService: ChatService,
+              private scrollService: ScrollService,
               private store: Store,
-              private matDialog: MatDialog,
-              private snackBar: SnackBarNotificationService,
-              private themingService: ThemingService) {
+              private matDialog: MatDialog,) {
   }
 
   /*
@@ -86,9 +81,9 @@ export class RoomListComponent  {
     this.chatService.sideMenuOpened.next(false);
   }
 
-  public navigateRoom(roomId: string) {
+  public navigateRoom(previousRoomId: string, roomId: string) {
     this.closeList();
-    this.store.dispatch(roomSwitchAction({ roomId }));
+    this.scrollService.previousRoomId.next(previousRoomId);
     this.router.navigate(["/chat", roomId]);
   }
 }
