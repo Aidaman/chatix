@@ -13,7 +13,7 @@ export class CustomContextMenuComponent implements OnInit{
   @Output() optionSelect: EventEmitter<string> = new EventEmitter<string>();
   @Input() options: IOption[] | null = [];
 
-  public isShown: BehaviorSubject<boolean> = this.chatService.isMyMessage;
+  // public isShown: BehaviorSubject<boolean> = this.chatService.isMyMessage;
   // public contextMenuConfig: BehaviorSubject<{ left: number, top: number }> = this.chatService.contextMenuConfig;
 
   constructor(private chatService: ChatService) {
@@ -21,7 +21,8 @@ export class CustomContextMenuComponent implements OnInit{
 
   ngOnInit(): void {
     if (!this.chatService.isMyMessage.value)
-      this.options = [{ id: "none", title: "you can not interact with other's message", icon: "error" }];
+      this.options = this.options?.filter((option) => option.isForMe === false) ?? null;
+      // this.options = [{ id: "none", title: "you can not interact with other's message", icon: "error" }];
   }
 
   @HostListener("document:click", ["$event"])

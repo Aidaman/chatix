@@ -2,7 +2,8 @@
      snInViewport (inViewportChange)="viewportChange($event)"
      [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage,
                  'foreign': message.creator?.id !== me && !message.isSystemMessage,
-                 'system': message.isSystemMessage}">
+                 'system': message.isSystemMessage,
+                 'forwarded': message.isForwardedMessage}">
 
   <ng-container *ngIf="message.isSystemMessage; else notSystemMessage">
         <span class="sys-message">
@@ -25,6 +26,9 @@
                 <span [ngClass]="{'premium': message.creator?.isPremium}">
                     {{message.creator?.name | premiumNickname: !!message.creator?.isPremium}}
                 </span>
+                <small class="forwarded" *ngIf="message.isForwardedMessage"><i>
+                  forwarded
+                </i></small>
             </ng-template>
         </span>
 

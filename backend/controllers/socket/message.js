@@ -21,7 +21,14 @@ module.exports = {
                 const room = await Room.findOne({_id: params.room, users: socket.decoded_token.id});
                 if (room) {
                     const content = crypto.AES.encrypt(validator.escape(params.message), MESSAGE_KEY).toString();
-                    const mess = await Message.create({createdAt, creator, room: params.room, content});
+                    const mess = await Message.create({
+                        createdAt, 
+                        creator, 
+                        room: params.room, 
+                        content,
+                        isForwardedMessage: params.isForwarded,
+                    });
+
                     messId = mess._id;
                     await room.update({lastAction: Date.now()});
                 } else {
@@ -31,10 +38,11 @@ module.exports = {
             io.to(params.room).emit('newMessage', {
                 message: {
                     content: params.message,
-                    createdAt, _id: messId,
+                    createdAt, 
+                    _id: messId,
                     creator,
                     isSystemMessage: false,
-                    isForwardedMessage: params.isForwarded,
+                    isForwardedMessage: false,
                     read: []},
                 room: params.room
             })
@@ -106,4 +114,53 @@ module.exports = {
             io.to(socket.id).emit('error', {error: {type: e.message}});
         }
     },
+
+    forwardMessage: async (io, socket, params) => {
+        try {
+            const message = await Message.findOne({_id: params.messageId});
+            const date = message.createdAt.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"numeric", day:"numeric"});
+            const content = crypto.AES.encrypt(validator.escape(`(created at ${date}) ${message.content}`), MESSAGE_KEY).toString();
+            console.log("(FORWARDING MESSAGES) message: ", message);
+            let messId = 0;
+            const createdAt = Date.now();
+            const creator = await User.findById(message.creator);
+
+            if (!creator) {
+                throw new Error('invalid message')
+            }
+
+            if (params.room !== 'common') {
+                const room = await Room.findOne({_id: params.room});
+                if (room) {
+                    const mess = await Message.create({
+                        createdAt, 
+                        creator, 
+                        room: params.room, 
+                        content: content,
+                        isForwardedMessage: true,
+                    });
+
+                    messId = mess._id;
+                    await room.update({lastAction: Date.now()});
+                } else {
+                    throw new Error('Forbidden')
+                }
+            }
+            
+            io.to(params.room).emit('newMessage', {
+                message: {
+                    content: crypto.AES.decrypt(validator.escape(content), MESSAGE_KEY).toString(crypto.enc.Utf8),
+                    createdAt, 
+                    _id: messId,
+                    creator,
+                    isSystemMessage: false,
+                    isForwardedMessage: true,
+                    read: []},
+                room: params.room
+            })
+        } catch (e) {
+            console.log(e);
+            io.to(socket.id).emit('error', {error: {type: e.message}});
+        }
+    }
 };

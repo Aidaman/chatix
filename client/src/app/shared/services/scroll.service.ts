@@ -9,7 +9,7 @@ export class ScrollService {
 
   /*
   * @description a subject that used to save/load the scroll position
-  * @description contain ir of the room that user switched to
+  * @description contain the scroll position of the room that user switched to
   */
   public roomSwitched: Subject<{ roomId: string }> = new Subject<{ roomId: string }>();
   /*

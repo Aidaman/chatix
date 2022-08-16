@@ -74,6 +74,8 @@ export class SocketService {
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
       map((value: { message: IMessage, room: string }) => {
+          console.log(value.message);
+        
           if (value.room === "common") {
             const messagesInCommon = this.roomService.messagesInCommon.value;
             this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);

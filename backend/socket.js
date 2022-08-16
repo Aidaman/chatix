@@ -21,7 +21,8 @@ const {
     createMessage,
     readMessage,
     updateMessage,
-    deleteMessage
+    deleteMessage,
+    forwardMessage
 } = require('./controllers/socket/message');
 
 const {
@@ -78,6 +79,8 @@ module.exports = server => {
 
         socket.on('deleteMessage', async params => await deleteMessage(io, socket, params));
 
+        socket.on('forwardMessage', async params => await forwardMessage(io, socket, params));
+        
         socket.on('disconnect', async () => await disconnect(io, socket));
     });
 };

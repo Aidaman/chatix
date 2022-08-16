@@ -1,8 +1,8 @@
 import {
   AfterViewInit,  Directive,  ElementRef,  EventEmitter,
-  HostListener,   OnInit,  Output
+  HostListener,   OnDestroy,   OnInit,  Output
 } from "@angular/core";
-import { delay, tap } from "rxjs";
+import { delay, Subject, takeUntil, tap } from "rxjs";
 import { LocalStorageService } from "../services/local-storage.service";
 import { ScrollService } from "../services/scroll.service";
 
@@ -13,11 +13,11 @@ import { ScrollService } from "../services/scroll.service";
 @Directive({
   selector: "[app-scroll-track]"
 })
-export class ScrollTrackDirective implements OnInit, AfterViewInit{
+export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
   @Output() loadMessages = new EventEmitter<void>();
+  private terminate$: Subject<boolean> = new Subject<boolean>();
   private scrollHeight: number = 0;
   private isEmitted: boolean = false;
-  private memorisedScrollTop: number = 0;
 
   constructor(private el: ElementRef,
               private scrollService: ScrollService,
@@ -29,6 +29,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit{
       tap((value: boolean) => {
         if (value || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) this.setScroll(null);
       }),
+      takeUntil(this.terminate$),
     ).subscribe();
 
     this.scrollService.roomSwitched.pipe(
@@ -47,6 +48,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit{
           this.setScroll(scroll);
         else this.setScroll(null);
       }),
+      takeUntil(this.terminate$),
     ).subscribe();
   }
 
@@ -54,10 +56,14 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit{
     this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
   }
 
+  ngOnDestroy(): void {
+    this.terminate$.next(true);
+    this.terminate$.complete;
+  }
+
   private emit(eventScrollTop: number){
     if (eventScrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
-      this.memorisedScrollTop = this.el.nativeElement.scrollTop;
       this.loadMessages.emit();
       this.isEmitted = true;
     }
@@ -69,7 +75,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit{
   @HostListener("scroll", ["$event"])
   public scrollIt() {
     //@ts-ignore
-    this.emit(event?.srcElement.scrollTop);
+    this.emit(event?.target.scrollTop);
   }
 
   public setScroll(newScrollPosition: number | null): void{

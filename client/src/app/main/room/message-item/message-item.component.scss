@@ -1,31 +1,4 @@
-$screen-sm-min: 320px;
-$screen-md-min: 768px;
-$screen-lg-min: 992px;
-$screen-xl-min: 1200px;
-
-@mixin sm {
-  @media (min-width: #{$screen-sm-min}) {
-    @content;
-  }
-}
-
-@mixin md {
-  @media (min-width: #{$screen-md-min}) {
-    @content;
-  }
-}
-
-@mixin lg {
-  @media (min-width: #{$screen-lg-min}) {
-    @content;
-  }
-}
-
-@mixin xl {
-  @media (min-width: #{$screen-xl-min}) {
-    @content;
-  }
-}
+@import "src/assets/mixins";
 
 ::ng-deep .e-contextmenu-wrapper ul {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.14) !important;
@@ -53,6 +26,13 @@ $screen-xl-min: 1200px;
   .message-text {
     justify-content: flex-end;
   }
+}
+
+.forwarded{
+  font-style: italic !important;
+}
+small.forwarded{
+  color: #ffffff65;
 }
 
 .foreign {
@@ -200,8 +180,8 @@ $screen-xl-min: 1200px;
 :host-context( body.light ) {
   .sys-message {
     transition: 0.3s;
-    background-color: rgba(0, 0, 0, 0.19);
-    color: black;
+    background-color: rgba(0, 0, 0, 0.19) !important;
+    color: black !important;
   }
 
   .avatar {
@@ -249,8 +229,8 @@ $screen-xl-min: 1200px;
 :host-context( body.dark ){
   .sys-message {
     transition: 0.3s;
-    background-color: rgba(251, 255, 253, 0.12);
-    color: white;
+    background-color: rgba(251, 255, 253, 0.12) !important;
+    color: white !important;
   }
 
   .avatar {

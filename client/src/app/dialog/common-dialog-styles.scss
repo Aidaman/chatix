@@ -1,5 +1,9 @@
 @import "src/assets/mixins";
 
+::ng-deep .mat-dialog-container {
+  padding: 0;
+}
+
 .dialog-wrapper {
   position: relative;
   @include sm{

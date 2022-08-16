@@ -47,7 +47,7 @@ export class RoomSelectDialogComponent implements OnInit {
   }
 
   public forwardTo(roomId: string){
-    this.socketService.emit("createMessage", { message: {...this.data, isForwardedMessage: true}, room: roomId,});
+    this.socketService.emit("forwardMessage", { messageId: this.data._id, room: roomId,});
     this.router.navigate(["/chat", roomId]);
     this.dialogRef.close();
   }

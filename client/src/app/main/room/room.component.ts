@@ -92,22 +92,26 @@ export class RoomComponent implements OnInit {
     {
       id: "edit",
       title: "Edit Message",
-      icon: "edit"
+      icon: "edit",
+      isForMe: true,
     },
     {
       id: "delete",
       title: "Delete Message",
-      icon: "delete"
+      icon: "delete",
+      isForMe: true,
     },
     {
       id: "forward",
       title: "Forward Message",
-      icon: "redo"
+      icon: "redo",
+      isForMe: false,
     },
     {
       id: "reply",
       title: "Reply Message",
-      icon: "reply"
+      icon: "reply",
+      isForMe: false,
     },
   ];
 
@@ -189,9 +193,9 @@ export class RoomComponent implements OnInit {
   }
 
   public onMessageRightClick(message: IMessage): void {
-    if (message.creator?._id === this.chatService.me) {
+    // if (message.creator?._id === this.chatService.me) {
       this.lastSelectedMessage = message;
-    }
+    // }
   }
 
   /*
@@ -268,11 +272,11 @@ export class RoomComponent implements OnInit {
         this.matDialog.open(RoomSelectDialogComponent, {data: this.lastSelectedMessage});
         break;
       }
-      case("reply"): {
-        // this.isReplying = true;
+      // case("reply"): {
+      //   // this.isReplying = true;
 
-        break;
-      }
+      //   break;
+      // }
     }
     this.chatService.showContextMenu.next(false);
   }

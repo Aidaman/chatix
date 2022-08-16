@@ -1,4 +1,5 @@
-<div *ngIf="isShown | async" class="container">
+<div class="container">
+  <!-- *ngIf="isShown | async" -->
   <ul>
     <li (click)="selectOption(option.id)"
         *ngFor="let option of options"
