@@ -119,11 +119,10 @@ module.exports = {
         try {
             const message = await Message.findOne({_id: params.messageId});
             const date = message.createdAt.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"numeric", day:"numeric"});
-            const content = crypto.AES.encrypt(validator.escape(`(created at ${date}) ${message.content}`), MESSAGE_KEY).toString();
-            console.log("(FORWARDING MESSAGES) message: ", message);
-            let messId = 0;
+            const content = `(created at ${date}) ${params.content}`;
             const createdAt = Date.now();
             const creator = await User.findById(message.creator);
+            let messId = 0;
 
             if (!creator) {
                 throw new Error('invalid message')
@@ -132,11 +131,12 @@ module.exports = {
             if (params.room !== 'common') {
                 const room = await Room.findOne({_id: params.room});
                 if (room) {
+                    const dbContent = crypto.AES.encrypt(validator.escape(content), MESSAGE_KEY).toString();
                     const mess = await Message.create({
-                        createdAt, 
+                        createdAt,
                         creator, 
                         room: params.room, 
-                        content: content,
+                        content: dbContent,
                         isForwardedMessage: true,
                     });
 
@@ -149,7 +149,7 @@ module.exports = {
             
             io.to(params.room).emit('newMessage', {
                 message: {
-                    content: crypto.AES.decrypt(validator.escape(content), MESSAGE_KEY).toString(crypto.enc.Utf8),
+                    content,
                     createdAt, 
                     _id: messId,
                     creator,
