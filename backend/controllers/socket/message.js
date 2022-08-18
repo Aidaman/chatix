@@ -118,8 +118,8 @@ module.exports = {
     forwardMessage: async (io, socket, params) => {
         try {
             const message = await Message.findOne({_id: params.messageId});
-            const date = message.createdAt.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"numeric", day:"numeric"});
-            const content = `(created at ${date}) ${params.content}`;
+            const date = message.createdAt;
+            const content = `(created ${date.getDate()}-${date.getMonth()}-${date.getFullYear()}) ${params.content}`;
             const createdAt = Date.now();
             const creator = await User.findById(message.creator);
             let messId = 0;

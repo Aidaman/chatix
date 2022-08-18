@@ -45,30 +45,58 @@
          app-scroll-track
          (loadMessages)="onScroll(room._id)">
       <div id="messagecontextmenutarget">
-        <mat-list class="mt-lst " *ngIf="messages$ | async as messages">
-          <mat-list-item *ngFor="let message of messages" [ngClass]="{
+       <mat-list class="mt-lst " #messagesList>
+         <ng-container *ngIf="messages$ | async as messages">
+            <mat-list-item *ngFor="let message of messages" [ngClass]="{
                         'own': (message.creator?._id | isCreatedByMe) && !message.isSystemMessage,
                         'foreign' : (message.creator?._id | isCreatedByMe) && !message.isSystemMessage,
                         'system' : message.isSystemMessage}">
-            <div class="message-item">
-              <app-message-item [message]="message"
-                                app-context-menu
-                                [isMyMessage]="message.creator?._id | isCreatedByMe"
-                                [cdkContextMenuTriggerFor]="context_menu"
-                                (contextmenu)="onMessageRightClick(message)"
-                                (viewChange)="onViewportChange($event, room, messages)">
-              </app-message-item>
-            </div>
-          </mat-list-item>
+              <div class="message-item">
+                <app-message-item [message]="message"
+                                  app-context-menu
+                                  [isMyMessage]="message.creator?._id | isCreatedByMe"
+                                  [cdkContextMenuTriggerFor]="context_menu"
+                                  (contextmenu)="onMessageRightClick(message)"
+                                  (viewChange)="onViewportChange($event, room, messages)">
+                </app-message-item>
+              </div>
+            </mat-list-item>
 
-          <ng-template #context_menu>
-            <app-custom-context-menu cdkMenu
-                                     [options]="menuItems"
-                                     (optionSelect)="onOptionSelect($event)">
-            </app-custom-context-menu>
-          </ng-template>
+            <ng-template #context_menu>
+              <app-custom-context-menu cdkMenu
+                                       [options]="menuItems"
+                                       (optionSelect)="onOptionSelect($event)">
+              </app-custom-context-menu>
+            </ng-template>
+          </ng-container>
 
         </mat-list>
+        <!-- <div class="mt-lst mat-list" #messagesList>
+          <ng-container *ngIf="messages$ | async as messages">
+            <div *ngFor="let message of messages" [ngClass]="{
+                        'own': (message.creator?._id | isCreatedByMe) && !message.isSystemMessage,
+                        'foreign' : (message.creator?._id | isCreatedByMe) && !message.isSystemMessage,
+                        'system' : message.isSystemMessage}">
+              <div class="message-item">
+                <app-message-item [message]="message"
+                                  app-context-menu
+                                  [isMyMessage]="message.creator?._id | isCreatedByMe"
+                                  [cdkContextMenuTriggerFor]="context_menu"
+                                  (contextmenu)="onMessageRightClick(message)"
+                                  (viewChange)="onViewportChange($event, room, messages)">
+                </app-message-item>
+              </div>
+            </div>
+
+            <ng-template #context_menu>
+              <app-custom-context-menu cdkMenu
+                                       [options]="menuItems"
+                                       (optionSelect)="onOptionSelect($event)">
+              </app-custom-context-menu>
+            </ng-template>
+          </ng-container>
+
+        </div> -->
       </div>
     </div>
 
@@ -78,8 +106,10 @@
       </button>
 
       <div class="input-message" (keydown.enter)="sendMessage($event, room)">
+
         <app-custom-message-input formControlName="message"
                                   dir="auto"></app-custom-message-input>
+
       </div>
 
       <button class="input-send" (click)="sendMessage($event, room)" mat-fab color="primary">

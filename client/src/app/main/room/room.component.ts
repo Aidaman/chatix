@@ -1,8 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { ThemingService } from "../../shared/services/theming.service";
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import { RoomService } from "../../shared/services/room.service";
 import { IRoom } from "../../shared/models/IRoom";
-import { BehaviorSubject, filter, lastValueFrom, Observable, switchMap, tap } from "rxjs";
+import {
+  asyncScheduler,
+  BehaviorSubject,
+  delay,
+  filter,
+  lastValueFrom,
+  Observable,
+  observeOn,
+  Subject,
+  switchMap,
+  tap
+} from "rxjs";
 import { IMessage } from "../../shared/models/IMessage";
 import { SocketService } from "../../shared/services/socket.service";
 import { IOption } from "../../shared/models/IOption";
@@ -26,6 +36,8 @@ import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/
 import { IUser } from "../../shared/models/IUser";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RoomSelectDialogComponent } from "src/app/dialog/room-select-dialog/room-select-dialog.component";
+import {MatList} from "@angular/material/list";
+import {ScrollService} from "../../shared/services/scroll.service";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -37,9 +49,14 @@ import { RoomSelectDialogComponent } from "src/app/dialog/room-select-dialog/roo
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit {
+  @ViewChild("messagesList") public messagesList!: ElementRef;
+  private DOMChanges!: MutationObserver;
+
   private lastSelectedMessage: IMessage | null = null;
   private isEditing: boolean = false;
   private isReplying: boolean = false;
+
+  public openMutationObserver$ = new BehaviorSubject<boolean>(false);
 
   public emojiExpanded: BehaviorSubject<boolean> = this.chatService.showEmoji;
 
@@ -48,12 +65,14 @@ export class RoomComponent implements OnInit {
   });
 
   public me = this.chatService.me;
-  public theme: BehaviorSubject<string> = this.themingService.theme;
 
   public currentRoomUnreadCount: number = 0;
   public overallUnread: Observable<number> = this.chatService.overallUnread;
 
   public room$: Observable<IRoom | null> = this.activeRoute.params.pipe(
+    tap(() => {
+      this.DOMChanges && this.DOMChanges.disconnect();
+    }),
     switchMap(({ id }) => {
       return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
@@ -65,6 +84,12 @@ export class RoomComponent implements OnInit {
           return this.store.select(roomByIdSelect(id));
         }),
         filter(Boolean),
+        tap(() => {
+          console.log("---------------------------------------");
+          if(!this.openMutationObserver$.getValue()){
+            this.openMutationObserver$.next(true);
+          }
+        })
       );
     }),
   );
@@ -83,6 +108,7 @@ export class RoomComponent implements OnInit {
       return this.roomService.messagesInCommon.asObservable();
     }),
     tap((messages) => {
+      this.chatService.lastMessageCreatorId = messages[messages.length-1].creator?._id ?? ""
       this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       return messages;
     })
@@ -115,26 +141,35 @@ export class RoomComponent implements OnInit {
     },
   ];
 
-  constructor(private themingService: ThemingService,
-              private socketService: SocketService,
+  constructor(private socketService: SocketService,
               private chatService: ChatService,
               private matDialog: MatDialog,
               private router: Router,
               private fb: FormBuilder,
               private activeRoute: ActivatedRoute,
               private roomService: RoomService,
+              private scrollService: ScrollService,
               private store: Store) {
   }
 
   ngOnInit(): void {
-    // this.socketService.emit("searchRooms", {});
+    this.openMutationObserver$.pipe(observeOn(asyncScheduler)).subscribe((isOpened: boolean) => {
+      if(isOpened){
+        const element = this.messagesList.nativeElement;
+        this.DOMChanges = new MutationObserver((mutations) => {
+          if (this.chatService.lastMessageCreatorId === this.chatService.me)
+            this.scrollService.scrollDown$.next(true);
+          else this.scrollService.scrollDown$.next(false);
+        });
+        this.DOMChanges.observe(element, {childList: true});
+      }
+    });
 
     this.socketService.listenUserLeft().subscribe();
     this.socketService.listenPrivacyChanged().subscribe();
     this.socketService.listenMessageDeleted().subscribe();
     this.socketService.listenMessageUpdated().subscribe();
     this.socketService.listenMessageRead().subscribe();
-
     this.socketService.listenUserJoined().subscribe();
   }
 

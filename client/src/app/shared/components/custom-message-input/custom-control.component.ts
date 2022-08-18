@@ -16,10 +16,6 @@ import { Subscription } from "rxjs";
   ]
 })
 export class CustomMessageInputComponent implements ControlValueAccessor, OnDestroy {
-  // @ViewChild("textArea", {static: true}) private textArea!: ElementRef;
-
-  // private caretPosition: number = 0;
-
   val: any = "";
   disabled: boolean = false;
 
@@ -29,32 +25,10 @@ export class CustomMessageInputComponent implements ControlValueAccessor, OnDest
   private emojiSubscription: Subscription = this.roomService.emoji
     .asObservable()
     .subscribe((emoji) => {
-      // const range = window.getSelection()?.getRangeAt(0);
-      // let preCaretRange = range?.cloneRange();
-      // preCaretRange?.selectNodeContents(this.textArea.nativeElement);
-      // preCaretRange?.setEnd(range?.endContainer as Node, range?.endOffset as number);
-      // this.caretPosition = preCaretRange?.toString().length as number;
-
-      // if (!this.val){
-      //   this.value = emoji;
-      // } else if (this.caretPosition === this.val.length) {
-      //   this.value = this.val + emoji;
-      // } else {
-      //   this.value = this.val.slice(0, this.caretPosition) + emoji + this.val.slice(this.caretPosition);
-      // }
-
-      // // window.getSelection()?.removeAllRanges();  
-      // // preCaretRange = window.getSelection()?.getRangeAt(0);
-      // preCaretRange?.setEnd(range?.endContainer as Node, (range?.endOffset as number) + 1);
-      // this.textArea.nativeElement.focus();
-
       if (!this.val)
         this.value = emoji;
-      else
-        this.value = this.val + emoji;
-      // } else {
-      //   this.value = this.val.slice(0, this.caretPosition) + emoji + this.val.slice(this.caretPosition);
-      // }
+
+      else this.value = this.val + emoji; 
     });
 
   constructor(private roomService: RoomService) {

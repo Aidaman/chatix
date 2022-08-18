@@ -119,9 +119,9 @@ export class RoomChatEffect {
     switchMap(({ roomId, message }) => this.store.select(hasRoomValueSelector).pipe(
       map(() => roomGetNewMessageSuccessAction({ message, roomId })),
       tap(() => {
-        if (message.creator?._id === this.chatService.me)
-          this.scrollService.scrollDown$.next(true);
-        else this.scrollService.scrollDown$.next(false);
+          if (this.chatService.lastMessageCreatorId === this.chatService.me)
+            this.scrollService.scrollDown$.next(true);
+          else this.scrollService.scrollDown$.next(false);
       }),
       catchError(() => of(roomGetNewMessageFailureAction()))))
   ));

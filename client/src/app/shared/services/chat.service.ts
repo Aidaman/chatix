@@ -17,6 +17,8 @@ export class ChatService {
   public sideMenuOpened: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showEmoji: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+  public lastMessageCreatorId: string = "";
+
   public overallUnread = this.store.select(allRoomsSelector).pipe(
     map((rooms) => {
       return rooms.reduce((accumulator, room) => room._id !== "common"? accumulator + room.unread : accumulator, 0);

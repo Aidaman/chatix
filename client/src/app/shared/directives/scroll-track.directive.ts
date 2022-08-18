@@ -17,6 +17,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
   @Output() loadMessages = new EventEmitter<void>();
   private terminate$: Subject<boolean> = new Subject<boolean>();
   private scrollHeight: number = 0;
+  private scrollTop: number = 0;
   private isEmitted: boolean = false;
 
   constructor(private el: ElementRef,
@@ -27,29 +28,31 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
     this.scrollService.scrollDown$.pipe(
       delay(50),
       tap((value: boolean) => {
-        if (value || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) this.setScroll(null);
+        if ((value || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) )
+            // && (!this.isEmitted && this.scrollHeight-this.scrollTop > 500)) 
+          this.setScroll(null);
       }),
       takeUntil(this.terminate$),
     ).subscribe();
 
-    this.scrollService.roomSwitched.pipe(
-      tap(({ roomId }) => {
-        if (roomId === "common") return;
-        //save scroll position for previous room
-        if (this.el.nativeElement.scrollTop > 500)
-          this.localStorageService.setScrollPosition(this.scrollService.previousRoomId.value, this.scrollHeight - this.el.nativeElement.scrollTop);
-
-        //get scroll for current room
-        const scroll: number = +this.localStorageService.getScrollPosition(roomId);
-        console.log(scroll);
-
-        //set scroll for current room
-        if (scroll && scroll > 500)
-          this.setScroll(scroll);
-        else this.setScroll(null);
-      }),
-      takeUntil(this.terminate$),
-    ).subscribe();
+    // this.scrollService.roomSwitched.pipe(
+    //   tap(({ roomId }) => {
+    //     if (roomId === "common") return;
+    //     //save scroll position for previous room
+    //     if (this.el.nativeElement.scrollTop > 500)
+    //       this.localStorageService.setScrollPosition(this.scrollService.previousRoomId.value, this.scrollHeight - this.el.nativeElement.scrollTop);
+    //
+    //     //get scroll for current room
+    //     const scroll: number = +this.localStorageService.getScrollPosition(roomId);
+    //     console.log(scroll);
+    //
+    //     //set scroll for current room
+    //     if (scroll && scroll > 500)
+    //       this.setScroll(scroll);
+    //     else this.setScroll(null);
+    //   }),
+    //   takeUntil(this.terminate$),
+    // ).subscribe();
   }
 
   ngAfterViewInit(): void {
@@ -62,6 +65,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
   }
 
   private emit(eventScrollTop: number){
+    this.scrollTop = eventScrollTop;
     if (eventScrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
       this.loadMessages.emit();
