@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { RoomService } from "../../shared/services/room.service";
 import { IRoom } from "../../shared/models/IRoom";
 import {
@@ -36,8 +36,8 @@ import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/
 import { IUser } from "../../shared/models/IUser";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { RoomSelectDialogComponent } from "src/app/dialog/room-select-dialog/room-select-dialog.component";
-import {MatList} from "@angular/material/list";
-import {ScrollService} from "../../shared/services/scroll.service";
+import { MatList } from "@angular/material/list";
+import { ScrollService } from "../../shared/services/scroll.service";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -71,6 +71,7 @@ export class RoomComponent implements OnInit {
 
   public room$: Observable<IRoom | null> = this.activeRoute.params.pipe(
     tap(() => {
+      // eslint-disable-next-line no-unused-expressions
       this.DOMChanges && this.DOMChanges.disconnect();
     }),
     switchMap(({ id }) => {
@@ -108,7 +109,7 @@ export class RoomComponent implements OnInit {
       return this.roomService.messagesInCommon.asObservable();
     }),
     tap((messages) => {
-      this.chatService.lastMessageCreatorId = messages[messages.length-1].creator?._id ?? ""
+      this.chatService.lastMessageCreatorId = messages[messages.length-1].creator?._id ?? "";
       this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       return messages;
     })
@@ -161,7 +162,7 @@ export class RoomComponent implements OnInit {
             this.scrollService.scrollDown$.next(true);
           else this.scrollService.scrollDown$.next(false);
         });
-        this.DOMChanges.observe(element, {childList: true});
+        this.DOMChanges.observe(element, { childList: true });
       }
     });
 
@@ -304,7 +305,7 @@ export class RoomComponent implements OnInit {
         break;
       }
       case("forward"): {
-        this.matDialog.open(RoomSelectDialogComponent, {data: this.lastSelectedMessage});
+        this.matDialog.open(RoomSelectDialogComponent, { data: this.lastSelectedMessage });
         break;
       }
       // case("reply"): {

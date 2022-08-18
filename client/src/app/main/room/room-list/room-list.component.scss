@@ -1,14 +1,11 @@
 @import "../../../../assets/mixins";
+@import "src/app/common-syles";
 
 .mobile-present{
   @include sm(){
     display: flex;
     justify-content: center;
-    //align-items: center;
     margin: 16px 0;
-  }
-  @include lg() {
-    display: none;
   }
 }
 
@@ -171,32 +168,6 @@
     height: calc(100vh - 349px);
 
     overflow-y: auto;
-
-    &::-webkit-scrollbar {
-      width: 8px;
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: rgba(203, 203, 203, 0.5);
-      transition: 0.3s;
-      border-radius: 6px;
-
-      &:hover {
-        background-color: rgba(148, 148, 148, 0.25);
-      }
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.6);
-      border-radius: 6px;
-      transition: 0.3s;
-
-      &:hover {
-        background-color: rgba(148, 148, 148, 0.5);
-      }
-    }
   }
 
   .room-title {

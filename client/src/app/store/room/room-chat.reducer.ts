@@ -109,13 +109,15 @@ export const roomChatReducer = createReducer(
         room = { ...room, unread: room.unread + 1 < 0? 0 : room.unread + 1 };
       return room;
     });
+
     if (!state.selectedRoom || action.roomId === state.selectedRoom?._id) {
       const newMessagesArr = state.messages.slice();
       newMessagesArr.push({ ...action.message });
       return ({
         ...state,
         messages: newMessagesArr,
-        allRooms: rooms
+        allRooms: rooms,
+        totalMessages: state.totalMessages+1,
       });
     } else return ({ ...state, allRooms: rooms });
   }),
@@ -153,7 +155,7 @@ export const roomChatReducer = createReducer(
   on(roomLoadMessagesAction, (state) => ({
     ...state,
     isLoading: true,
-    offset: state.offset + 50 > state.totalMessages ? state.totalMessages : state.offset + 50,
+    offset: state.offset + 50 >= state.totalMessages ? state.totalMessages : state.offset + 50,
   })),
   on(roomLoadMessagesSuccessAction, (state, action) => {
     const newState = { ...state, isLoading: false };

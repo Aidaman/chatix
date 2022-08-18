@@ -10,7 +10,7 @@
         </button>
       </div>
 
-      <div class="user-list" formArrayName="participants">
+      <div class="user-list custom-scroll" formArrayName="participants">
         <div class="list-items" *ngFor="let item of participants.controls; let pointIndex=index" [formGroupName]="pointIndex.toString()">
           <mat-form-field class="part-input">
             <label>

@@ -25,7 +25,7 @@
       {{(searchCondition | lowercase) === 'public' ? 'Public' : 'Private'}}
     </mat-slide-toggle>
   </div>
-  <div class="room-list">
+  <div class="room-list custom-scroll">
     <mat-list *ngIf="currentRoomId$ | async as currentRoomId">
       <mat-list-item class="room-list-item"
                      *ngFor="let room of (rooms$ | async) | updateRooms

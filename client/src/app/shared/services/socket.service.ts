@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { environment } from "../../../environments/environment";
-import { map, Observable, Subject, takeUntil, tap } from "rxjs";
-import { LocalStorageService } from "./local-storage.service";
+import {Injectable} from "@angular/core";
+import {environment} from "../../../environments/environment";
+import {map, Observable, Subject, takeUntil, tap} from "rxjs";
+import {LocalStorageService} from "./local-storage.service";
 // @ts-ignore
 import * as io from "socket.io-client";
 import {
@@ -11,14 +11,14 @@ import {
   roomMessageRemoveAction,
   roomUpdateMessageAction
 } from "../../store/room/room-chat.actions";
-import { Store } from "@ngrx/store";
-import { Router } from "@angular/router";
-import { SnackBarNotificationService } from "./snack-bar-notification.service";
-import { IUser } from "../models/IUser";
-import { IRoom } from "../models/IRoom";
-import { ChatService } from "./chat.service";
-import { IMessage } from "../models/IMessage";
-import { RoomService } from "./room.service";
+import {Store} from "@ngrx/store";
+import {Router} from "@angular/router";
+import {SnackBarNotificationService} from "./snack-bar-notification.service";
+import {IUser} from "../models/IUser";
+import {IRoom} from "../models/IRoom";
+import {ChatService} from "./chat.service";
+import {IMessage} from "../models/IMessage";
+import {RoomService} from "./room.service";
 
 @Injectable({
   providedIn: "root"
@@ -41,7 +41,7 @@ export class SocketService {
   public connect(): void {
     if (!this.isConnected) {
       // @ts-ignore
-      this.socket = io(this.uri, { query: `token=${this.localStorageService.getToken()}` });
+      this.socket = io(this.uri, {query: `token=${this.localStorageService.getToken()}`});
       this.isConnected = true;
     } else {
       console.error("---UNAUTHORIZED. SOCKET IS NOT CONNECTED");
@@ -74,19 +74,18 @@ export class SocketService {
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
       map((value: { message: IMessage, room: string }) => {
-          console.log(value.message);
-        
-          if (value.room === "common") {
-            const messagesInCommon = this.roomService.messagesInCommon.value;
-            this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
-          }
-          this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
-          this.snackBar.openSnackBar("You receive new Message", [], {
-            horizontalPosition: "center",
-            verticalPosition: "top",
-            duration: 50,
-          });
-          return value;
+        this.chatService.lastMessageCreatorId = value.message.creator?._id ?? "";
+        if (value.room === "common") {
+          const messagesInCommon = this.roomService.messagesInCommon.value;
+          this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
+        }
+        this.store.dispatch(roomGetNewMessageAction({message: value.message, roomId: value.room}));
+        this.snackBar.openSnackBar("You receive new Message", [], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 50,
+        });
+        return value;
       }),
       takeUntil(this.termination$));
   }
@@ -112,7 +111,7 @@ export class SocketService {
   */
   public listenUserJoined(): Observable<any> {
     return this.listen("userJoined").pipe(
-      map((value: {user: IUser, room: IRoom}) => {
+      map((value: { user: IUser, room: IRoom }) => {
         console.log("userJoined");
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
@@ -124,8 +123,7 @@ export class SocketService {
             duration: 1000,
           });
           return;
-        }
-        else {
+        } else {
           if (value.user._id === this.chatService.me)
             this.router.navigate(["chat", value.room._id]);
           else return;
@@ -145,7 +143,7 @@ export class SocketService {
   */
   public listenUserLeft(): Observable<any> {
     return this.listen("userLeft").pipe(
-      tap((value: {user: IUser, room: IRoom}) => {
+      tap((value: { user: IUser, room: IRoom }) => {
         this.emit("getAllRooms", {});
         this.store.dispatch(chatGetAvailableRooms());
 
@@ -277,7 +275,7 @@ export class SocketService {
   public listenMessageRead(): Observable<any> {
     return this.listen("messageRead").pipe(
       map((value) => {
-        this.store.dispatch(roomMessageReadAction({ messageId: value.id, userId: value.user }));
+        this.store.dispatch(roomMessageReadAction({messageId: value.id, userId: value.user}));
       }),
       takeUntil(this.termination$)
     );
@@ -292,12 +290,12 @@ export class SocketService {
   public listenMessageUpdated(): Observable<any> {
     return this.listen("messageUpdated").pipe(
       map((value) => {
-        this.snackBar.openSnackBar("Message has been updated",["Ok"], {
+        this.snackBar.openSnackBar("Message has been updated", ["Ok"], {
           horizontalPosition: "center",
           verticalPosition: "bottom",
           duration: 2000,
         });
-        this.store.dispatch(roomUpdateMessageAction({ messageId: value.id, correction: value.newContent }));
+        this.store.dispatch(roomUpdateMessageAction({messageId: value.id, correction: value.newContent}));
       }),
       takeUntil(this.termination$));
   }
@@ -311,12 +309,12 @@ export class SocketService {
   public listenMessageDeleted(): Observable<any> {
     return this.listen("messageDeleted").pipe(
       map((value) => {
-        this.snackBar.openSnackBar("Message has been deleted",["Ok", "Discard"], {
+        this.snackBar.openSnackBar("Message has been deleted", ["Ok", "Discard"], {
           horizontalPosition: "center",
           verticalPosition: "top",
           duration: 2000,
         });
-        this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
+        this.store.dispatch(roomMessageRemoveAction({messageId: value.id}));
       }),
       takeUntil(this.termination$));
   }

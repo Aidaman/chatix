@@ -19,6 +19,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
   private scrollHeight: number = 0;
   private scrollTop: number = 0;
   private isEmitted: boolean = false;
+  private isQueryDone: boolean = false;
 
   constructor(private el: ElementRef,
               private scrollService: ScrollService,
@@ -26,10 +27,15 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
 
   public ngOnInit(): void {
     this.scrollService.scrollDown$.pipe(
-      delay(50),
-      tap((value: boolean) => {
-        if ((value || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) )
-            // && (!this.isEmitted && this.scrollHeight-this.scrollTop > 500)) 
+      // delay(50),
+      tap((isForceScroll: boolean) => {
+        //condition in words:
+        /*
+        * if either scroll is on the very top of message list and query for new messages done
+        * or event aren't emitted and value are true (or if scroll is almost down)
+        */
+        if (((isForceScroll || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) && (!this.isEmitted))
+            || (this.el.nativeElement.scrollHeight - this.scrollTop === this.el.nativeElement.scrollHeight && this.isQueryDone))
           this.setScroll(null);
       }),
       takeUntil(this.terminate$),
@@ -61,18 +67,21 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.terminate$.next(true);
-    this.terminate$.complete;
+    this.terminate$.complete();
   }
 
   private emit(eventScrollTop: number){
-    this.scrollTop = eventScrollTop;
+    this.scrollTop = eventScrollTop ;
     if (eventScrollTop < 500 && !this.isEmitted) {
       this.scrollHeight = this.el.nativeElement.scrollHeight;
       this.loadMessages.emit();
+
+      this.isQueryDone = false;
       this.isEmitted = true;
     }
     if (this.scrollHeight !== this.el.nativeElement.scrollHeight) {
       this.isEmitted = false;
+      this.isQueryDone = true;
     }
   }
 
@@ -83,9 +92,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
   }
 
   public setScroll(newScrollPosition: number | null): void{
-    this.scrollHeight = this.el.nativeElement.scrollHeight;
-
-    if (!newScrollPosition) this.el.nativeElement.scrollTop = this.scrollHeight;
+    if (!newScrollPosition) this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
     else this.el.nativeElement.scrollTop = newScrollPosition;
   }
 }

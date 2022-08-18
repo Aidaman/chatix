@@ -1,13 +1,14 @@
 @import "../../assets/mixins.scss";
+@import "src/app/common-syles";
 
-.mobile-absent{
-  @include sm(){
-    display: none;
-  }
-  @include lg(){
-    display: block;
-  }
-}
+//.mobile-absent{
+//  @include sm(){
+//    display: none;
+//  }
+//  @include lg(){
+//    display: block;
+//  }
+//}
 
 .main-wrapper {
   @include sm(){

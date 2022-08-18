@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css?family=Muli:300,400,700&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Kaushan+Script&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Julius+Sans+One&display=swap');
+@import "src/assets/mixins";
 
 html, body {
   //height: 100%;
@@ -26,23 +27,5 @@ body {
   .mat-menu-item {
     font-family: 'Quicksand', "Noto Color Emoji", "Helvetica Neue", sans-serif;
     font-weight: 500;
-  }
-}
-
-.mobile-present{
-  @include sm(){
-    display: block;
-  }
-  @include lg() {
-    display: none;
-  }
-}
-
-.mobile-absent{
-  @include sm(){
-    display: none;
-  }
-  @include lg(){
-    display: block;
   }
 }

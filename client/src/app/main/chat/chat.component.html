@@ -1,15 +1,15 @@
 <div class="chat-wrapper">
-    <mat-drawer-container autosize class="sidenav-wrapper">
-      <mat-drawer class="sidenav-content"
-                  [opened]="opened | async ">
-        <app-room-list></app-room-list>
-      </mat-drawer>
-      <app-room></app-room>
-      <mat-drawer class="sidenav-content mobile-absent"
-                  mode="side"
-                  position="end"
-                  [opened]="showEmojis | async">
-        <app-emojis></app-emojis>
-      </mat-drawer>
-    </mat-drawer-container>
+  <mat-drawer-container autosize class="sidenav-wrapper">
+    <mat-drawer class="sidenav-content"
+                [opened]="opened | async ">
+      <app-room-list></app-room-list>
+    </mat-drawer>
+    <app-room></app-room>
+    <mat-drawer class="sidenav-content mobile-absent"
+                mode="side"
+                position="end"
+                [opened]="showEmojis | async">
+      <app-emojis></app-emojis>
+    </mat-drawer>
+  </mat-drawer-container>
 </div>

@@ -1,6 +1,6 @@
 <div class="dialog-wrapper" [formGroup]="dialogForm">
   <h1 mat-dialog-title>
-    <mat-icon *ngIf="me === room.creator?._id" 
+    <mat-icon *ngIf="me === room.creator?._id"
               matRipple (click)="toggleEdit()">edit</mat-icon>
     <app-custom-room-config-input formControlName="title"
                                   [isContentEditable]="me === room.creator?._id && isEdit"
@@ -21,25 +21,27 @@
       <h2 mat-dialog-title>Participants</h2>
     </div>
 
-    <div class="part-list" *ngFor="let user of participants">
-      <div class="user-container">
-        <div class="avatar">
-          <img [src]="user.avatar" alt="">
+    <div class="custom-scroll">
+      <div class="part-list" *ngFor="let user of participants">
+        <div class="user-container">
+          <div class="avatar">
+            <img [src]="user.avatar" alt="">
+          </div>
+          <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
         </div>
-        <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
+        <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
+          <i class="material-icons">
+            delete
+          </i>
+        </button>
       </div>
-      <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
-        <i class="material-icons">
-          delete
-        </i>
-      </button>
     </div>
 
     <div mat-dialog-actions>
       <button mat-button (click)="onNoClick()" class="close-btn">
         <i class="material-icons">clear</i>
       </button>
-      <button *ngIf="room.creator?._id === me" mat-button 
+      <button *ngIf="room.creator?._id === me" mat-button
               [disabled]="!dialogForm.valid"
               (click)="onUpdate()"
               class="create-btn">Update
@@ -56,9 +58,9 @@
       <mat-form-field>
         <input matInput type="text" [placeholder]="'Enter title of room to confirm'" #input>
       </mat-form-field>
-      <button type="button" 
-              class="close-btn" 
-              mat-button [disabled]="input.value !== room.title" 
+      <button type="button"
+              class="close-btn"
+              mat-button [disabled]="input.value !== room.title"
               (click)="onDelete()">
         <i class="material-icons">
           check

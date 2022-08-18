@@ -1,4 +1,5 @@
 @import "../../../assets/mixins";
+@import "src/app/common-syles";
 
 .chat-wrapper {
   //position: relative;
@@ -22,15 +23,6 @@
     height: 100%;
   }
 
-  .sidenav-content.mobile-absent{
-    @include sm(){
-      display: none;
-    }
-    @include lg(){
-      display: block;
-    }
-  }
-
   .sidenav-content {
     display: flex;
     align-items: center;
@@ -44,6 +36,15 @@
       width: 300px;
     }
 
+    //It shows strange behavior without this
+    &.mobile-absent{
+      @include sm() {
+        display: none;
+      }
+      @include lg() {
+        display: block;
+      }
+    }
   }
 
   .room-wrapper {

@@ -1,22 +1,5 @@
-@import "../../../assets/mixins";
-
-.mobile-present {
-  @include sm() {
-    display: block;
-  }
-  @include lg() {
-    display: none;
-  }
-}
-
-.mobile-absent {
-  @include sm() {
-    display: none;
-  }
-  @include lg() {
-    display: block;
-  }
-}
+@import "src/assets/mixins";
+@import "src/app/common-syles";
 
 .room-wrapper {
   display: flex;
@@ -54,15 +37,6 @@
     min-height: 0;
     min-width: 0;
     border-radius: 50px;
-  }
-
-  ::ng-deep .mat-list {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    position: relative;
-    padding: 0;
-    // overflow: hidden;
   }
 
   .mat-list {
@@ -183,53 +157,31 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    display: flex;
     height: auto;
     padding: 10px;
 
-    @include sm{
-      justify-content: space-between;
-    }
-    @include md {
-      justify-content: space-around;
-    }
-    align-items: flex-end;
-    //align-items: flex-end;
-
     .input-message {
+      display: flex;
       transition: 0.5s;
+      align-items: flex-end;
       height: auto;
       border-radius: 30px;
-      width: 80%;
-      max-width: 80%;
-    }
+      width: 100%;
+      max-width: 100%;
 
-    //.composer_rich_textarea {
-    //  border: 0;
-    //  outline: none;
-    //  margin: 0;
-    //  line-height: 20px;
-    //  height: auto;
-    //  min-height: 40px;
-    //  max-height: 250px;
-    //  box-sizing: border-box;
-    //  font-family: 'Quicksand', "Noto Color Emoji" ,"Helvetica Neue", sans-serif;
-    //  width: 100%;
-    //  border-radius: 30px;
-    //
-    //  @include sm {
-    //    padding: 10px 0 10px 20px;
-    //  }
-    //
-    //  @include md {
-    //    padding: 10px 25px 10px 20px;
-    //  }
-    //}
+      @include sm{
+        justify-content: space-between;
+      }
+      @include md {
+        justify-content: space-around;
+      }
+    }
 
     .input-send {
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 5px 10px;
 
       @include sm {
         width: 30px;
@@ -238,8 +190,8 @@
       }
 
       @include md {
-        width: 45px;
-        height: 45px;
+        width: 35px;
+        height: 35px;
         font-size: 24px;
       }
     }
@@ -264,14 +216,17 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 100% !important;
+  position: relative;
+  padding: 0;
+  //max-width: 100% !important;
 
   ::ng-deep .mat-list-item {
     height: auto;
   }
 
   .system {
-    ::ng-deep .mat-list-item-content {
+    //::ng-deep .mat-list-item-content {
+    &.mat-list-item-content {
       display: flex;
       flex-direction: column !important;
       align-items: center;
@@ -280,23 +235,20 @@
   }
 
   .own {
-    ::ng-deep .mat-list-item-content {
+    align-self: flex-end;
+    //::ng-deep .mat-list-item-content {
+    &.mat-list-item-content {
       display: flex;
       flex-direction: column !important;
       align-items: flex-end;
-      //align-self: flex-end;
-      //justify-self: flex-end;
       margin: 8px 20px 8px 20px;
       padding: 0;
-
-      .message-item {
-        align-self: flex-end;
-      }
     }
   }
 
   .foreign {
-    ::ng-deep .mat-list-item-content {
+    //::ng-deep .mat-list-item-content {
+    &.mat-list-item-content {
       display: flex;
       flex-direction: column !important;
       align-items: flex-start;
@@ -608,32 +560,6 @@
   height: 94vh;
 
   overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    border-radius: 6px;
-    transition: 0.3s;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: rgba(203, 203, 203, 0.5);
-    transition: 0.3s;
-    border-radius: 6px;
-
-    &:hover {
-      background-color: rgba(148, 148, 148, 0.25);
-    }
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.6);
-    border-radius: 6px;
-    transition: 0.3s;
-
-    &:hover {
-      background-color: rgba(148, 148, 148, 0.5);
-    }
-  }
 }
 
 @media only screen and (max-width: 500px) {

@@ -1,5 +1,5 @@
-import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { IRoomChatState } from "./room-chat.reducer";
+import {createFeatureSelector, createSelector} from "@ngrx/store";
+import {IRoomChatState} from "./room-chat.reducer";
 
 export const roomChatFeatureSelector = createFeatureSelector<IRoomChatState>("room");
 

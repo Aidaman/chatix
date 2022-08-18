@@ -1,4 +1,9 @@
 @import "src/assets/mixins";
+@import "src/app/common-syles";
+
+:host(app-custom-message-input){
+  width: 100%;
+}
 
 .composer_rich_textarea {
   border: 0;
@@ -10,38 +15,11 @@
   max-height: 250px;
   box-sizing: border-box;
   font-family: 'Quicksand', "Noto Color Emoji" ,"Helvetica Neue", sans-serif;
-  width: 100%;
   min-width: 100%;
   max-width: 100%;
   border-radius: 30px;
 
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    border-radius: 6px;
-    transition: 0.3s;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: rgba(203, 203, 203, 0.5);
-    transition: 0.3s;
-    border-radius: 6px;
-  
-    &:hover {
-      background-color: rgba(148, 148, 148, 0.25);
-    }
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.6);
-    border-radius: 6px;
-    transition: 0.3s;
-  
-    &:hover {
-      background-color: rgba(148, 148, 148, 0.5);
-    }
-  }
+  word-break: break-word;
 
   @include sm {
     padding: 10px;
