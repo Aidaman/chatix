@@ -109,7 +109,9 @@ export class RoomComponent implements OnInit {
       return this.roomService.messagesInCommon.asObservable();
     }),
     tap((messages) => {
-      this.chatService.lastMessageCreatorId = messages[messages.length-1].creator?._id ?? "";
+      if (messages.length > 0)
+        this.chatService.lastMessageCreatorId = messages[messages.length-1].creator?._id ?? "";
+
       this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       return messages;
     })

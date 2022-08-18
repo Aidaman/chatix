@@ -39,6 +39,9 @@
 }
 
 :host-context( body.light ) {
+  ::ng-deep .mat-dialog-container {
+    background: #e6e7f2
+  }
   .dialog-wrapper{
     color: black;
     background: #e6e7f2;
@@ -78,6 +81,9 @@
 }
 
 :host-context( body.dark ) {
+  ::ng-deep .mat-dialog-container {
+    background: #273038;
+  }
   .dialog-wrapper{
     color: white;
     background: #273038;

@@ -75,6 +75,7 @@ export const roomChatReducer = createReducer(
     ...state,
     selectedRoom: action.room,
     offset: 0,
+    totalMessages: 0,
     isLoading: false,
     hasRoomValue: true,
   })),

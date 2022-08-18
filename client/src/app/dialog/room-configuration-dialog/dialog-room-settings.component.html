@@ -9,7 +9,6 @@
   </h1>
 
   <div class="dialog-content-wrapper">
-
     <mat-slide-toggle *ngIf="room.creator?._id === me"
                       [checked]="isRoomPublic"
                       (change)="switchPrivate()">
@@ -22,12 +21,12 @@
     </div>
 
     <div class="custom-scroll">
-      <div class="part-list" *ngFor="let user of participants">
+      <div class="part-list " *ngFor="let user of participants">
         <div class="user-container">
           <div class="avatar">
             <img [src]="user.avatar" alt="">
           </div>
-          <span>{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
+          <span class="name">{{user.name}} <span *ngIf="room.creator?._id === user._id">🥇</span> </span>
         </div>
         <button type="button" *ngIf="room.creator?._id === me" mat-button (click)="deleteParticipant(user)">
           <i class="material-icons">
@@ -58,12 +57,14 @@
       <mat-form-field>
         <input matInput type="text" [placeholder]="'Enter title of room to confirm'" #input>
       </mat-form-field>
-      <button type="button"
-              class="close-btn"
-              mat-button [disabled]="input.value !== room.title"
-              (click)="onDelete()">
+      <button type="button" mat-button [disabled]="input.value !== room.title" (click)="onDelete()">
         <i class="material-icons">
           check
+        </i>
+      </button>
+      <button type="button" mat-button (click)="deleteConfirm()">
+        <i class="material-icons">
+          close
         </i>
       </button>
     </div>
