@@ -1,5 +1,5 @@
 @import "src/assets/mixins";
-@import "src/app/common-syles";
+@import "src/app/common-styles";
 
 ::ng-deep .mat-dialog-container {
   padding: 0;
@@ -9,10 +9,14 @@
   position: relative;
   @include sm{
     height: 100vh;
+    max-height: 100vh;
+    min-height: 100vh;
     width: 100vw;
   }
   @include md{
     height: 500px;
+    max-height: 500px;
+    min-height: 500px;
     width: 500px;
   }
 

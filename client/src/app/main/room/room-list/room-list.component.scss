@@ -1,11 +1,14 @@
 @import "../../../../assets/mixins";
-@import "src/app/common-syles";
+@import "src/app/common-styles";
 
 .mobile-present{
   @include sm(){
     display: flex;
     justify-content: center;
     margin: 16px 0;
+  }
+  @include lg(){
+    display: none;
   }
 }
 

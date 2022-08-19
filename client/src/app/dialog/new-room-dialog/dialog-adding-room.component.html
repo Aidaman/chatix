@@ -6,7 +6,7 @@
       {{!isPublic ? 'Private' : 'Public'}}
     </mat-slide-toggle>
 
-    <form [formGroup]="newRoomForm">
+    <form [formGroup]="newRoomForm" class="form">
       <mat-form-field>
         <input matInput placeholder="Title" formControlName="title">
       </mat-form-field>
@@ -18,7 +18,7 @@
         </button>
       </div>
 
-      <div formArrayName="participants" class="participants-array custom-scroll">
+      <div formArrayName="participants" class="participants custom-scroll">
         <div *ngFor="let item of participants.controls; let pointIndex=index" [formGroupName]="pointIndex.toString()">
           <mat-form-field class="part-input">
             <input matInput [placeholder]="'Participant - ' + (pointIndex + 1)"

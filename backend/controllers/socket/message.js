@@ -44,7 +44,7 @@ module.exports = {
                     isSystemMessage: false,
                     isForwardedMessage: false,
                     read: []},
-                room: params.room
+                room: params.room,
             })
         } catch (e) {
             console.log(e);
@@ -156,7 +156,7 @@ module.exports = {
                     isSystemMessage: false,
                     isForwardedMessage: true,
                     read: []},
-                room: params.room
+                room: params.room,
             })
         } catch (e) {
             console.log(e);

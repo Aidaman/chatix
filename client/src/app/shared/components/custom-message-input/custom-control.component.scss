@@ -1,5 +1,5 @@
 @import "src/assets/mixins";
-@import "src/app/common-syles";
+@import "src/app/common-styles";
 
 :host(app-custom-message-input){
   width: 100%;
@@ -15,17 +15,19 @@
   max-height: 250px;
   box-sizing: border-box;
   font-family: 'Quicksand', "Noto Color Emoji" ,"Helvetica Neue", sans-serif;
-  min-width: 100%;
-  max-width: 100%;
   border-radius: 30px;
+
+  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
 
   word-break: break-word;
 
   @include sm {
-    padding: 10px;
+    padding: 10px 5px;
   }
 
   @include md {
-    padding: 10px 25px 10px 15px;
+    padding: 12px 10px;
   }
 }

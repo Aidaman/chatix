@@ -83,3 +83,16 @@
   }
 
 }
+
+.user-list{
+  @include sm{
+    height: 40vh;
+    max-height: 40vh;
+    min-height: 40vh;
+  }
+  @include md{
+    height: 250px;
+    max-height: 250px;
+    min-height: 250px;
+  }
+}

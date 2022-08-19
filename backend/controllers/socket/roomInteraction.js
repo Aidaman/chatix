@@ -190,12 +190,13 @@ module.exports = {
                 if (!room.isFavorites)
                 {
                     const messages = await Message.find({room: room.id, isSystemMessage: false})
-                    messages.forEach((message)=>{
-                        if ((String(message.creator) !== String(user._id))
-                            && message.read.find(i => String(i) === String(user._id)) === undefined) {
-                            room.unread += 1;
-                        }
-                    });
+                    room.unread = messages.filter((message) => (String(message.creator) !== String(user._id) && message.read.find(i => String(i) === String(user._id)) === undefined) ).length
+                    // messages.forEach((message)=>{
+                    //     if ((String(message.creator) !== String(user._id))
+                    //         && message.read.find(i => String(i) === String(user._id)) === undefined) {
+                    //         room.unread += 1;
+                    //     }
+                    // });
                 }
             }
 

@@ -24,7 +24,7 @@ export const roomGetNewMessageAction = createAction(
 
 export const roomGetNewMessageSuccessAction = createAction(
   ActionTypes.ROOM_GET_NEW_MESSAGE_SUCCESS,
-  props<{ roomId: string, message: IMessage }>(),
+  props<{ roomId: string, message: IMessage, creator: string }>(),
 );
 
 export const roomGetNewMessageFailureAction = createAction(

@@ -73,7 +73,7 @@ export class SocketService {
   */
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
-      map((value: { message: IMessage, room: string }) => {
+      map((value: { message: IMessage, room: string, creator: string }) => {
         this.chatService.lastMessageCreatorId = value.message.creator?._id ?? "";
         if (value.room === "common") {
           const messagesInCommon = this.roomService.messagesInCommon.value;
