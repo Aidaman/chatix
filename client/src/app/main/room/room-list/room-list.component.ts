@@ -7,7 +7,7 @@ import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialo
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChatService } from "../../../shared/services/chat.service";
 import { Store } from "@ngrx/store";
-import { chatGetAvailableRooms } from "../../../store/room/room-chat.actions";
+import {chatGetAvailableRooms, chatSearchRoomsActions} from "../../../store/room/room-chat.actions";
 import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room/room-chat.selectors";
 import { ScrollService } from "../../../shared/services/scroll.service";
 
@@ -67,15 +67,17 @@ export class RoomListComponent {
 
   public toggleSearch(): void {
     this.searchCondition = this.searchCondition.toLowerCase() === "public" ? "private" : "public";
-
-    // this.isPublicRooms = !this.isPublicRooms;
-    // this.searchRooms();
   }
 
-  // public searchRooms() {
-  //   this.socketService.emit("searchRoom", { title: this.searchText });
-  //   this.store.dispatch(chatSearchRoomsActions());
-  // }
+  public searchRooms(searchText: string) {
+    if (this.searchCondition.toLowerCase() === "public" && searchText.trim()){
+      this.socketService.emit("searchRooms", { title: searchText.trim() });
+      this.store.dispatch(chatSearchRoomsActions({ searchText: searchText }));
+    } else if(!this.searchText.trim() || this.searchCondition !== "public"){
+      this.socketService.emit("getAllRooms", {});
+      this.store.dispatch(chatGetAvailableRooms());
+    }
+  }
 
   public closeList() {
     this.chatService.sideMenuOpened.next(false);

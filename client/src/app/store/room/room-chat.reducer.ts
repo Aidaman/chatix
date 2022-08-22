@@ -5,7 +5,7 @@ import {
   chatGetAvailableRoomsSucces,
   chatSearchRoomsActions,
   chatSearchRoomsFailureAction,
-  chatSearchRoomsSuccesAction,
+  chatSearchRoomsSuccessAction,
   roomAddParticipantAction,
   roomAddParticipantFailureAction,
   roomAddParticipantSuccessAction,
@@ -266,7 +266,7 @@ export const roomChatReducer = createReducer(
     ...state,
     isLoading: true,
   })),
-  on(chatSearchRoomsSuccesAction, (state, action) => ({
+  on(chatSearchRoomsSuccessAction, (state, action) => ({
     ...state,
     allRooms: action.rooms,
     isLoading: false,

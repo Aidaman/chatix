@@ -19,6 +19,7 @@
 
     <input matInput
            placeholder="Search room..."
+           (input)="searchRooms(searchText)"
            [(ngModel)]="searchText">
     <mat-slide-toggle class="searchToggle"
                       (change)="toggleSearch()">

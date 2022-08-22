@@ -162,7 +162,7 @@ module.exports = {
         try {
             const rooms = await Room.find({
                 title: {
-                    $regex: '.*' + params + '.*',
+                    $regex: '.*' + params.title + '.*',
                     $options: 'i'
                 },
                 isPublic: true
@@ -189,7 +189,8 @@ module.exports = {
             for (const room of rooms) {
                 if (!room.isFavorites)
                 {
-                    const messages = await Message.find({room: room.id, isSystemMessage: false})
+                    //TODO: Rework it a bit. There is can be more than 100 unread messages in theory
+                    const messages = await Message.find({room: room.id, isSystemMessage: false}).limit(100);
                     room.unread = messages.filter((message) => (String(message.creator) !== String(user._id) && message.read.find(i => String(i) === String(user._id)) === undefined) ).length
                     // messages.forEach((message)=>{
                     //     if ((String(message.creator) !== String(user._id))
@@ -205,5 +206,18 @@ module.exports = {
             console.log(e);
             io.to(socket.id).emit('error', {error: {type: e.message}});
         }
-    }
+    },
+
+    // askToJoin: async (io, socket, params) => {
+    //     try {
+    //         let user = await User.findById(socket.decoded_token.id);
+    //         let room = await Room.findById(params.roomId);
+    //         let creator = room.creator;
+    //
+    //         io.to(creator).emit('askedToJoin', {user: user, title: room.title, roomId: params.roomId});
+    //     } catch (e) {
+    //         console.log(e);
+    //         io.to(socket.id).emit('error', {error: {type: e.message}});
+    //     }
+    // }
 };

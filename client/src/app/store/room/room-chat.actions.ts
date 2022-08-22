@@ -161,9 +161,10 @@ export const chatGetAvailableRoomsFailure = createAction(
 
 export const chatSearchRoomsActions = createAction(
   ActionTypes.CHAT_SEARCH_ROOMS,
+  props<{searchText: string}>(),
 );
 
-export const chatSearchRoomsSuccesAction = createAction(
+export const chatSearchRoomsSuccessAction = createAction(
   ActionTypes.CHAT_SEARCH_ROOMS_SUCCESS,
   props<{ rooms: IRoom[] }>()
 );

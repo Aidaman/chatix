@@ -6,7 +6,8 @@ const {
     connect,
     searchUsers,
     changeColor,
-    disconnect, searchUsersById
+    disconnect,
+    searchUsersById
 } = require('./controllers/socket/user');
 
 const {
@@ -14,7 +15,8 @@ const {
     joinRoom,
     leaveRoom,
     searchRoom,
-    getAllRooms
+    getAllRooms,
+    // askToJoin
 } = require('./controllers/socket/roomInteraction');
 
 const {
@@ -68,6 +70,8 @@ module.exports = server => {
         socket.on('searchUsers', async params => await searchUsers(io, socket, params));
 
         socket.on('searchRooms', async params => await searchRoom(io, socket, params));
+
+        // socket.on('askToJoin', async params => await askToJoin(io, socket, params));
 
         socket.on('getAllRooms', async params => await getAllRooms(io, socket, params));
 

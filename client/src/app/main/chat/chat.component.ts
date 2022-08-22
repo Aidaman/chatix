@@ -1,14 +1,11 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { IRoom } from "../../shared/models/IRoom";
 import { SocketService } from "../../shared/services/socket.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogInvitationComponent } from "../../dialog/invitation-dialog/dialog-invitation.component";
 import { ThemingService } from "../../shared/services/theming.service";
-import { BehaviorSubject, lastValueFrom, Observable, switchMap, tap } from "rxjs";
-import { RoomService } from "../../shared/services/room.service";
+import { BehaviorSubject, lastValueFrom, tap } from "rxjs";
 import { Store } from "@ngrx/store";
 import { userAuthAction } from "../../store/user/user.actions";
-import { allRoomsSelector, isAllRoomsHasValue } from "../../store/room/room-chat.selectors";
 import { chatGetAvailableRooms } from "../../store/room/room-chat.actions";
 import { ChatService } from "../../shared/services/chat.service";
 

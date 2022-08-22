@@ -6,7 +6,7 @@ import {
   BehaviorSubject,
   delay,
   filter,
-  lastValueFrom,
+  lastValueFrom, map,
   Observable,
   observeOn,
   Subject,
@@ -80,13 +80,20 @@ export class RoomComponent implements OnInit {
           if (!value) {
             this.store.dispatch(chatGetAvailableRooms());
           }
+          return this.store.select(roomByIdSelect(id));
+        }),
+        map((room: IRoom | null) => {
+          if (room === null) return;
+          if (room?.users.find((user: IUser) => user._id === this.chatService.me) === undefined){
+            this.socketService.emit("joinRoom", { roomId: room._id });
+            return room;
+          }
           this.store.dispatch(roomSwitchAction({ roomId: id }));
           this.store.dispatch(roomGetMessagesAction({ roomId: id }));
-          return this.store.select(roomByIdSelect(id));
+          return room;
         }),
         filter(Boolean),
         tap(() => {
-          console.log("---------------------------------------");
           if(!this.openMutationObserver$.getValue()){
             this.openMutationObserver$.next(true);
           }

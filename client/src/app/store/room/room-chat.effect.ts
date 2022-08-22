@@ -6,7 +6,7 @@ import {
   chatGetAvailableRoomsFailure,
   chatGetAvailableRoomsSucces,
   chatSearchRoomsActions, chatSearchRoomsFailureAction,
-  chatSearchRoomsSuccesAction,
+  chatSearchRoomsSuccessAction,
   roomGetAmountOfMessagesAction,
   roomGetAmountOfMessagesFailureAction,
   roomGetAmountOfMessagesSuccessAction,
@@ -62,7 +62,7 @@ export class RoomChatEffect {
   searchRooms$ = createEffect(() => this.actions$.pipe(
     ofType(chatSearchRoomsActions),
     switchMap(() => this.socketService.listenSearchRoomsResult().pipe(
-      map((data) => chatSearchRoomsSuccesAction({ rooms: data })),
+      map((data) => chatSearchRoomsSuccessAction({ rooms: data })),
       catchError(() => of(chatSearchRoomsFailureAction())),
     )),
   ));
