@@ -19,6 +19,11 @@ module.exports = {
                 const content = `${user.name} has joined the ${room.title} 😁`;
                 const contentEncrypted = crypto.AES.encrypt(validator.escape(content), MESSAGE_KEY).toString();
 
+                const messages = await Message.find({room: room.id, isSystemMessage: false}).limit(100);
+                messages.forEach((message)=>{
+                    message.update({read: [...message.read, socket.decoded_token.id]})
+                });
+
                 await Message.create({
                     createdAt: Date.now(),
                     room: params.roomId,
@@ -75,7 +80,6 @@ module.exports = {
                     creator: user
                 });
                 io.to(getUserSocketsRoom(user)).emit('newRoom', room);
-                console.log(user, room);
                 io.to(params.roomId).emit('userJoined', {user, room});
                 return socket.broadcast.to(params.roomId).emit('newMessage', {
                     message: {
@@ -104,7 +108,6 @@ module.exports = {
                 room.lastAction = Date.now();
                 room = await room.save();
 
-                console.log(user, room);
                 io.to(params.roomId).emit('userLeft', {user: user, room: room});
 
                 user.socketIds.forEach(i => {
@@ -136,7 +139,6 @@ module.exports = {
 
                 if (room.users.length === 1) {
                     const lastUser = await room.populate('users').execPopulate();
-                    console.log(user, room);
                     io.to(getUserSocketsRoom(lastUser.users[0])).emit('userLeft', {
                         user: lastUser.users[0],
                         room: room

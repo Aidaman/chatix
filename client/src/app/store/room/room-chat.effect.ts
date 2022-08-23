@@ -34,7 +34,7 @@ import {
 } from "./room-chat.actions";
 import { map, of, switchMap, tap, } from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
-import { catchError } from "rxjs/operators";
+import { catchError, take } from "rxjs/operators";
 import { SocketService } from "../../shared/services/socket.service";
 import { hasRoomValueSelector, offsetSelector, roomByIdSelect } from "./room-chat.selectors";
 import { SnackBarNotificationService } from "../../shared/services/snack-bar-notification.service";
@@ -84,10 +84,10 @@ export class RoomChatEffect {
   switchRoom$ = createEffect(() => this.actions$.pipe(
     ofType(roomSwitchAction),
     switchMap(({ roomId }) => this.store.select(roomByIdSelect(roomId)).pipe(
-      map((value: IRoom | null) => {
-        this.scrollService.roomSwitched.next({ roomId: value?._id ?? "common" });
-        return roomSwitchSuccessAction({ room: value });
+      tap(()=>{
+        console.log("(room effect) room switch");
       }),
+      map((value: IRoom | null) => roomSwitchSuccessAction({ room: value })),
       catchError(() => of(roomSwitchFailureAction())),
     )))
   );

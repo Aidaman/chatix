@@ -30,11 +30,9 @@ export class DialogRoomSettingsComponent{
   });
 
   public me = this.chatService.me;
-  public theme: BehaviorSubject<string> = this.themeService.theme;
 
   constructor(public dialogRef: MatDialogRef<DialogRoomSettingsComponent>,
               public chatService: ChatService,
-              private themeService: ThemingService,
               private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public room: IRoom) {
   }

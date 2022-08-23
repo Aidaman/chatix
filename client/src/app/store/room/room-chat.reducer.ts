@@ -154,16 +154,18 @@ export const roomChatReducer = createReducer(
   })),
 
   on(roomLoadMessagesAction, (state) => ({
-    ...state,
-    isLoading: true,
-    offset: state.offset + 50 >= state.totalMessages ? state.totalMessages : state.offset + 50,
+      ...state,
+      isLoading: true,
+      offset: state.offset+50 >= state.totalMessages ? state.totalMessages : state.offset + 50,
   })),
   on(roomLoadMessagesSuccessAction, (state, action) => {
     const newState = { ...state, isLoading: false };
     const newMessagesArr = state.messages.slice();
     newMessagesArr.unshift(...action.messages);
 
-    return ({ ...newState, messages: newMessagesArr });
+    return ({ ...newState, 
+      messages: newMessagesArr,
+     });
   }),
   on(roomLoadMessagesFailureAction, (state) => ({
     ...state,

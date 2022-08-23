@@ -2,9 +2,10 @@ import {
   AfterViewInit,  Directive,  ElementRef,  EventEmitter,
   HostListener,   OnDestroy,   OnInit,  Output
 } from "@angular/core";
-import { delay, Subject, takeUntil, tap } from "rxjs";
+import { Subject, takeUntil, tap } from "rxjs";
 import { LocalStorageService } from "../services/local-storage.service";
 import { ScrollService } from "../services/scroll.service";
+import { environment } from "../../../environments/environment";
 
 /*
 * @description This is a directive to track the scroll in the room
@@ -27,42 +28,39 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
 
   public ngOnInit(): void {
     this.scrollService.scrollDown$.pipe(
-      // delay(50),
       tap((isForceScroll: boolean) => {
-        //condition in words:
-        /*
-        * if either scroll is on the very top of message list and query for new messages done
-        * or event aren't emitted and value are true (or if scroll is almost down)
-        */
-        if (((isForceScroll || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight) && (!this.isEmitted))
-            || (this.el.nativeElement.scrollHeight - this.scrollTop === this.el.nativeElement.scrollHeight && this.isQueryDone))
+        if (((isForceScroll || this.el.nativeElement.scrollTop + 100 >= this.el.nativeElement.scrollHeight)))
           this.setScroll(null);
       }),
       takeUntil(this.terminate$),
     ).subscribe();
 
-    // this.scrollService.roomSwitched.pipe(
-    //   tap(({ roomId }) => {
-    //     if (roomId === "common") return;
-    //     //save scroll position for previous room
-    //     if (this.el.nativeElement.scrollTop > 500)
-    //       this.localStorageService.setScrollPosition(this.scrollService.previousRoomId.value, this.scrollHeight - this.el.nativeElement.scrollTop);
-    //
-    //     //get scroll for current room
-    //     const scroll: number = +this.localStorageService.getScrollPosition(roomId);
-    //     console.log(scroll);
-    //
-    //     //set scroll for current room
-    //     if (scroll && scroll > 500)
-    //       this.setScroll(scroll);
-    //     else this.setScroll(null);
-    //   }),
-    //   takeUntil(this.terminate$),
-    // ).subscribe();
+    this.scrollService.roomSwitched.pipe(
+      tap(({ roomId }) => {
+        if (environment.ENABLE_EXPERIMENTAL_FUNCTIONALITY){
+          if (roomId === "common") return;
+          //save scroll position for previous room
+          if (this.el.nativeElement.scrollTop > 500)
+            this.localStorageService.setScrollPosition(this.scrollService.previousRoomId.value, this.scrollHeight - this.el.nativeElement.scrollTop);
+
+          //get scroll for current room
+          const scroll: number = +this.localStorageService.getScrollPosition(roomId);
+          console.log(scroll);
+
+          //set scroll for current room
+          if (scroll && scroll > 500)
+            this.setScroll(scroll);
+          else this.setScroll(null);
+        } else {
+          this.setScroll(null);
+        }
+      }),
+      takeUntil(this.terminate$),
+    ).subscribe();
   }
 
   ngAfterViewInit(): void {
-    this.el.nativeElement.scrollTop = this.el.nativeElement.scrollHeight;
+    this.setScroll(null);
   }
 
   ngOnDestroy(): void {

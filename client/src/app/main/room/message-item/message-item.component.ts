@@ -3,10 +3,8 @@ import { IMessage } from "../../../shared/models/IMessage";
 import { ChatService } from "../../../shared/services/chat.service";
 import { ThemingService } from "../../../shared/services/theming.service";
 import { BehaviorSubject, map, Observable,  } from "rxjs";
-import { IOption } from "../../../shared/models/IOption";
-import { SocketService } from "../../../shared/services/socket.service";
-import { Store } from "@ngrx/store";
-import { currentRoomSelector } from "../../../store/room/room-chat.selectors";
+import { MatDialog } from "@angular/material/dialog";
+import { ReadDialogComponent } from "src/app/dialog/read-dialog/read-dialog.component";
 
 @Component({
   selector: "app-message-item",
@@ -19,28 +17,10 @@ export class MessageItemComponent  {
 
   public theme: BehaviorSubject<string> = this.themeService.theme;
   public me = this.chatService.me;
-
-  /*
-  * @description This is the variable that generate list of who read the message
-  */
-  public menuItems: Observable<IOption[] | null> = this.store.select(currentRoomSelector()).pipe(
-    map((value) => {
-      const newArr = value?.users.filter((user) => this.message.read.indexOf(user._id) !== -1).map((value) => {
-        return ({
-          id: "user",
-          title: value.name,
-          icon: value.avatar,
-        }) as IOption;
-      });
-      console.log(newArr);
-      return newArr ?? null;
-    })
-  );
   // public currentRoom: Observable<IRoom | undefined> = this.store.select(roomByIdSelect(this.message?._id));
 
   constructor(private chatService: ChatService,
-              private socketService: SocketService,
-              private store: Store,
+              private matDialog: MatDialog,
               private themeService: ThemingService,) {
   }
 
@@ -50,4 +30,7 @@ export class MessageItemComponent  {
     }
   }
 
+  public openReaders(){
+    this.matDialog.open(ReadDialogComponent, { data: this.message });
+  }
 }

@@ -40,7 +40,7 @@
         "object-curly-spacing": ["error", "always"],
         "no-extra-semi": "error",
         "sort-vars": ["warn" ],
-        "max-params": ["warn", 3],
+        "max-params": ["warn", 5],
         "quotes": ["error", "double"],
         "arrow-spacing": "error",
         "no-unused-expressions": "error",

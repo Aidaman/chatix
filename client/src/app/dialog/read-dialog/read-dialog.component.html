@@ -1,0 +1,22 @@
+<div class="dialog-wrapper">
+    <h1 mat-dialog-title>Read by</h1>
+
+    <mat-divider></mat-divider>
+
+    <div class="custom-scroll">
+        <div class="part-list " *ngFor="let user of menuItems | async">
+            <div class="user-container">
+                <div class="avatar">
+                    <img [src]="user.icon" alt="">
+                </div>
+                <span class="name">{{user.title}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div mat-dialog-actions>
+        <button mat-button (click)="onCloseClick()" class="close-btn">
+            <i class="material-icons">clear</i>
+        </button>
+    </div>
+</div>

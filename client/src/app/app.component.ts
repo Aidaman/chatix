@@ -7,7 +7,8 @@ import { Component } from "@angular/core";
 export class AppComponent {}
 
 /*
-    TODO: Room search. If user is not in some room, but the rooms exists - he can find it
-
     TODO: EXTRA make functionality to answer the messages
+
+    EXTRA-EXTRA make functionality to send pictures???
+    EXTRA-EXTRA-OPTIONAL Refactor sockets????
  */

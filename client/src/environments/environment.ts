@@ -3,10 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-    API_URL: "http://localhost:8080",
-    API_URL_WSS: "wss://localhost:8080",
-    API_URL_WS: "ws://localhost:8080",
-    production: false,
+  API_URL: "http://localhost:8080",
+  ENABLE_EXPERIMENTAL_FUNCTIONALITY: false,
+  production: false,
 };
 
 /*

@@ -38,9 +38,7 @@
              matBadgePosition="above after">
           <p>{{message.content}}</p>
           <button *ngIf="message.creator?._id === me"
-                  [cdkMenuTriggerFor]="readers"
-                  app-context-menu
-                  [isMyMessage]="message.creator?._id | isCreatedByMe"
+                  (click)="openReaders()"
                   class="read"
                   mat-icon-button>
             <mat-icon>{{message.read.length > 0 ? 'done_all' : 'done'}}</mat-icon>
@@ -57,7 +55,7 @@
     </div>
   </ng-template>
 
-  <ng-template #readers>
+  <!-- <ng-template #readers>
     <app-custom-context-menu cdkMenu [options]="menuItems | async"></app-custom-context-menu>
-  </ng-template>
+  </ng-template> -->
 </div>
