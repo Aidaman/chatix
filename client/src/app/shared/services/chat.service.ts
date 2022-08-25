@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, EMPTY, map, Observable, of, Subject } from "rxjs";
+import { BehaviorSubject, EMPTY, map, Observable } from "rxjs";
 import { IMessage } from "../models/IMessage";
 import { environment } from "../../../environments/environment";
 import { LocalStorageService } from "./local-storage.service";
 import { Store } from "@ngrx/store";
-import { allRoomsSelector } from "../../store/room/room-chat.selectors";
+import { IRoom } from "../models/IRoom";
+import { allRoomsSelector } from "../../store/chat/chat.selectors";
 
 @Injectable({
   providedIn: "root"
@@ -21,7 +22,9 @@ export class ChatService {
 
   public overallUnread = this.store.select(allRoomsSelector).pipe(
     map((rooms) => {
-      return rooms.reduce((accumulator, room) => room._id !== "common"? accumulator + room.unread : accumulator, 0);
+      if (rooms) {
+        return rooms.reduce((accumulator: number, room: IRoom) => room._id !== "common" ? accumulator + room.unread : accumulator, 0);
+      } else return 0;
     }),
   );
 

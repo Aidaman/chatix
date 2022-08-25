@@ -7,9 +7,9 @@ import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialo
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChatService } from "../../../shared/services/chat.service";
 import { Store } from "@ngrx/store";
-import {chatGetAvailableRooms, chatSearchRoomsActions} from "../../../store/room/room-chat.actions";
-import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/room/room-chat.selectors";
 import { ScrollService } from "../../../shared/services/scroll.service";
+import { chatGetAvailableRooms, chatSearchRoomsActions } from "../../../store/chat/chat.actions";
+import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/chat/chat.selectors";
 
 /*
 * @description This component is responsible to show the list of rooms available for users
@@ -28,7 +28,8 @@ export class RoomListComponent {
   public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
     switchMap((value) => {
       if (!value) {
-        this.store.dispatch(chatGetAvailableRooms());
+        this.socketService.emit("getAllRooms", {});
+        // this.store.dispatch(chatGetAvailableRooms());
       }
       return this.store.select(allRoomsSelector);
     }),
@@ -72,10 +73,10 @@ export class RoomListComponent {
   public searchRooms(searchText: string) {
     if (this.searchCondition.toLowerCase() === "public" && searchText.trim()){
       this.socketService.emit("searchRooms", { title: searchText.trim() });
-      this.store.dispatch(chatSearchRoomsActions({ searchText: searchText }));
+
     } else if(!this.searchText.trim() || this.searchCondition !== "public"){
       this.socketService.emit("getAllRooms", {});
-      this.store.dispatch(chatGetAvailableRooms());
+
     }
   }
 

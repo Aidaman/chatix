@@ -1,15 +1,12 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { RoomService } from "../../shared/services/room.service";
 import { IRoom } from "../../shared/models/IRoom";
 import {
   asyncScheduler,
   BehaviorSubject,
-  delay,
-  filter,
-  lastValueFrom, map,
+  filter, map,
   Observable,
   observeOn,
-  Subject,
   switchMap,
   tap
 } from "rxjs";
@@ -17,27 +14,24 @@ import { IMessage } from "../../shared/models/IMessage";
 import { SocketService } from "../../shared/services/socket.service";
 import { IOption } from "../../shared/models/IOption";
 import { ChatService } from "../../shared/services/chat.service";
-import { MatDialog } from "@angular/material/dialog";
-import { DialogRoomSettingsComponent } from "../../dialog/room-configuration-dialog/dialog-room-settings.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import {
+  currentRoomSelector,
   isAllRoomsHasValue,
-  messagesSelector,
   roomByIdSelect
-} from "../../store/room/room-chat.selectors";
+} from "../../store/chat/chat.selectors";
+import { messagesSelector, } from "../../store/room/room.selectors";
 import {
-  chatGetAvailableRooms,
   roomGetAmountOfMessagesAction,
   roomGetMessagesAction,
-  roomLoadMessagesAction, roomMessageRemoveAction, roomSwitchAction, roomUpdateMessageAction
-} from "../../store/room/room-chat.actions";
-import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
-import { IUser } from "../../shared/models/IUser";
+  roomLoadMessagesAction,
+} from "../../store/room/room.actions";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { RoomSelectDialogComponent } from "src/app/dialog/room-select-dialog/room-select-dialog.component";
-import { MatList } from "@angular/material/list";
 import { ScrollService } from "../../shared/services/scroll.service";
+import { chatGetAvailableRooms, chatRoomSwitchAction } from "../../store/chat/chat.actions";
+import { MessagesService } from "../../shared/services/messages.service";
+import { ModalsService } from "../../shared/services/modals.service";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -54,7 +48,6 @@ export class RoomComponent implements OnInit {
 
   private lastSelectedMessage: IMessage | null = null;
   private isEditing: boolean = false;
-  private isReplying: boolean = false;
 
   public openMutationObserver$ = new BehaviorSubject<boolean>(false);
 
@@ -78,16 +71,20 @@ export class RoomComponent implements OnInit {
       return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
           if (!value) {
-            this.store.dispatch(chatGetAvailableRooms());
+            this.socketService.emit("getAllRooms", {});
           }
-          this.store.dispatch(roomSwitchAction({ roomId: id }));
-          this.store.dispatch(roomGetMessagesAction({ roomId: id }));
           return this.store.select(roomByIdSelect(id));
+        }),
+        map((room: IRoom | null) => {
+          if (!room){
+            this.router.navigate(["chat", "common"]);
+          }
+          this.store.dispatch(chatRoomSwitchAction({ roomId: id }));
+          this.store.dispatch(roomGetMessagesAction({ roomId: id }));
+          return room;
         }),
         filter(Boolean),
         tap(() => {
-          console.log("-------------------------");
-          
           if(!this.openMutationObserver$.getValue()){
             this.openMutationObserver$.next(true);
           }
@@ -101,7 +98,7 @@ export class RoomComponent implements OnInit {
       if (id !== "common") return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
           if (!value) {
-            this.store.dispatch(chatGetAvailableRooms());
+            this.socketService.emit("getAllRooms", {});
           }
           this.store.dispatch(roomGetAmountOfMessagesAction({ roomId: id }));
           return this.store.select(messagesSelector);
@@ -147,12 +144,13 @@ export class RoomComponent implements OnInit {
 
   constructor(private socketService: SocketService,
               private chatService: ChatService,
-              private matDialog: MatDialog,
+              private messagesService: MessagesService,
+              private modalsService: ModalsService,
+              private roomService: RoomService,
+              private scrollService: ScrollService,
               private router: Router,
               private fb: FormBuilder,
               private activeRoute: ActivatedRoute,
-              private roomService: RoomService,
-              private scrollService: ScrollService,
               private store: Store) {
   }
 
@@ -177,11 +175,6 @@ export class RoomComponent implements OnInit {
     this.socketService.listenUserJoined().subscribe();
   }
 
-  private deleteMessage(messageId: string, roomId: string) {
-    this.socketService.emit("deleteMessage", { messageId, roomId });
-    this.store.dispatch(roomMessageRemoveAction({ messageId }));
-  }
-
   public toggleMatDrawer(): void {
     const newValue = !this.chatService.sideMenuOpened.value;
     this.chatService.sideMenuOpened.next(newValue);
@@ -197,26 +190,13 @@ export class RoomComponent implements OnInit {
   }
 
   public sendMessage(event: any, room: IRoom): void {
-    const msg = this.messageForm.get("message")?.value.trim() ?? "";
     if (event.code === "Enter") event.preventDefault();
 
-    const newMessage = { messageId: this.lastSelectedMessage?._id, newContent: msg, roomId: room._id, };
+    const messageText = this.messageForm.get("message")?.value.trim() ?? "";
     const messageId = this.lastSelectedMessage?._id as string;
-
-    if (msg) {
-      if (room._id === "common" && this.isEditing)
-        this.roomService.editMessageInCommon(messageId, msg);
-
-      else if (room._id !== "common" && this.isEditing) {
-        this.socketService.emit("updateMessage", newMessage);
-        this.store.dispatch(roomUpdateMessageAction({ messageId, correction: msg }));
-      } else {
-        this.socketService.emit("createMessage", { message: msg, room: room._id, });
-      }
-    }
+    this.messagesService.sendMessage(room, messageText, messageId);
 
     this.messageForm.get("message")?.setValue("");
-    this.isEditing = false;
   }
 
   /*
@@ -232,52 +212,7 @@ export class RoomComponent implements OnInit {
   }
 
   public onMessageRightClick(message: IMessage): void {
-    // if (message.creator?._id === this.chatService.me) {
-      this.lastSelectedMessage = message;
-    // }
-  }
-
-  /*
-  * @description Opens modal window for configure room
-  */
-  public async openSettings(room: IRoom): Promise<void> {
-    const matDialogRef = this.matDialog.open(DialogRoomSettingsComponent, { data: room });
-    const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
-      //If Value is false - then no changes were made
-      if (!value) return;
-      if (value.delete) {
-        this.socketService.emit("roomDelete", { roomId: value.roomId });
-        this.router.navigate(["chat", "common"]);
-      } else {
-        if (value.newRoomTitle !== room.title)
-          this.socketService.emit("renameRoom", { roomId: value._id, roomTitle: value.newRoomTitle });
-
-        if (value.newIsPublic !== room.isPublic)
-          this.socketService.emit("privacyChange", { roomId: value._id, roomPublicity: value.newIsPublic });
-
-        if (value.deletedUsers && value.deletedUsers.length > 0) {
-          value.deletedUsers.forEach((user: IUser) => {
-            this.socketService.emit("deleteParticipant", { roomId: room._id, deletedUserId: user._id });
-          });
-        }
-      }
-    }));
-
-    await lastValueFrom(afterClosedSource$);
-  }
-
-  /*
-  * @description opens modal window for invite users into room
-  */
-  public async openInviteParticipantsDialog(room: IRoom): Promise<void> {
-    const matDialogRef = this.matDialog.open(DialogInvitingRoomComponent,
-      { data: room });
-    const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
-      if (!value) return;
-      else this.socketService.emit("inviteUsers", { roomId: value.roomId, participants: value.participants });
-    }));
-
-    await lastValueFrom(afterClosedSource$);
+    this.lastSelectedMessage = message;
   }
 
   public exitRoom(room: IRoom) {
@@ -297,26 +232,19 @@ export class RoomComponent implements OnInit {
     const messageId = this.lastSelectedMessage?._id as string;
     const roomId = this.lastSelectedMessage?.room as string;
 
-    switch (e) {
-      case("edit"): {
-        this.isEditing = true;
-        this.messageForm.get("message")?.setValue(this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "");
-        break;
-      }
-      case("delete"): {
-        this.deleteMessage(messageId, roomId);
-        break;
-      }
-      case("forward"): {
-        this.matDialog.open(RoomSelectDialogComponent, { data: this.lastSelectedMessage });
-        break;
-      }
-      // case("reply"): {
-      //   // this.isReplying = true;
+    if(e === "edit") {
+      this.isEditing = true;
+      this.messageForm.get("message")?.setValue(this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "");
+    } else this.messagesService.onOptionSelect(e, messageId, roomId);
 
-      //   break;
-      // }
-    }
     this.chatService.showContextMenu.next(false);
+  }
+
+  public openSettings(room: IRoom): void {
+    this.modalsService.openSettings(room);
+  }
+
+  public openInviteParticipantsDialog(room: IRoom): void {
+    this.modalsService.openInviteParticipantsDialog(room);
   }
 }

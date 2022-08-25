@@ -7,8 +7,8 @@ import { switchMap } from "rxjs/operators";
 import { IMessage } from "src/app/shared/models/IMessage";
 import { IRoom } from "src/app/shared/models/IRoom";
 import { SocketService } from "src/app/shared/services/socket.service";
-import { chatGetAvailableRooms } from "src/app/store/room/room-chat.actions";
-import { allRoomsSelector, isAllRoomsHasValue } from "src/app/store/room/room-chat.selectors";
+import { chatGetAvailableRooms } from "src/app/store/chat/chat.actions";
+import { allRoomsSelector, isAllRoomsHasValue } from "src/app/store/chat/chat.selectors";
 import { DialogRoomSettingsComponent } from "../room-configuration-dialog/dialog-room-settings.component";
 
 /*
@@ -20,14 +20,7 @@ import { DialogRoomSettingsComponent } from "../room-configuration-dialog/dialog
   styleUrls: ["./room-select-dialog.component.scss", "../common-dialog-styles.scss"]
 })
 export class RoomSelectDialogComponent  {
-  public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
-    switchMap((value) => {
-      if (!value) {
-        this.store.dispatch(chatGetAvailableRooms());
-      }
-      return this.store.select(allRoomsSelector);
-    }),
-  );
+  public rooms$: Observable<IRoom[]> = this.store.select(allRoomsSelector);
 
   public searchText: string = "";
   public isPublicRooms: boolean = false;

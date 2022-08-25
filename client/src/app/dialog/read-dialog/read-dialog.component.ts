@@ -5,7 +5,8 @@ import { Observable, map } from "rxjs";
 import { IMessage } from "src/app/shared/models/IMessage";
 import { IOption } from "src/app/shared/models/IOption";
 import { ChatService } from "src/app/shared/services/chat.service";
-import { currentRoomSelector } from "src/app/store/room/room-chat.selectors";
+import { currentRoomSelector } from "src/app/store/chat/chat.selectors";
+import { IUser } from "../../shared/models/IUser";
 
 
 @Component({
@@ -22,7 +23,7 @@ export class ReadDialogComponent  {
   */
   public menuItems: Observable<IOption[] | null> = this.store.select(currentRoomSelector()).pipe(
     map((value) => {
-      const arr = value?.users.filter((user) => this.data.read.indexOf(user._id) !== -1).map((value) => {
+      const arr = value?.users.filter((user: IUser) => this.data.read.indexOf(user._id) !== -1).map((value: IUser) => {
         return ({
           id: "user",
           title: value.name,

@@ -1,13 +1,11 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { SocketService } from "../../shared/services/socket.service";
-import { MatDialog } from "@angular/material/dialog";
-import { DialogInvitationComponent } from "../../dialog/invitation-dialog/dialog-invitation.component";
 import { ThemingService } from "../../shared/services/theming.service";
 import { BehaviorSubject, lastValueFrom, tap } from "rxjs";
 import { Store } from "@ngrx/store";
 import { userAuthAction } from "../../store/user/user.actions";
-import { chatGetAvailableRooms } from "../../store/room/room-chat.actions";
 import { ChatService } from "../../shared/services/chat.service";
+import { chatGetAvailableRooms } from "../../store/chat/chat.actions";
 
 /*
 * @description This is the component that wraps room and room-list components
@@ -27,46 +25,23 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(private store: Store,
               private chatService: ChatService,
               private socketService: SocketService,
-              private themingService: ThemingService,
-              public dialog: MatDialog,) {
+              private themingService: ThemingService,) {
   }
 
   public ngOnInit(): void {
     this.store.dispatch(userAuthAction());
     this.socketService.emit("getAllRooms", {});
-    this.store.dispatch(chatGetAvailableRooms());
+    // this.store.dispatch(chatGetAvailableRooms());
 
-    this.socketService.listenInvitation().pipe(
-      tap(value => this.openInvitation(value))
-    ).subscribe();
-
+    this.socketService.listenGetAllRooms().subscribe();
     this.socketService.listenNewMessage().subscribe();
-
     this.socketService.listenNewRoom().subscribe();
     this.socketService.listenRoomDeleted().subscribe();
     this.socketService.listenRoomRenamed().subscribe();
+    this.socketService.listenSearchRoomsResult().subscribe();
   }
 
   ngOnDestroy(): void {
     this.socketService.disconnect();
-  }
-
-  /*
-  * @description the function that opens modal window for invitation to the room
-  */
-  private async openInvitation(data: any): Promise<void> {
-    const invitationDialogRef = this.dialog.open(DialogInvitationComponent,
-      { hasBackdrop: true, data });
-
-    const invitationResultSource$ = invitationDialogRef.afterClosed().pipe(tap((response) => {
-      if (response) {
-        if (response.isAgree)
-          this.socketService.emit("acceptInvitation", { roomId: response.roomId });
-        else
-          this.socketService.emit("leaveRoom", { roomId: response.roomId });
-      }
-    }));
-
-    await lastValueFrom(invitationResultSource$);
   }
 }

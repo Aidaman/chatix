@@ -1,24 +1,29 @@
-import {Injectable} from "@angular/core";
-import {environment} from "../../../environments/environment";
-import {map, Observable, Subject, takeUntil, tap} from "rxjs";
-import {LocalStorageService} from "./local-storage.service";
+import { Injectable } from "@angular/core";
+import { environment } from "../../../environments/environment";
+import { map, Observable, startWith, Subject, takeUntil, tap } from "rxjs";
+import { LocalStorageService } from "./local-storage.service";
 // @ts-ignore
 import * as io from "socket.io-client";
 import {
-  chatGetAvailableRooms,
   roomGetNewMessageAction,
   roomMessageReadAction,
   roomMessageRemoveAction,
   roomUpdateMessageAction
-} from "../../store/room/room-chat.actions";
-import {Store} from "@ngrx/store";
-import {Router} from "@angular/router";
-import {SnackBarNotificationService} from "./snack-bar-notification.service";
-import {IUser} from "../models/IUser";
-import {IRoom} from "../models/IRoom";
-import {ChatService} from "./chat.service";
-import {IMessage} from "../models/IMessage";
-import {RoomService} from "./room.service";
+} from "../../store/room/room.actions";
+import { Store } from "@ngrx/store";
+import { Router } from "@angular/router";
+import { SnackBarNotificationService } from "./snack-bar-notification.service";
+import { IUser } from "../models/IUser";
+import { IRoom } from "../models/IRoom";
+import { ChatService } from "./chat.service";
+import { IMessage } from "../models/IMessage";
+import { RoomService } from "./room.service";
+import {
+  chatGetAvailableRooms,
+  chatGetNewRoomAction,
+  chatSearchRoomsActions,
+  chatRemoveParticipantAction, chatRemoveRoomAction
+} from "../../store/chat/chat.actions";
 
 @Injectable({
   providedIn: "root"
@@ -41,7 +46,7 @@ export class SocketService {
   public connect(): void {
     if (!this.isConnected) {
       // @ts-ignore
-      this.socket = io(this.uri, {query: `token=${this.localStorageService.getToken()}`});
+      this.socket = io(this.uri, { query: `token=${this.localStorageService.getToken()}` });
       this.isConnected = true;
     } else {
       console.error("---UNAUTHORIZED. SOCKET IS NOT CONNECTED");
@@ -53,7 +58,7 @@ export class SocketService {
       this.socket.on(eventName, (data: any) => {
         subscriber.next(data);
       });
-    });
+    }).pipe(startWith(null));
   }
 
   public emit(eventName: string, data: any): void {
@@ -73,19 +78,22 @@ export class SocketService {
   */
   public listenNewMessage(): Observable<any> {
     return this.listen("newMessage").pipe(
-      map((value: { message: IMessage, room: string, creator: string }) => {
-        this.chatService.lastMessageCreatorId = value.message.creator?._id ?? "";
-        if (value.room === "common") {
-          const messagesInCommon = this.roomService.messagesInCommon.value;
-          this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
+      map((value: { message: IMessage, room: string, creator: string } | null) => {
+        if(value) {
+          this.chatService.lastMessageCreatorId = value.message.creator?._id ?? "";
+          if (value.room === "common") {
+            const messagesInCommon = this.roomService.messagesInCommon.value;
+            this.roomService.messagesInCommon.next([...messagesInCommon, value.message]);
+          }
+          this.store.dispatch(roomGetNewMessageAction({ message: value.message, roomId: value.room }));
+          this.snackBar.openSnackBar("You receive new Message", [], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 50,
+          });
+          return value;
         }
-        this.store.dispatch(roomGetNewMessageAction({message: value.message, roomId: value.room}));
-        this.snackBar.openSnackBar("You receive new Message", [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 50,
-        });
-        return value;
+        return null;
       }),
       takeUntil(this.termination$));
   }
@@ -111,22 +119,23 @@ export class SocketService {
   */
   public listenUserJoined(): Observable<any> {
     return this.listen("userJoined").pipe(
-      map((value: { user: IUser, room: IRoom }) => {
-        console.log("userJoined");
-        this.emit("getAllRooms", {});
-        this.store.dispatch(chatGetAvailableRooms());
+      map((value: { user: IUser, room: IRoom } | null) => {
+        if (value) {
+          this.emit("getAllRooms", {});
+          // this.store.dispatch(roomAddParticipantAction({ room: value.room }));
 
-        if (!value.room && value.user._id === this.chatService.me) {
-          this.snackBar.openSnackBar("welcome " + value.user.name, ["ok"], {
-            horizontalPosition: "center",
-            verticalPosition: "top",
-            duration: 1000,
-          });
-          return;
-        } else {
-          if (value.user._id === this.chatService.me)
-            this.router.navigate(["chat", value.room._id]);
-          else return;
+          if (!value.room && value.user._id === this.chatService.me) {
+            this.snackBar.openSnackBar("welcome " + value.user.name, ["ok"], {
+              horizontalPosition: "center",
+              verticalPosition: "top",
+              duration: 300,
+            });
+            return;
+          } else {
+            if (value.user._id === this.chatService.me)
+              this.router.navigate(["chat", value.room._id]);
+            else return;
+          }
         }
       }),
       takeUntil(this.termination$),
@@ -143,20 +152,25 @@ export class SocketService {
   */
   public listenUserLeft(): Observable<any> {
     return this.listen("userLeft").pipe(
-      tap((value: { user: IUser, room: IRoom }) => {
-        this.emit("getAllRooms", {});
-        this.store.dispatch(chatGetAvailableRooms());
+      tap((value: { user: IUser, room: IRoom } | null) => {
+        if (value) {
+          const room = value.room;
+          if (value.room.users.length <= 2){
+            this.store.dispatch(chatRemoveRoomAction({ room }));
+          } else {
+            this.store.dispatch(chatRemoveParticipantAction({ room: room }));
+          }
 
-        if (value.user._id === this.chatService.me) {
-          console.log("worked");
-          this.router.navigate(["chat", "common"]);
+          if (value.user._id === this.chatService.me) {
+            this.router.navigate(["chat", "common"]);
+          }
+
+          this.snackBar.openSnackBar(value.user.name + " left the room " + room.title, [], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 1000,
+          });
         }
-
-        this.snackBar.openSnackBar(value.user.name + " left the room " + value.room.title, [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 1000,
-        });
       }),
       takeUntil(this.termination$),
     );
@@ -170,14 +184,13 @@ export class SocketService {
   */
   public listenNewRoom(): Observable<any> {
     return this.listen("newRoom").pipe(
-      map(() => {
-        this.emit("getAllRooms", {});
+      map((room: IRoom) => {
+        this.store.dispatch(chatGetNewRoomAction({ room }));
         this.snackBar.openSnackBar("Room has been created", ["Ok"], {
           horizontalPosition: "center",
           verticalPosition: "top",
           duration: 2000,
         });
-        this.store.dispatch(chatGetAvailableRooms());
       }),
       takeUntil(this.termination$),
     );
@@ -192,15 +205,17 @@ export class SocketService {
   */
   public listenRoomDeleted(): Observable<any> {
     return this.listen("roomDeleted").pipe(
-      map((data: { room: IRoom }) => {
-        this.snackBar.openSnackBar(data.room.title + " has been deleted", [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 500,
-        });
+      map((value: { room: IRoom } | null) => {
+        if (value) {
+          const room = value.room;
+          this.store.dispatch(chatRemoveRoomAction({ room }));
 
-        this.emit("getAllRooms", {});
-        this.store.dispatch(chatGetAvailableRooms());
+          this.snackBar.openSnackBar(value.room.title + " has been deleted", [], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 500,
+          });
+        }
       }),
       takeUntil(this.termination$),
     );
@@ -214,14 +229,13 @@ export class SocketService {
   */
   public listenRoomRenamed(): Observable<any> {
     return this.listen("roomRename").pipe(
-      map(() => {
+      tap(() => {
         this.snackBar.openSnackBar("room has been renamed", [], {
           horizontalPosition: "center",
           verticalPosition: "top",
           duration: 500,
         });
         this.emit("getAllRooms", {});
-        this.store.dispatch(chatGetAvailableRooms());
       }),
       takeUntil(this.termination$),
     );
@@ -235,21 +249,20 @@ export class SocketService {
   */
   public listenPrivacyChanged(): Observable<any> {
     return this.listen("privacyChanged").pipe(
-      map(() => {
-        // this.snackBar.openSnackBar("room privacy changed", ["Ok"], {
-        //   horizontalPosition: "center",
-        //   verticalPosition: "top",
-        //   duration: 500,
-        // });
+      tap(() => {
         this.emit("getAllRooms", {});
-        this.store.dispatch(chatGetAvailableRooms());
       }),
       takeUntil(this.termination$),
     );
   }
 
   public listenSearchRoomsResult(): Observable<any> {
-    return this.listen("searchRoomsResult").pipe(takeUntil(this.termination$));
+    return this.listen("searchRoomsResult").pipe(
+      tap((rooms: IRoom[]) => {
+        this.store.dispatch(chatSearchRoomsActions({ rooms }));
+      }),
+      takeUntil(this.termination$)
+    );
   }
 
   /*
@@ -260,9 +273,11 @@ export class SocketService {
   */
   public listenGetAllRooms(): Observable<any> {
     return this.listen("allRooms").pipe(
-      // map((value) => {
-      //   console.log(value);
-      // }),
+      tap((rooms: IRoom[] | null) => {
+        if (rooms){
+          this.store.dispatch(chatGetAvailableRooms({ rooms }));
+        }
+      }),
       takeUntil(this.termination$));
   }
 
@@ -274,8 +289,10 @@ export class SocketService {
   */
   public listenMessageRead(): Observable<any> {
     return this.listen("messageRead").pipe(
-      map((value) => {
-        this.store.dispatch(roomMessageReadAction({messageId: value.id, userId: value.user}));
+      tap((value: any | null) => {
+        if(value) {
+          this.store.dispatch(roomMessageReadAction({ messageId: value.id, userId: value.user }));
+        }
       }),
       takeUntil(this.termination$)
     );
@@ -289,13 +306,15 @@ export class SocketService {
   */
   public listenMessageUpdated(): Observable<any> {
     return this.listen("messageUpdated").pipe(
-      map((value) => {
-        this.snackBar.openSnackBar("Message has been updated", ["Ok"], {
-          horizontalPosition: "center",
-          verticalPosition: "bottom",
-          duration: 2000,
-        });
-        this.store.dispatch(roomUpdateMessageAction({messageId: value.id, correction: value.newContent}));
+      map((value: any | null) => {
+        if(value) {
+          this.store.dispatch(roomUpdateMessageAction({ messageId: value.id, correction: value.newContent }));
+          this.snackBar.openSnackBar("Message has been updated", ["Ok"], {
+            horizontalPosition: "center",
+            verticalPosition: "bottom",
+            duration: 500,
+          });
+        }
       }),
       takeUntil(this.termination$));
   }
@@ -308,13 +327,15 @@ export class SocketService {
   */
   public listenMessageDeleted(): Observable<any> {
     return this.listen("messageDeleted").pipe(
-      map((value) => {
-        this.snackBar.openSnackBar("Message has been deleted", ["Ok", "Discard"], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 2000,
-        });
-        this.store.dispatch(roomMessageRemoveAction({messageId: value.id}));
+      tap((value: any | null) => {
+        if (value) {
+          this.snackBar.openSnackBar("Message has been deleted", ["Ok", "Discard"], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 500,
+          });
+          this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
+        }
       }),
       takeUntil(this.termination$));
   }
