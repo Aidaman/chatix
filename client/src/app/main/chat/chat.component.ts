@@ -32,13 +32,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.store.dispatch(userAuthAction());
     this.socketService.emit("getAllRooms", {});
     // this.store.dispatch(chatGetAvailableRooms());
-
-    this.socketService.listenGetAllRooms().subscribe();
-    this.socketService.listenNewMessage().subscribe();
-    this.socketService.listenNewRoom().subscribe();
-    this.socketService.listenRoomDeleted().subscribe();
-    this.socketService.listenRoomRenamed().subscribe();
-    this.socketService.listenSearchRoomsResult().subscribe();
   }
 
   ngOnDestroy(): void {

@@ -94,6 +94,7 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
     return this.socketService.listen("searchResult")
       .subscribe(users => {
         if (this.selectedInput !== null
+          && users !== null
           && users.length === 1
           && this.newRoomForm.get("participants")?.value[this.selectedInput].name === users[0].name) {
           this.userIds[this.selectedInput] = users[0]._id;

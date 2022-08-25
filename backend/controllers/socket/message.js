@@ -86,7 +86,7 @@ module.exports = {
                 throw new Error('Not allowed');
             }
             const content = crypto.AES.encrypt(validator.escape(params.newContent), MESSAGE_KEY).toString();
-            await message.update({content});
+            await message.updateOne({content});
 
             await message.save();
             return io.to(params.roomId).emit('messageUpdated', {

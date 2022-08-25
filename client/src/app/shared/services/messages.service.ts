@@ -1,17 +1,19 @@
 import { Injectable } from "@angular/core";
 import { RoomSelectDialogComponent } from "../../dialog/room-select-dialog/room-select-dialog.component";
-import { roomMessageRemoveAction, roomUpdateMessageAction } from "../../store/room/room.actions";
+import { roomMessageRemoveAction } from "../../store/room/room.actions";
 import { SocketService } from "./socket.service";
 import { Store } from "@ngrx/store";
 import { MatDialog } from "@angular/material/dialog";
 import { ChatService } from "./chat.service";
 import { IRoom } from "../models/IRoom";
 import { RoomService } from "./room.service";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
   providedIn: "root"
 })
 export class MessagesService {
+  public messageSent: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isEditing: boolean = false;
 
   constructor(private socketService: SocketService,
@@ -29,19 +31,19 @@ export class MessagesService {
     const newMessage = { messageId: messageId, newContent: messageText, roomId: room._id, };
 
     if (messageText) {
+      console.log(room._id, this.isEditing);
       if (room._id === "common" && this.isEditing) {
         this.roomService.editMessageInCommon(messageId, messageText);
       }
 
-      else if (room._id !== "common" && this.isEditing) {
+      else if (room._id.toLowerCase() !== "common" && this.isEditing)
         this.socketService.emit("updateMessage", newMessage);
-        this.store.dispatch(roomUpdateMessageAction({ messageId, correction: messageText }));
+        // this.store.dispatch(roomUpdateMessageAction({ messageId, correction: messageText }));
 
-      } else {
-        this.socketService.emit("createMessage", { message: messageText, room: room._id, });
-      }
+      else this.socketService.emit("createMessage", { message: messageText, room: room._id, });
     }
 
+    this.messageSent.next(true);
     this.isEditing = false;
   }
 

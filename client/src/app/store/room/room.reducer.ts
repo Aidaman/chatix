@@ -50,6 +50,7 @@ export const roomReducer = createReducer(
   on(roomGetMessagesAction, (state) => ({
     ...state,
     isLoading: true,
+    hasMessagesValue: false,
   })),
   on(roomGetMessagesSuccessAction, (state, action) => ({
     ...state,

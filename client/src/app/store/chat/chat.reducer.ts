@@ -8,7 +8,7 @@ import {
   chatMessageReadAction,
   chatGetNewRoomAction,
   chatAddParticipantAction,
-  chatRemoveParticipantAction, chatRemoveRoomAction
+  chatRemoveParticipantAction, chatRemoveRoomAction, chatRoomRenamedAction, chatRoomPrivacyChangedAction
 } from "./chat.actions";
 
 export interface IChatState {
@@ -65,8 +65,9 @@ export const chatReducer = createReducer(
 
   on(chatMessageReadAction, (state) => {
     const rooms = [...state.allRooms].map((room: IRoom) => {
-      if (state.selectedRoom !== null && room._id === state.selectedRoom._id)
-        room = { ...room, unread: room.unread - 1 > 0? room.unread - 1 : 0 };
+      if (room._id === state.selectedRoom?._id) {
+        room = {...room, unread: room.unread - 1 > 0 ? room.unread - 1 : 0};
+      }
       return room;
     });
 
@@ -108,16 +109,49 @@ export const chatReducer = createReducer(
   }),
 
   on(chatAddParticipantAction, (state, action) => {
-    const newRooms = [...state.allRooms].map((room) => {
-      if (room._id === action.room._id){
-        room = action.room;
+    if (state.allRooms && action.room) {
+      const newRooms = [...state.allRooms].map((room) => {
+        if (room._id === action.room._id) {
+          room = action.room;
+        }
+        return room;
+      });
+
+      return ({
+        ...state,
+        allRooms: newRooms,
+      });
+    } else return ({
+      ...state,
+    });
+  }),
+
+  on(chatRoomRenamedAction, (state, action) => {
+    const rooms = [...state.allRooms].map((room) => {
+      console.log(room._id, action.roomId);
+      if (room._id === action.roomId){
+        room = {...room, title: action.title};
       }
       return room;
     });
 
     return ({
       ...state,
-      allRooms: newRooms,
+      allRooms: rooms,
+    })
+  }),
+
+  on(chatRoomPrivacyChangedAction, (state, action) => {
+    const rooms = [...state.allRooms].map((room) => {
+      if (room._id === action.id){
+        room = {...room, isPublic: action.isPublic};
+      }
+      return room;
     });
+
+    return ({
+      ...state,
+      allRooms: rooms,
+    })
   }),
 );

@@ -28,8 +28,10 @@ export enum ActionTypes {
   CHAT_GET_NEW_ROOM = "[Chat] get new room",
   CHAT_GET_AVAILABLE_ROOMS = "[Chat] get available rooms",
   CHAT_SEARCH_ROOMS = "[Chat] search rooms",
-  CHAT_REMOVE_PARTICIPANT = "[Room] remove participant",
-  CHAT_ADD_PARTICIPANT = "[Room] add participant",
+  CHAT_REMOVE_PARTICIPANT = "[Chat] participant left a room",
+  CHAT_ADD_PARTICIPANT = "[Chat] participant joined a room",
+  CHAT_ROOM_RENAMED = "[Room] a room has been renamed",
+  CHAT_ROOM_PRIVACY_CHANGED = "[Room] a room\'s privacy has been changed",
 
   //ROOM & CHAT
   ROOM_AND_CHAT_GET_NEW_MESSAGE = "[Room & Chat] get new messages",

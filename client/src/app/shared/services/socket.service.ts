@@ -22,7 +22,11 @@ import {
   chatGetAvailableRooms,
   chatGetNewRoomAction,
   chatSearchRoomsActions,
-  chatRemoveParticipantAction, chatRemoveRoomAction
+  chatRemoveParticipantAction,
+  chatRemoveRoomAction,
+  chatAddParticipantAction,
+  chatRoomRenamedAction,
+  chatRoomPrivacyChangedAction
 } from "../../store/chat/chat.actions";
 
 @Injectable({
@@ -120,9 +124,9 @@ export class SocketService {
   public listenUserJoined(): Observable<any> {
     return this.listen("userJoined").pipe(
       map((value: { user: IUser, room: IRoom } | null) => {
-        if (value) {
-          this.emit("getAllRooms", {});
-          // this.store.dispatch(roomAddParticipantAction({ room: value.room }));
+        if (value !== null) {
+          // this.emit("getAllRooms", {});
+          this.store.dispatch(chatAddParticipantAction({ room: value.room }));
 
           if (!value.room && value.user._id === this.chatService.me) {
             this.snackBar.openSnackBar("welcome " + value.user.name, ["ok"], {
@@ -229,13 +233,17 @@ export class SocketService {
   */
   public listenRoomRenamed(): Observable<any> {
     return this.listen("roomRename").pipe(
-      tap(() => {
-        this.snackBar.openSnackBar("room has been renamed", [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 500,
-        });
-        this.emit("getAllRooms", {});
+      tap((value: { id: string, title: string } | null) => {
+        if (value){
+          const [roomId, title] = [value.id, value.title];
+          this.store.dispatch(chatRoomRenamedAction({ roomId, title }));
+
+          this.snackBar.openSnackBar("room has been renamed", [], {
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            duration: 500,
+          });
+        }
       }),
       takeUntil(this.termination$),
     );
@@ -249,8 +257,11 @@ export class SocketService {
   */
   public listenPrivacyChanged(): Observable<any> {
     return this.listen("privacyChanged").pipe(
-      tap(() => {
-        this.emit("getAllRooms", {});
+      tap((value: { id: string, isPublic: boolean } | null) => {
+        if (value !== null){
+          const [id, isPublic] = [value.id, value.isPublic];
+         this.store.dispatch(chatRoomPrivacyChangedAction({ id, isPublic }))
+        }
       }),
       takeUntil(this.termination$),
     );

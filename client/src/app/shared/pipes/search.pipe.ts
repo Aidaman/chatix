@@ -6,6 +6,6 @@ import { IRoom } from "../models/IRoom";
 })
 export class SearchPipe implements PipeTransform {
     transform(rooms: IRoom[], searchText: string): IRoom[] {
-        return rooms.filter(room => room.title.toLowerCase().includes(searchText.toLowerCase()));
+        return rooms.filter(room => room?.title.toLowerCase().includes(searchText.toLowerCase()));
     }
 }

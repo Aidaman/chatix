@@ -17,3 +17,8 @@ export const currentRoomSelector = () => createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.selectedRoomId,
 );
+
+export const hasRoomMessagesValueSelector = () => createSelector(
+  roomChatFeatureSelector,
+  (chatState: IRoomChatState) => chatState.messages !== [],
+);

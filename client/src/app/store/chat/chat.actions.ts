@@ -47,3 +47,13 @@ export const chatAddParticipantAction = createAction(
   ActionTypes.CHAT_ADD_PARTICIPANT,
   props<{ room: IRoom }>(),
 );
+
+export const chatRoomRenamedAction = createAction(
+  ActionTypes.CHAT_ROOM_RENAMED,
+  props<{ roomId: string, title: string }>()
+);
+
+export const chatRoomPrivacyChangedAction = createAction(
+  ActionTypes.CHAT_ROOM_PRIVACY_CHANGED,
+  props<{ id: string, isPublic: boolean }>(),
+);
