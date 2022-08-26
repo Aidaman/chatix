@@ -3,12 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
-import { switchMap } from "rxjs/operators";
 import { IMessage } from "src/app/shared/models/IMessage";
 import { IRoom } from "src/app/shared/models/IRoom";
 import { SocketService } from "src/app/shared/services/socket.service";
-import { chatGetAvailableRooms } from "src/app/store/chat/chat.actions";
-import { allRoomsSelector, isAllRoomsHasValue } from "src/app/store/chat/chat.selectors";
+import { allRoomsSelector} from "src/app/store/chat/chat.selectors";
 import { DialogRoomSettingsComponent } from "../room-configuration-dialog/dialog-room-settings.component";
 
 /*

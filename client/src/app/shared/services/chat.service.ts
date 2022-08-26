@@ -39,7 +39,6 @@ export class ChatService {
   * @param limit: describes how many messages backend should send us
   */
   public getRoomContent(id: string, offset?: number, limit?: number): Observable<IMessage[]> {
-    console.log(offset);
     if (id === "common") return EMPTY;
     return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
   }

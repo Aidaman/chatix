@@ -5,6 +5,7 @@ const {getUserSocketsRoom} = require('./utils');
 const crypto = require('crypto-js');
 const validator = require('validator');
 const {MESSAGE_KEY} = require('../../config/config');
+const {ObjectId} = require("mongoose/lib/types");
 
 module.exports = {
     createMessage: async (io, socket, params) => {
@@ -22,9 +23,9 @@ module.exports = {
                 if (room) {
                     const content = crypto.AES.encrypt(validator.escape(params.message), MESSAGE_KEY).toString();
                     const mess = await Message.create({
-                        createdAt, 
-                        creator, 
-                        room: params.room, 
+                        createdAt,
+                        creator,
+                        room: params.room,
                         content,
                         isForwardedMessage: params.isForwarded,
                     });
@@ -38,12 +39,13 @@ module.exports = {
             io.to(params.room).emit('newMessage', {
                 message: {
                     content: params.message,
-                    createdAt, 
+                    createdAt,
                     _id: messId,
                     creator,
                     isSystemMessage: false,
                     isForwardedMessage: false,
-                    read: []},
+                    read: []
+                },
                 room: params.room,
             })
         } catch (e) {
@@ -118,8 +120,14 @@ module.exports = {
     forwardMessage: async (io, socket, params) => {
         try {
             const message = await Message.findOne({_id: params.messageId});
+
+            if (!message) {
+                throw new Error('invalid message')
+            }
+
             const date = message.createdAt;
             const content = `(created ${date.getDate()}-${date.getMonth()}-${date.getFullYear()}) ${params.content}`;
+            console.log(params.content);
             const createdAt = Date.now();
             const creator = await User.findById(message.creator);
             let messId = 0;
@@ -128,14 +136,16 @@ module.exports = {
                 throw new Error('invalid message')
             }
 
+            console.log(params.room)
+
             if (params.room !== 'common') {
                 const room = await Room.findOne({_id: params.room});
                 if (room) {
                     const dbContent = crypto.AES.encrypt(validator.escape(content), MESSAGE_KEY).toString();
                     const mess = await Message.create({
                         createdAt,
-                        creator, 
-                        room: params.room, 
+                        creator,
+                        room: params.room,
                         content: dbContent,
                         isForwardedMessage: true,
                     });
@@ -146,16 +156,17 @@ module.exports = {
                     throw new Error('Forbidden')
                 }
             }
-            
+
             io.to(params.room).emit('newMessage', {
                 message: {
                     content,
-                    createdAt, 
+                    createdAt,
                     _id: messId,
                     creator,
                     isSystemMessage: false,
                     isForwardedMessage: true,
-                    read: []},
+                    read: []
+                },
                 room: params.room,
             })
         } catch (e) {

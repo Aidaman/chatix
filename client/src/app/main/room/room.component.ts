@@ -44,7 +44,7 @@ import {IUser} from "../../shared/models/IUser";
   styleUrls: ["room.component.scss"],
 })
 export class RoomComponent implements OnInit {
-  @ViewChild("messagesList") public messagesList!: ElementRef;
+  @ViewChild("messagesList") private messagesList!: ElementRef;
   private DOMChanges!: MutationObserver;
 
   private lastSelectedMessage: IMessage | null = null;
@@ -84,18 +84,17 @@ export class RoomComponent implements OnInit {
 
           this.store.dispatch(chatRoomSwitchAction({roomId: id}));
           this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
-          // this.store.dispatch(roomGetMessagesAction({ roomId: id }));
           this.currentRoomUnreadCount = room.unread;
           return room;
         }),
         filter(Boolean),
-        tap(() => {
-          if (!this.openMutationObserver$.getValue()) {
-            this.openMutationObserver$.next(true);
-          }
-        })
       );
     }),
+    tap(() => {
+      if (!this.openMutationObserver$.getValue()) {
+        this.openMutationObserver$.next(true);
+      }
+    })
   );
 
   public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
@@ -229,7 +228,8 @@ export class RoomComponent implements OnInit {
     if (e === "edit") {
       this.messagesService.isEditing = true;
       this.messageForm.get("message")?.setValue(this.lastSelectedMessage?.content ? this.lastSelectedMessage?.content : "");
-    } else this.messagesService.onOptionSelect(e, messageId, roomId);
+      this.chatService.showContextMenu.next(false);
+    } else this.messagesService.onOptionSelect(e, this.lastSelectedMessage, roomId);
 
     this.chatService.showContextMenu.next(false);
   }

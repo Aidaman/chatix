@@ -33,15 +33,6 @@ export class MainComponent implements OnDestroy, OnInit {
     if (this.authService.isAuthenticated()) {
       this.socketService.connect();
 
-      this.socketService.listenInvitation().pipe(
-        tap((value: any | null) => {
-          if (value) {
-            this.modalsService.openInvitation(value);
-          }
-        })
-      ).subscribe();
-
-
       from([
         this.socketService.listenUserLeft(),
         this.socketService.listenPrivacyChanged(),
@@ -63,9 +54,7 @@ export class MainComponent implements OnDestroy, OnInit {
             }
           })
         ),
-      ]).pipe(mergeAll()).subscribe((result: any) => {
-        console.log("(stream result)", result);
-      });
+      ]).pipe(mergeAll()).subscribe();
     }
     if (this.localStorageService.getUser()["colorTheme"]) {
       this.themingService.theme.next(this.localStorageService.getUser()["colorTheme"] as string);

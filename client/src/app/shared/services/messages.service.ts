@@ -8,6 +8,7 @@ import { ChatService } from "./chat.service";
 import { IRoom } from "../models/IRoom";
 import { RoomService } from "./room.service";
 import { BehaviorSubject } from "rxjs";
+import {IMessage} from "../models/IMessage";
 
 @Injectable({
   providedIn: "root"
@@ -47,14 +48,15 @@ export class MessagesService {
     this.isEditing = false;
   }
 
-  public onOptionSelect(e: string, messageId: string, roomId: string): void {
+  public onOptionSelect(e: string, message: IMessage | null, roomId: string): void {
+    if (message === null) return;
     switch (e) {
       case("delete"): {
-        this.deleteMessage(messageId, roomId);
+        this.deleteMessage(message._id, roomId);
         break;
       }
       case("forward"): {
-        this.dialog.open(RoomSelectDialogComponent, { data: messageId });
+        this.dialog.open(RoomSelectDialogComponent, { data: message });
         break;
       }
     }
