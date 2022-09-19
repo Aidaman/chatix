@@ -16,7 +16,7 @@
                     [matBadgeHidden]="currentRoomUnreadCount === 0">meeting_room
           </mat-icon>
           <div class="room-title-text">
-            <span class="room-name">{{me | isPersonalMessagePipe: room}}</span>
+            <span class="room-name">{{room | isPersonalMessagePipe }}</span>
             <small *ngIf="!room.isFavorites">{{room.users.length}} participants</small>
           </div>
           <button mat-button (click)="openSettings(room)">

@@ -7,6 +7,8 @@ import { LocalStorageService } from "../services/local-storage.service";
 import { ScrollService } from "../services/scroll.service";
 import { environment } from "../../../environments/environment";
 import {MessagesService} from "../services/messages.service";
+import {Store} from "@ngrx/store";
+import {messageAmountSelector, offsetSelector} from "../../store/room/room.selectors";
 
 /*
 * @description This is a directive to track the scroll in the room
@@ -21,14 +23,30 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
   private scrollHeight: number = 0;
   private scrollTop: number = 0;
   private isEmitted: boolean = false;
-  private isQueryDone: boolean = false;
+
+  private offset!: number;
+  private maxMesssages!: number;
 
   constructor(private el: ElementRef,
+              private store: Store,
               private scrollService: ScrollService,
               private messageService: MessagesService,
               private localStorageService: LocalStorageService,) {}
 
   public ngOnInit(): void {
+    this.store.select(offsetSelector).pipe(
+      tap((offset) => {
+        this.offset = offset;
+      }),
+      takeUntil(this.terminate$)
+    ).subscribe();
+    this.store.select(messageAmountSelector).pipe(
+      tap((maxMessages) => {
+        this.maxMesssages = maxMessages;
+      }),
+      takeUntil(this.terminate$)
+    ).subscribe();
+
     this.scrollService.scrollDown$.pipe(
       tap((isForceScroll: boolean) => {
         if (isForceScroll && this.messageService.messageSent.getValue()) {
@@ -39,7 +57,7 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
       takeUntil(this.terminate$),
     ).subscribe();
 
-    this.scrollService.roomSwitched.pipe(
+    this.scrollService.roomSwitched$.pipe(
       tap(({ roomId }) => {
         if (environment.ENABLE_EXPERIMENTAL_FUNCTIONALITY){
           if (roomId === "common") return;
@@ -74,16 +92,15 @@ export class ScrollTrackDirective implements OnInit, AfterViewInit, OnDestroy{
 
   private emit(eventScrollTop: number){
     this.scrollTop = eventScrollTop;
-    if (eventScrollTop < 500 && !this.isEmitted) {
+    if (eventScrollTop < 500 && !this.isEmitted && this.offset !== this.maxMesssages) {
+      console.log(this.offset, this.maxMesssages)
       this.scrollHeight = this.el.nativeElement.scrollHeight;
       this.loadMessages.emit();
 
-      this.isQueryDone = false;
       this.isEmitted = true;
     }
     if (this.scrollHeight !== this.el.nativeElement.scrollHeight) {
       this.isEmitted = false;
-      this.isQueryDone = true;
     }
   }
 

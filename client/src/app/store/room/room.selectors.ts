@@ -13,6 +13,11 @@ export const offsetSelector = createSelector(
   (roomState: IRoomChatState) => roomState.offset
 );
 
+export const messageAmountSelector = createSelector(
+  roomChatFeatureSelector,
+  (roomState: IRoomChatState) => roomState.totalMessages
+);
+
 export const currentRoomSelector = () => createSelector(
   roomChatFeatureSelector,
   (chatState: IRoomChatState) => chatState.selectedRoomId,

@@ -10,6 +10,7 @@ import { Store } from "@ngrx/store";
 import { ScrollService } from "../../../shared/services/scroll.service";
 import { chatGetAvailableRooms, chatSearchRoomsActions } from "../../../store/chat/chat.actions";
 import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/chat/chat.selectors";
+import {SignalRService} from "../../../shared/services/signal-r.service";
 
 /*
 * @description This component is responsible to show the list of rooms available for users
@@ -47,6 +48,7 @@ export class RoomListComponent {
               private chatService: ChatService,
               private scrollService: ScrollService,
               private store: Store,
+              private signalRService: SignalRService,
               private matDialog: MatDialog,) {
   }
 
@@ -62,7 +64,8 @@ export class RoomListComponent {
         ...value,
         participants: [this.chatService.me, ...value.participants],
       };
-      this.socketService.emit("createRoom", newRoom);
+      this.signalRService.invokeRoomEvent("CreateRoom", newRoom);
+      // this.socketService.emit("createRoom", newRoom);
     });
   }
 

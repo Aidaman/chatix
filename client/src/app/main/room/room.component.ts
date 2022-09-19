@@ -33,6 +33,7 @@ import {chatGetAvailableRooms, chatRoomSwitchAction} from "../../store/chat/chat
 import {MessagesService} from "../../shared/services/messages.service";
 import {ModalsService} from "../../shared/services/modals.service";
 import {IUser} from "../../shared/models/IUser";
+import {SignalRService} from "../../shared/services/signal-r.service";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -56,8 +57,6 @@ export class RoomComponent implements OnInit {
   public messageForm: FormGroup = this.fb.group({
     message: [null, [Validators.required]]
   });
-
-  public me = this.chatService.me;
 
   public currentRoomUnreadCount: number = 0;
   public overallUnread: Observable<number> = this.chatService.overallUnread;
@@ -151,7 +150,8 @@ export class RoomComponent implements OnInit {
               private router: Router,
               private fb: FormBuilder,
               private activeRoute: ActivatedRoute,
-              private store: Store) {
+              private store: Store,
+              private signalRService: SignalRService) {
   }
 
   ngOnInit(): void {
@@ -159,7 +159,7 @@ export class RoomComponent implements OnInit {
       if (isOpened) {
         const element = this.messagesList.nativeElement;
         this.DOMChanges = new MutationObserver((mutations) => {
-          if (this.messagesService.messageSent.getValue() || this.chatService.lastMessageCreatorId === this.chatService.me) {
+          if (this.messagesService.messageSent.getValue()) {
             this.scrollService.scrollDown$.next(true);
           } else this.scrollService.scrollDown$.next(false);
         });
@@ -198,7 +198,8 @@ export class RoomComponent implements OnInit {
   public onViewportChange(event: { inView: boolean, id: string }, room: IRoom, messages: IMessage[]) {
     if (room._id !== "common") {
       if (event.inView) {
-        this.socketService.emit("readMessage", {messageId: event.id});
+        // this.socketService.emit("readMessage", {messageId: event.id});
+        this.signalRService.invokeMessageEvent("ReadMessage", {userId: this.chatService.me, messageId: event.id});
         this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       }
     }

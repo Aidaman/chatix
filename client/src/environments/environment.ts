@@ -4,6 +4,7 @@
 
 export const environment = {
   API_URL: "http://localhost:8080",
+  DOTNET_API_URL: "https://localhost:5001",
   ENABLE_EXPERIMENTAL_FUNCTIONALITY: false,
   production: false,
 };

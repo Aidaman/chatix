@@ -9,6 +9,7 @@ import { IRoom } from "../models/IRoom";
 import { RoomService } from "./room.service";
 import { BehaviorSubject } from "rxjs";
 import {IMessage} from "../models/IMessage";
+import {SignalRService} from "./signal-r.service";
 
 @Injectable({
   providedIn: "root"
@@ -21,7 +22,8 @@ export class MessagesService {
               private chatService: ChatService,
               private roomService: RoomService,
               private store: Store,
-              private dialog: MatDialog) { }
+              private dialog: MatDialog,
+              private signalR: SignalRService) { }
 
   private deleteMessage(messageId: string, roomId: string) {
     this.socketService.emit("deleteMessage", { messageId, roomId });
@@ -29,19 +31,23 @@ export class MessagesService {
   }
 
   public sendMessage(room: IRoom, messageText: string, messageId: string){
-    const newMessage = { messageId: messageId, newContent: messageText, roomId: room._id, };
+    const newMessage = { messageId: messageId, newContent: messageText, roomId: room._id, userId: this.chatService.me };
+    const newMessageString: string = JSON.stringify(newMessage).slice(1, JSON.stringify(newMessage).length-1);
 
     if (messageText) {
-      console.log(room._id, this.isEditing);
       if (room._id === "common" && this.isEditing) {
         this.roomService.editMessageInCommon(messageId, messageText);
       }
 
       else if (room._id.toLowerCase() !== "common" && this.isEditing)
-        this.socketService.emit("updateMessage", newMessage);
+        this.signalR.invokeMessageEvent("UpdateMessage", JSON.stringify(newMessage));
+        // this.socketService.emit("updateMessage", newMessage);
         // this.store.dispatch(roomUpdateMessageAction({ messageId, correction: messageText }));
 
-      else this.socketService.emit("createMessage", { message: messageText, room: room._id, });
+      else this.signalR.invokeMessageEvent("CreateMessage", JSON.stringify(newMessage));
+      // else this.signalR.invokeMessageEvent("createMessage", messageText, room._id, this.chatService.me);
+      // else this.signalR.invokeMessageEvent("createMessage", {message: messageText, room: room._id});
+      // else this.socketService.emit("createMessage", { message: messageText, room: room._id, });
     }
 
     this.messageSent.next(true);

@@ -79,4 +79,8 @@ export class ModalsService {
 
     await lastValueFrom(afterClosedSource$);
   }
-}
+
+  /*
+  * @description opens modal window for creating a room
+  */
+  }

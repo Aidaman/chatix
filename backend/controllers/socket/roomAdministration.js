@@ -7,7 +7,7 @@ const validator = require('validator');
 const {MESSAGE_KEY} = require('../../config/config');
 
 module.exports = {
-    createRoom: async (io, socket, params) => {
+    createRoom: async (io, socket, params) =>  {
         try {
             if (params.roomTitle.trim().toLowerCase() === 'common'
                 || params.roomTitle.trim().length < 3

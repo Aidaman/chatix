@@ -40,27 +40,27 @@ export class ChatService {
   */
   public getRoomContent(id: string, offset?: number, limit?: number): Observable<IMessage[]> {
     if (id === "common") return EMPTY;
-    return this.http.get<IMessage[]>(`${environment.API_URL}/roomContent/${id}?offset=${offset}&limit=${limit}`);
+    return this.http.get<IMessage[]>(`${environment.DOTNET_API_URL}/api/messages/RoomContent/${id}/${offset}/${limit}`);
   }
 
   /*
   * @description A function for get the number of messages in the room
   * @param id: id of the room that requesting this
   */
-  public getRoomMessagesamount(id: string): Observable<string> {
-    return this.http.get<string>(`${environment.API_URL}/roomAmountOfMessage/${id}`);
+  public getRoomMessagesAmount(id: string): Observable<string> {
+    return this.http.get<string>(`${environment.DOTNET_API_URL}/api/messages/RoomAmountOfMessage/${id}`);
   }
 
   public getBlacklist(): Observable<string[]> {
-    return this.http.get<string[]>(`${environment.API_URL}/blacklist`);
+    return this.http.get<string[]>(`${environment.DOTNET_API_URL}/blacklist`);
   }
 
   public addToBlacklist(id: string): Observable<string[]> {
-    return this.http.post<string[]>(`${environment.API_URL}/blacklist`, { blacklistedId: id });
+    return this.http.post<string[]>(`${environment.DOTNET_API_URL}/blacklist`, { blacklistedId: id });
   }
 
   public deleteFromBlacklist(id: string): Observable<any> {
-    return this.http.request("delete", `${environment.API_URL}/blacklist`, {
+    return this.http.request("delete", `${environment.DOTNET_API_URL}/blacklist`, {
       body: {
         blacklistedId: id,
       }

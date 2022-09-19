@@ -24,7 +24,7 @@ export class RoomEffect {
   */
   amountOfMessages$ = createEffect(() => this.actions$.pipe(
     ofType(roomGetAmountOfMessagesAction),
-    switchMap(({ roomId }) => this.chatService.getRoomMessagesamount(roomId).pipe(
+    switchMap(({ roomId }) => this.chatService.getRoomMessagesAmount(roomId).pipe(
       map((amount) => roomGetAmountOfMessagesSuccessAction({ amount: +amount })),
       catchError(() => of(roomGetAmountOfMessagesFailureAction())),
     ))
@@ -46,7 +46,7 @@ export class RoomEffect {
   loadMessages$ = createEffect(() => this.actions$.pipe(
     ofType(roomLoadMessagesAction),
     switchMap(({ roomId }) => this.store.select(offsetSelector).pipe(
-      switchMap((offset) => this.chatService.getRoomContent(roomId, offset, 50).pipe(
+      switchMap((offset) => this.chatService.getRoomContent(roomId, offset,50).pipe(
         map((messages) => roomLoadMessagesSuccessAction({ messages })),
         catchError(() => of(roomLoadMessagesFailureAction()))))
     )),
