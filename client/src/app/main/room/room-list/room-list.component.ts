@@ -11,6 +11,7 @@ import { ScrollService } from "../../../shared/services/scroll.service";
 import { chatGetAvailableRooms, chatSearchRoomsActions } from "../../../store/chat/chat.actions";
 import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/chat/chat.selectors";
 import {SignalRService} from "../../../shared/services/signal-r.service";
+import {ModalsService} from "../../../shared/services/modals.service";
 
 /*
 * @description This component is responsible to show the list of rooms available for users
@@ -48,25 +49,14 @@ export class RoomListComponent {
               private chatService: ChatService,
               private scrollService: ScrollService,
               private store: Store,
-              private signalRService: SignalRService,
-              private matDialog: MatDialog,) {
+              private modalsService: ModalsService) {
   }
 
   /*
   * @description Opens modal window for creating a room
   */
   public createRoom(): void {
-    const newRoomDialogRef = this.matDialog.open(DialogAddingRoomComponent);
-    newRoomDialogRef.afterClosed().subscribe((value) => {
-      //if the value is false - it means that user declined to create the room
-      if (!value) return;
-      const newRoom = {
-        ...value,
-        participants: [this.chatService.me, ...value.participants],
-      };
-      this.signalRService.invokeRoomEvent("CreateRoom", newRoom);
-      // this.socketService.emit("createRoom", newRoom);
-    });
+    this.modalsService.createRoomDialog();
   }
 
   public toggleSearch(): void {

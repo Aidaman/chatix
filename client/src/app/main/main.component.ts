@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {AuthService} from "../shared/services/auth.service";
-import {SocketService} from "../shared/services/socket.service";
-import {LocalStorageService} from "../shared/services/local-storage.service";
-import {from, mergeAll, tap} from "rxjs";
-import {ThemingService} from "../shared/services/theming.service";
-import {Router} from "@angular/router";
-import {ModalsService} from "../shared/services/modals.service";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { AuthService } from "../shared/services/auth.service";
+import { SocketService } from "../shared/services/socket.service";
+import { LocalStorageService } from "../shared/services/local-storage.service";
+import { from, mergeAll, tap } from "rxjs";
+import { ThemingService } from "../shared/services/theming.service";
+import { Router } from "@angular/router";
+import { ModalsService } from "../shared/services/modals.service";
 
 /*
 * @description This component just wraps another subcomponents
@@ -34,17 +34,17 @@ export class MainComponent implements OnDestroy, OnInit {
       this.socketService.connect();
 
       from([
-        this.socketService.listenUserLeft(),
-        this.socketService.listenPrivacyChanged(),
-        this.socketService.listenMessageDeleted(),
+        // this.socketService.listenUserLeft(),
+        // this.socketService.listenPrivacyChanged(),
+        // this.socketService.listenMessageDeleted(),
         // this.socketService.listenMessageUpdated(),
         // this.socketService.listenMessageRead(),
         this.socketService.listenUserJoined(),
         this.socketService.listenGetAllRooms(),
         // this.socketService.listenNewMessage(),
         // this.socketService.listenNewRoom(),
-        this.socketService.listenRoomDeleted(),
-        this.socketService.listenRoomRenamed(),
+        // this.socketService.listenRoomDeleted(),
+        // this.socketService.listenRoomRenamed(),
         this.socketService.listenSearchRoomsResult(),
 
         this.socketService.listenInvitation().pipe(

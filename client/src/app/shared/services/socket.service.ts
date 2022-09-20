@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
-import {environment} from "../../../environments/environment";
-import {map, Observable, startWith, Subject, takeUntil, tap} from "rxjs";
-import {LocalStorageService} from "./local-storage.service";
+import { Injectable } from "@angular/core";
+import { environment } from "../../../environments/environment";
+import { map, Observable, startWith, Subject, takeUntil, tap } from "rxjs";
+import { LocalStorageService } from "./local-storage.service";
 // @ts-ignore
 import * as io from "socket.io-client";
 import {
@@ -10,14 +10,14 @@ import {
   roomMessageRemoveAction,
   roomUpdateMessageAction
 } from "../../store/room/room.actions";
-import {Store} from "@ngrx/store";
-import {Router} from "@angular/router";
-import {SnackBarNotificationService} from "./snack-bar-notification.service";
-import {IUser} from "../models/IUser";
-import {IRoom} from "../models/IRoom";
-import {ChatService} from "./chat.service";
-import {IMessage} from "../models/IMessage";
-import {RoomService} from "./room.service";
+import { Store } from "@ngrx/store";
+import { Router } from "@angular/router";
+import { SnackBarNotificationService } from "./snack-bar-notification.service";
+import { IUser } from "../models/IUser";
+import { IRoom } from "../models/IRoom";
+import { ChatService } from "./chat.service";
+import { IMessage } from "../models/IMessage";
+import { RoomService } from "./room.service";
 import {
   chatGetAvailableRooms,
   chatGetNewRoomAction,
@@ -28,7 +28,7 @@ import {
   chatRoomRenamedAction,
   chatRoomPrivacyChangedAction
 } from "../../store/chat/chat.actions";
-import {SignalRService} from "./signal-r.service";
+import { SignalRService } from "./signal-r.service";
 
 @Injectable({
   providedIn: "root"
@@ -52,7 +52,7 @@ export class SocketService {
   public connect(): void {
     if (!this.isConnected) {
       // @ts-ignore
-      this.socket = io(this.uri, {query: `token=${this.localStorageService.getToken()}`});
+      this.socket = io(this.uri, { query: `token=${this.localStorageService.getToken()}` });
       this.isConnected = true;
     } else {
       console.error("---UNAUTHORIZED. SOCKET IS NOT CONNECTED");
@@ -66,13 +66,13 @@ export class SocketService {
     this.signalRService.listenMessageEvent("newMessage", (value: string) => {
       if (value) {
         const message: IMessage = JSON.parse(value);
-        console.log(message);
+        console.log("new message", message);
         this.chatService.lastMessageCreatorId = message.creator?._id ?? "";
         if (message.room === "common") {
           const messagesInCommon = this.roomService.messagesInCommon.value;
           this.roomService.messagesInCommon.next([...messagesInCommon, message]);
         }
-        this.store.dispatch(roomGetNewMessageAction({message: message, roomId: message.room}));
+        this.store.dispatch(roomGetNewMessageAction({ message: message, roomId: message.room }));
         this.snackBar.openSnackBar("You receive new Message", [], {
           horizontalPosition: "center",
           verticalPosition: "top",
@@ -86,7 +86,7 @@ export class SocketService {
       if (value) {
         const message: IMessage = JSON.parse(value);
         console.log(message);
-        this.store.dispatch(roomUpdateMessageAction({messageId: message._id, correction: message.content}));
+        this.store.dispatch(roomUpdateMessageAction({ messageId: message._id, correction: message.content }));
         this.snackBar.openSnackBar("Message has been updated", ["Ok"], {
           horizontalPosition: "center",
           verticalPosition: "bottom",
@@ -99,17 +99,52 @@ export class SocketService {
       value = JSON.parse(value) as { messageId: string, userId: string } | null;
       console.log("After JSON parsing" + value);
       if (value) {
-        this.store.dispatch(roomMessageReadAction({messageId: value.id, userId: value.user}));
+        this.store.dispatch(roomMessageReadAction({ messageId: value.id, userId: value.user }));
       }
     });
     this.signalRService.listenRoomEvent("newRoom", (value: any) => {
       const room = JSON.parse(value) as IRoom;
-      this.store.dispatch(chatGetNewRoomAction({room}));
+      this.store.dispatch(chatGetNewRoomAction({ room }));
       this.snackBar.openSnackBar("Room has been created", ["Ok"], {
         horizontalPosition: "center",
         verticalPosition: "top",
         duration: 2000,
       });
+    });
+    this.signalRService.listenRoomEvent("privacyChanged", (value: any) => {
+      const room = JSON.parse(value) as IRoom;
+      if (room !== null) {
+        const [id, isPublic] = [room._id, room.isPublic];
+        this.store.dispatch(chatRoomPrivacyChangedAction({ id, isPublic }));
+      }
+    });
+    this.signalRService.listenRoomEvent("roomRename", (value: any) => {
+      const room = JSON.parse(value) as IRoom;
+      console.log("room renamed", room);
+      if (room !== null) {
+        const [roomId, title] = [room._id, room.title];
+        this.store.dispatch(chatRoomRenamedAction({ roomId, title }));
+      }
+    });
+    this.signalRService.listenRoomEvent("userLeft", (value: any) => {
+      const room = JSON.parse(value) as IRoom;
+      if (room !== null) {
+        if (room.users.length <= 2) {
+          this.store.dispatch(chatRemoveRoomAction({ room }));
+        } else {
+          this.store.dispatch(chatRemoveParticipantAction({ room: room }));
+        }
+
+        if (!room.users.some((user) => user._id === this.chatService.me)) {
+          this.router.navigate(["chat", "common"]);
+        }
+
+        this.snackBar.openSnackBar(value.user.name + " left the room " + room.title, [], {
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          duration: 1000,
+        });
+      }
     });
   }
 
@@ -182,7 +217,7 @@ export class SocketService {
       map((value: { user: IUser, room: IRoom } | null) => {
         if (value !== null) {
           // this.emit("getAllRooms", {});
-          this.store.dispatch(chatAddParticipantAction({room: value.room}));
+          this.store.dispatch(chatAddParticipantAction({ room: value.room }));
 
           if (!value.room && value.user._id === this.chatService.me) {
             this.snackBar.openSnackBar("welcome " + value.user.name, ["ok"], {
@@ -216,9 +251,9 @@ export class SocketService {
         if (value) {
           const room = value.room;
           if (value.room.users.length <= 2) {
-            this.store.dispatch(chatRemoveRoomAction({room}));
+            this.store.dispatch(chatRemoveRoomAction({ room }));
           } else {
-            this.store.dispatch(chatRemoveParticipantAction({room: room}));
+            this.store.dispatch(chatRemoveParticipantAction({ room: room }));
           }
 
           if (value.user._id === this.chatService.me) {
@@ -268,7 +303,7 @@ export class SocketService {
       map((value: { room: IRoom } | null) => {
         if (value) {
           const room = value.room;
-          this.store.dispatch(chatRemoveRoomAction({room}));
+          this.store.dispatch(chatRemoveRoomAction({ room }));
 
           this.snackBar.openSnackBar(value.room.title + " has been deleted", [], {
             horizontalPosition: "center",
@@ -292,7 +327,7 @@ export class SocketService {
       tap((value: { id: string, title: string } | null) => {
         if (value) {
           const [roomId, title] = [value.id, value.title];
-          this.store.dispatch(chatRoomRenamedAction({roomId, title}));
+          this.store.dispatch(chatRoomRenamedAction({ roomId, title }));
 
           this.snackBar.openSnackBar("room has been renamed", [], {
             horizontalPosition: "center",
@@ -316,7 +351,7 @@ export class SocketService {
       tap((value: { id: string, isPublic: boolean } | null) => {
         if (value !== null) {
           const [id, isPublic] = [value.id, value.isPublic];
-          this.store.dispatch(chatRoomPrivacyChangedAction({id, isPublic}))
+          this.store.dispatch(chatRoomPrivacyChangedAction({ id, isPublic }));
         }
       }),
       takeUntil(this.termination$),
@@ -326,7 +361,7 @@ export class SocketService {
   public listenSearchRoomsResult(): Observable<any> {
     return this.listen("searchRoomsResult").pipe(
       tap((rooms: IRoom[]) => {
-        this.store.dispatch(chatSearchRoomsActions({rooms}));
+        this.store.dispatch(chatSearchRoomsActions({ rooms }));
       }),
       takeUntil(this.termination$)
     );
@@ -342,7 +377,7 @@ export class SocketService {
     return this.listen("allRooms").pipe(
       tap((rooms: IRoom[] | null) => {
         if (rooms) {
-          this.store.dispatch(chatGetAvailableRooms({rooms}));
+          this.store.dispatch(chatGetAvailableRooms({ rooms }));
         }
       }),
       takeUntil(this.termination$));
@@ -401,7 +436,7 @@ export class SocketService {
             verticalPosition: "top",
             duration: 500,
           });
-          this.store.dispatch(roomMessageRemoveAction({messageId: value.id}));
+          this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
         }
       }),
       takeUntil(this.termination$));

@@ -8,6 +8,9 @@ import { DialogRoomSettingsComponent } from "../../dialog/room-configuration-dia
 import { IUser } from "../models/IUser";
 import { DialogInvitingRoomComponent } from "../../dialog/invite-to-room-dialog/dialog-inviting-room.component";
 import { Router } from "@angular/router";
+import { SignalRService } from "./signal-r.service";
+import { DialogAddingRoomComponent } from "../../dialog/new-room-dialog/dialog-adding-room.component";
+import { ChatService } from "./chat.service";
 
 @Injectable({
   providedIn: "root"
@@ -16,6 +19,8 @@ export class ModalsService {
 
   constructor(private socketService: SocketService,
               private router: Router,
+              private chatService: ChatService,
+              private signalRService: SignalRService,
               public dialog: MatDialog) { }
 
   /*
@@ -46,18 +51,22 @@ export class ModalsService {
       //If Value is false - then no changes were made
       if (!value) return;
       if (value.delete) {
-        this.socketService.emit("roomDelete", { roomId: value.roomId });
+        this.signalRService.invokeRoomEvent("DeleteRoom", JSON.stringify({ roomId: value.roomId, creatorId: value.creator._id, }));
+        // this.socketService.emit("roomDelete", { roomId: value.roomId });
         this.router.navigate(["chat", "common"]);
       } else {
         if (value.newRoomTitle !== room.title)
-          this.socketService.emit("renameRoom", { roomId: value._id, roomTitle: value.newRoomTitle });
+          this.signalRService.invokeRoomEvent("RenameRoom", JSON.stringify({ roomId: value._id, creatorId: value.creator._id, title: value.newRoomTitle }));
+          // this.socketService.emit("renameRoom", { roomId: value._id, roomTitle: value.newRoomTitle });
 
         if (value.newIsPublic !== room.isPublic)
-          this.socketService.emit("privacyChange", { roomId: value._id, roomPublicity: value.newIsPublic });
+          this.signalRService.invokeRoomEvent("PrivacyChange", JSON.stringify({ roomId: value._id, creatorId: value.creator._id, isPublic: value.newIsPublic }));
+          // this.socketService.emit("privacyChange", { roomId: value._id, roomPublicity: value.newIsPublic });
 
         if (value.deletedUsers && value.deletedUsers.length > 0) {
           value.deletedUsers.forEach((user: IUser) => {
-            this.socketService.emit("deleteParticipant", { roomId: room._id, deletedUserId: user._id });
+            this.signalRService.invokeRoomEvent("DeleteParticipant", JSON.stringify({ roomId: value._id, creatorId: value.creator._id, userId: user._id }));
+            // this.socketService.emit("deleteParticipant", { roomId: room._id, deletedUserId: user._id });
           });
         }
       }
@@ -83,4 +92,18 @@ export class ModalsService {
   /*
   * @description opens modal window for creating a room
   */
+  public createRoomDialog(): void {
+    const newRoomDialogRef = this.dialog.open(DialogAddingRoomComponent);
+    newRoomDialogRef.afterClosed().subscribe((value) => {
+      //if the value is false - it means that user declined to create the room
+      if (!value) return;
+      const newRoom = {
+        ...value,
+        participants: [this.chatService.me, ...value.participants],
+        creatorId: this.chatService.me,
+      };
+      this.signalRService.invokeRoomEvent("CreateRoom", JSON.stringify(newRoom));
+      // this.socketService.emit("createRoom", newRoom);
+    });
+  }
   }

@@ -64,6 +64,7 @@ export class DialogRoomSettingsComponent{
   }
 
   public onNoClick(): void {
+    console.log(this.room)
     this.dialogRef.close(false);
   }
 

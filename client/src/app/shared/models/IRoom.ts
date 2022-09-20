@@ -6,7 +6,6 @@ export interface IRoom {
   title: string;
   users: IUser[];
   creator: IUser | null;
-  index: number;
   unread: number;
   lastAction: Date;
   isPublic: boolean;

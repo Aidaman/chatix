@@ -72,7 +72,7 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
     this.userIds = this.userIds.filter(userId => userId !== this.me);
     this.userIds = Array.from(new Set(this.userIds));
     this.dialogRef.close({
-      roomTitle: this.newRoomForm.get("title")?.value,
+      title: this.newRoomForm.get("title")?.value,
       participants: this.userIds,
       isPublic: this.isPublic
     });

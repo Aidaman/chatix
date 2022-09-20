@@ -8,8 +8,8 @@ import { ChatService } from "./chat.service";
 import { IRoom } from "../models/IRoom";
 import { RoomService } from "./room.service";
 import { BehaviorSubject } from "rxjs";
-import {IMessage} from "../models/IMessage";
-import {SignalRService} from "./signal-r.service";
+import { IMessage } from "../models/IMessage";
+import { SignalRService } from "./signal-r.service";
 
 @Injectable({
   providedIn: "root"
@@ -32,7 +32,6 @@ export class MessagesService {
 
   public sendMessage(room: IRoom, messageText: string, messageId: string){
     const newMessage = { messageId: messageId, newContent: messageText, roomId: room._id, userId: this.chatService.me };
-    const newMessageString: string = JSON.stringify(newMessage).slice(1, JSON.stringify(newMessage).length-1);
 
     if (messageText) {
       if (room._id === "common" && this.isEditing) {
