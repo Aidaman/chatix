@@ -23,11 +23,12 @@ export class MessagesService {
               private roomService: RoomService,
               private store: Store,
               private dialog: MatDialog,
-              private signalR: SignalRService) { }
+              private signalRService: SignalRService) { }
 
   private deleteMessage(messageId: string, roomId: string) {
-    this.socketService.emit("deleteMessage", { messageId, roomId });
-    this.store.dispatch(roomMessageRemoveAction({ messageId }));
+    this.signalRService.invokeMessageEvent("DeleteMessage", JSON.stringify({ messageId, roomId }));
+    // this.socketService.emit("deleteMessage", { messageId, roomId });
+    // this.store.dispatch(roomMessageRemoveAction({ messageId }));
   }
 
   public sendMessage(room: IRoom, messageText: string, messageId: string){
@@ -39,11 +40,11 @@ export class MessagesService {
       }
 
       else if (room._id.toLowerCase() !== "common" && this.isEditing)
-        this.signalR.invokeMessageEvent("UpdateMessage", JSON.stringify(newMessage));
+        this.signalRService.invokeMessageEvent("UpdateMessage", JSON.stringify(newMessage));
         // this.socketService.emit("updateMessage", newMessage);
         // this.store.dispatch(roomUpdateMessageAction({ messageId, correction: messageText }));
 
-      else this.signalR.invokeMessageEvent("CreateMessage", JSON.stringify(newMessage));
+      else this.signalRService.invokeMessageEvent("CreateMessage", JSON.stringify(newMessage));
       // else this.signalR.invokeMessageEvent("createMessage", messageText, room._id, this.chatService.me);
       // else this.signalR.invokeMessageEvent("createMessage", {message: messageText, room: room._id});
       // else this.socketService.emit("createMessage", { message: messageText, room: room._id, });

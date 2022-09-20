@@ -1,6 +1,6 @@
-import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {RoomService} from "../../shared/services/room.service";
-import {IRoom} from "../../shared/models/IRoom";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { RoomService } from "../../shared/services/room.service";
+import { IRoom } from "../../shared/models/IRoom";
 import {
   asyncScheduler,
   BehaviorSubject,
@@ -10,30 +10,30 @@ import {
   switchMap,
   tap
 } from "rxjs";
-import {IMessage} from "../../shared/models/IMessage";
-import {SocketService} from "../../shared/services/socket.service";
-import {IOption} from "../../shared/models/IOption";
-import {ChatService} from "../../shared/services/chat.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Store} from "@ngrx/store";
+import { IMessage } from "../../shared/models/IMessage";
+import { SocketService } from "../../shared/services/socket.service";
+import { IOption } from "../../shared/models/IOption";
+import { ChatService } from "../../shared/services/chat.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Store } from "@ngrx/store";
 import {
   currentRoomSelector,
   isAllRoomsHasValue,
   roomByIdSelect
 } from "../../store/chat/chat.selectors";
-import {hasRoomMessagesValueSelector, messagesSelector,} from "../../store/room/room.selectors";
+import { hasRoomMessagesValueSelector, messagesSelector, } from "../../store/room/room.selectors";
 import {
   roomGetAmountOfMessagesAction,
   roomGetMessagesAction,
   roomLoadMessagesAction,
 } from "../../store/room/room.actions";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ScrollService} from "../../shared/services/scroll.service";
-import {chatGetAvailableRooms, chatRoomSwitchAction} from "../../store/chat/chat.actions";
-import {MessagesService} from "../../shared/services/messages.service";
-import {ModalsService} from "../../shared/services/modals.service";
-import {IUser} from "../../shared/models/IUser";
-import {SignalRService} from "../../shared/services/signal-r.service";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ScrollService } from "../../shared/services/scroll.service";
+import { chatGetAvailableRooms, chatRoomSwitchAction } from "../../store/chat/chat.actions";
+import { MessagesService } from "../../shared/services/messages.service";
+import { ModalsService } from "../../shared/services/modals.service";
+import { IUser } from "../../shared/models/IUser";
+import { SignalRService } from "../../shared/services/signal-r.service";
 
 /*
 * @description This component is responsible for displaying the room and messages in it
@@ -66,7 +66,7 @@ export class RoomComponent implements OnInit {
       // eslint-disable-next-line no-unused-expressions
       this.DOMChanges && this.DOMChanges.disconnect();
     }),
-    switchMap(({id}) => {
+    switchMap(({ id }) => {
       return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
           if (!value) {
@@ -76,14 +76,14 @@ export class RoomComponent implements OnInit {
         }),
         map((room: IRoom | null) => {
           if (room === null) return;
-          if (room.users.find((user: IUser) => user._id === this.chatService.me) === undefined) {
-            this.socketService.emit("joinRoom", { roomId: room._id });
+          if (room?.users.find((user: IUser) => user._id === this.chatService.me) === undefined) {
+            this.socketService.emit("joinRoom", { roomId: room?._id });
             return room;
           }
 
-          this.store.dispatch(chatRoomSwitchAction({roomId: id}));
-          this.store.dispatch(roomGetAmountOfMessagesAction({roomId: id}));
-          this.currentRoomUnreadCount = room.unread;
+          this.store.dispatch(chatRoomSwitchAction({ roomId: id }));
+          this.store.dispatch(roomGetAmountOfMessagesAction({ roomId: id }));
+          this.currentRoomUnreadCount = room?.unread;
           return room;
         }),
         filter(Boolean),
@@ -97,11 +97,11 @@ export class RoomComponent implements OnInit {
   );
 
   public messages$: Observable<IMessage[]> = this.activeRoute.params.pipe(
-    switchMap(({id}) => {
+    switchMap(({ id }) => {
       if (id === "common") return this.roomService.messagesInCommon.asObservable();
       else return this.store.select(hasRoomMessagesValueSelector()).pipe(
         switchMap(() => {
-          this.store.dispatch(roomGetMessagesAction({roomId: id}));
+          this.store.dispatch(roomGetMessagesAction({ roomId: id }));
           return this.store.select(messagesSelector);
         })
       );
@@ -163,7 +163,7 @@ export class RoomComponent implements OnInit {
             this.scrollService.scrollDown$.next(true);
           } else this.scrollService.scrollDown$.next(false);
         });
-        this.DOMChanges.observe(element, {childList: true});
+        this.DOMChanges.observe(element, { childList: true });
       }
     });
   }
@@ -199,7 +199,7 @@ export class RoomComponent implements OnInit {
     if (room._id !== "common") {
       if (event.inView) {
         // this.socketService.emit("readMessage", {messageId: event.id});
-        this.signalRService.invokeMessageEvent("ReadMessage", {userId: this.chatService.me, messageId: event.id});
+        this.signalRService.invokeMessageEvent("ReadMessage", { userId: this.chatService.me, messageId: event.id });
         this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       }
     }
@@ -210,7 +210,7 @@ export class RoomComponent implements OnInit {
   }
 
   public exitRoom(room: IRoom) {
-    this.socketService.emit("leaveRoom", {roomId: room._id});
+    this.socketService.emit("leaveRoom", { roomId: room._id });
   }
 
   /*
@@ -219,7 +219,7 @@ export class RoomComponent implements OnInit {
   * @description so we need to load new messages if there is ones
   */
   public onScroll(roomId: string) {
-    this.store.dispatch(roomLoadMessagesAction({roomId}));
+    this.store.dispatch(roomLoadMessagesAction({ roomId }));
   }
 
   public onOptionSelect(e: string) {

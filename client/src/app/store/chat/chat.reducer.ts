@@ -89,10 +89,13 @@ export const chatReducer = createReducer(
     isLoading: false,
   })),
 
-  on(chatRemoveRoomAction, (state, action) => ({
-    ...state,
-    allRooms: [...state.allRooms.filter((room) => room._id !== action.room._id)]
-  })),
+  on(chatRemoveRoomAction, (state, action) => {
+    const newAllRooms: IRoom[] = state.allRooms.slice().filter((room) => room._id !== action.room._id);
+    return ({
+      ...state,
+      allRooms: newAllRooms,
+    });
+  }),
 
   on(chatRemoveParticipantAction, (state, action) => {
     const newRooms = [...state.allRooms].map((room) => {

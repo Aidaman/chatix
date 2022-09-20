@@ -143,8 +143,11 @@ export const roomReducer = createReducer(
     return ({ ...state, messages: newMessages });
   }),
 
-  on(roomMessageRemoveAction, (state, action) => ({
-    ...state,
-    messages: state.messages.filter((message) => action.messageId !== message._id)
-  })),
+  on(roomMessageRemoveAction, (state, action) => {
+    const newMessages: IMessage[] = state.messages.filter((message) => message._id !== action.messageId);
+    return ({
+      ...state,
+      messages: newMessages,
+    });
+  }),
 );

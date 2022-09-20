@@ -79,8 +79,12 @@ export class SocketService {
     this.signalRService.startRoomsConnection();
 
     // this.signalRService.listenMessageEvent("newMessage", (value: { message: IMessage, room: string, creator: string } | null) => {
-    this.signalRService.listenMessageEvent("newMessage", (value) => {this.newMessageHandler(value);});
-    this.signalRService.listenRoomEvent("newMessage", (value) => {this.newMessageHandler(value);});
+    this.signalRService.listenMessageEvent("newMessage", (value) => {
+      this.newMessageHandler(value);
+    });
+    this.signalRService.listenRoomEvent("newMessage", (value) => {
+      this.newMessageHandler(value);
+    });
 
     this.signalRService.listenMessageEvent("messageUpdated", (value: string) => {
       if (value) {
@@ -97,6 +101,14 @@ export class SocketService {
         this.store.dispatch(roomMessageReadAction({ messageId: ids.id, userId: ids.user }));
       }
     });
+    this.signalRService.listenMessageEvent("messageDeleted", (value: any) => {
+      const message: IMessage | null = JSON.parse(value) as IMessage | null;
+      console.log(message);
+      if (message) {
+        this.store.dispatch(roomMessageRemoveAction({ messageId: message._id }));
+      }
+    });
+
     this.signalRService.listenRoomEvent("newRoom", (value: any) => {
       const room: IRoom = JSON.parse(value) as IRoom;
       console.log("new Room", room);
@@ -136,6 +148,7 @@ export class SocketService {
       console.log("room deleted: ", room);
       if (value) {
         this.store.dispatch(chatRemoveRoomAction({ room }));
+        this.router.navigate(["chat", "common"]);
       }
     });
   }
@@ -419,20 +432,20 @@ export class SocketService {
   *
   * @description the logic of this listener described in the effect and reducer
   */
-  public listenMessageDeleted(): Observable<any> {
-    return this.listen("messageDeleted").pipe(
-      tap((value: any | null) => {
-        if (value) {
-          this.snackBar.openSnackBar("Message has been deleted", ["Ok", "Discard"], {
-            horizontalPosition: "center",
-            verticalPosition: "top",
-            duration: 500,
-          });
-          this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
-        }
-      }),
-      takeUntil(this.termination$));
-  }
+  // public listenMessageDeleted(): Observable<any> {
+  //   return this.listen("messageDeleted").pipe(
+  //     tap((value: any | null) => {
+  //       if (value) {
+  //         this.snackBar.openSnackBar("Message has been deleted", ["Ok", "Discard"], {
+  //           horizontalPosition: "center",
+  //           verticalPosition: "top",
+  //           duration: 500,
+  //         });
+  //         this.store.dispatch(roomMessageRemoveAction({ messageId: value.id }));
+  //       }
+  //     }),
+  //     takeUntil(this.termination$));
+  // }
 
   /*
   * @description method that terminates all the listeners to complete triggering "takeUntil" operator
