@@ -1,4 +1,4 @@
-import {createReducer, on} from "@ngrx/store";
+import { createReducer, on } from "@ngrx/store";
 import {
   roomGetAmountOfMessagesAction,
   roomGetAmountOfMessagesFailureAction,
@@ -14,8 +14,8 @@ import {
   roomMessageRemoveAction,
   roomUpdateMessageAction,
 } from "./room.actions";
-import {IMessage} from "../../shared/models/IMessage";
-import {chatRoomSwitchAction} from "../chat/chat.actions";
+import { IMessage } from "../../shared/models/IMessage";
+import { chatRoomSwitchAction } from "../chat/chat.actions";
 
 export interface IRoomChatState {
   selectedRoomId: string | null,
@@ -44,7 +44,7 @@ export const roomReducer = createReducer(
         ...state,
         selectedRoom: action.roomId ?? null,
       });
-    } else return ({...state, selectedRoom: null});
+    } else return ({ ...state, selectedRoom: null });
   }),
 
   on(roomGetMessagesAction, (state) => ({
@@ -68,19 +68,19 @@ export const roomReducer = createReducer(
   on(roomGetNewMessageAction, (state, action) => {
     if (!state.selectedRoomId || action.roomId === state.selectedRoomId) {
       const newMessagesArr = state.messages.slice();
-      newMessagesArr.push({...action.message});
+      newMessagesArr.push({ ...action.message });
       return ({
         ...state,
         messages: newMessagesArr,
         totalMessages: state.totalMessages + 1,
       });
-    } else return ({...state});
+    } else return ({ ...state });
   }),
 
   on(roomMessageReadAction, (state, action) => {
     const newMessagesArr = [...state.messages].map((message: IMessage) => {
       if (message._id === action.messageId && message.read.indexOf(action.userId) === -1) {
-        message = {...message, read: [...message.read, action.userId]};
+        message = { ...message, read: [...message.read, action.userId] };
       }
       return message;
     });
@@ -98,9 +98,9 @@ export const roomReducer = createReducer(
   })),
   on(roomLoadMessagesSuccessAction, (state, action) => {
     if (action.messages[0]._id === state.messages[0]._id)
-      return ({...state});
+      return ({ ...state });
 
-    const newState = {...state, isLoading: false};
+    const newState = { ...state, isLoading: false };
     const newMessagesArr = state.messages.slice();
     newMessagesArr.unshift(...action.messages);
     // } else return ({
@@ -135,12 +135,12 @@ export const roomReducer = createReducer(
   on(roomUpdateMessageAction, (state, action) => {
     const newMessages = state.messages.map((message: IMessage) => {
       if (message._id === action.messageId) {
-        return {...message, content: action.correction};
+        return { ...message, content: action.correction };
       }
       return message;
     });
 
-    return ({...state, messages: newMessages});
+    return ({ ...state, messages: newMessages });
   }),
 
   on(roomMessageRemoveAction, (state, action) => ({

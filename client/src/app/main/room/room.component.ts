@@ -77,7 +77,7 @@ export class RoomComponent implements OnInit {
         map((room: IRoom | null) => {
           if (room === null) return;
           if (room.users.find((user: IUser) => user._id === this.chatService.me) === undefined) {
-            this.socketService.emit("joinRoom", {roomId: room._id});
+            this.socketService.emit("joinRoom", { roomId: room._id });
             return room;
           }
 

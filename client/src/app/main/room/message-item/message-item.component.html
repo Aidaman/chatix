@@ -1,7 +1,7 @@
 <div class="message-wrapper"
      snInViewport (inViewportChange)="viewportChange($event)"
      [ngClass]="{'own': message.creator?._id === me && !message.isSystemMessage,
-                 'foreign': message.creator?.id !== me && !message.isSystemMessage,
+                 'foreign': message.creator?._id !== me && !message.isSystemMessage,
                  'system': message.isSystemMessage,
                  'forwarded': message.isForwardedMessage}">
 
@@ -48,9 +48,6 @@
         <small class="message-date">
           <span>{{message.createdAt | date: 'HH:mm' : ''}}</span>
         </small>
-      </div>
-      <div class="avatar" *ngIf="message.creator?.id === me">
-        <img [src]="message.creator?.avatar" alt="A">
       </div>
     </div>
   </ng-template>

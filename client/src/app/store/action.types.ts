@@ -34,7 +34,8 @@ export enum ActionTypes {
   CHAT_ROOM_PRIVACY_CHANGED = "[Room] a room\'s privacy has been changed",
 
   //ROOM & CHAT
-  ROOM_AND_CHAT_GET_NEW_MESSAGE = "[Room & Chat] get new messages",
+  ROOM_GET_NEW_MESSAGE = "[Room] get new messages",
+  CHAT_GET_NEW_MESSAGE = "[Chat] get new messages",
 
   ROOM_AND_CHAT_MESSAGE_READ = "[Room & Chat] User read message",
   ROOM_AND_CHAT_MESSAGE_READ_SUCCESS = "[Room & Chat] User read message successfully",

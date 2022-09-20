@@ -17,7 +17,7 @@ export const roomGetMessagesFailureAction = createAction(
 );
 
 export const roomGetNewMessageAction = createAction(
-  ActionTypes.ROOM_AND_CHAT_GET_NEW_MESSAGE,
+  ActionTypes.ROOM_GET_NEW_MESSAGE,
   props<{ message: IMessage, roomId: string }>(),
 );
 

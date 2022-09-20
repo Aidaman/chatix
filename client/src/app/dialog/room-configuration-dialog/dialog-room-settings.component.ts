@@ -50,13 +50,14 @@ export class DialogRoomSettingsComponent{
   public onDelete(): void {
     this.dialogRef.close({
       roomId: this.room._id,
-      delete: true
+      delete: true,
+      creatorId: this.room.creator?._id,
     });
   }
 
   public deleteParticipant(user: IUser): void {
     this.removedUsers.push(user);
-    this.participants = this.participants.filter(val => val.id !== user.id);
+    this.participants = this.participants.filter(val => val._id !== user._id);
   }
 
   public deleteConfirm(): void {
@@ -64,7 +65,7 @@ export class DialogRoomSettingsComponent{
   }
 
   public onNoClick(): void {
-    console.log(this.room)
+    console.log(this.room);
     this.dialogRef.close(false);
   }
 

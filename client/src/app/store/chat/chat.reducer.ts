@@ -42,7 +42,7 @@ export const chatReducer = createReducer(
 
   on(chatGetNewMessageAction, (state, action) => {
     const rooms = state.allRooms.slice().map((room: IRoom) => {
-      if (room._id === action.roomId && action.message.creator?._id !== action.creator && !action.message.isSystemMessage)
+      if (room._id === action.roomId && action.message.creator?._id !== action.me && !action.message.isSystemMessage)
         room = { ...room, unread: room.unread + 1 < 0? 0 : room.unread + 1 };
       return room;
     });
@@ -66,7 +66,7 @@ export const chatReducer = createReducer(
   on(chatMessageReadAction, (state) => {
     const rooms = [...state.allRooms].map((room: IRoom) => {
       if (room._id === state.selectedRoom?._id) {
-        room = {...room, unread: room.unread - 1 > 0 ? room.unread - 1 : 0};
+        room = { ...room, unread: room.unread - 1 > 0 ? room.unread - 1 : 0 };
       }
       return room;
     });
@@ -130,7 +130,7 @@ export const chatReducer = createReducer(
     const rooms = [...state.allRooms].map((room) => {
       console.log(room._id, action.roomId);
       if (room._id === action.roomId){
-        room = {...room, title: action.title};
+        room = { ...room, title: action.title };
       }
       return room;
     });
@@ -138,13 +138,13 @@ export const chatReducer = createReducer(
     return ({
       ...state,
       allRooms: rooms,
-    })
+    });
   }),
 
   on(chatRoomPrivacyChangedAction, (state, action) => {
     const rooms = [...state.allRooms].map((room) => {
       if (room._id === action.id){
-        room = {...room, isPublic: action.isPublic};
+        room = { ...room, isPublic: action.isPublic };
       }
       return room;
     });
@@ -152,6 +152,6 @@ export const chatReducer = createReducer(
     return ({
       ...state,
       allRooms: rooms,
-    })
+    });
   }),
 );

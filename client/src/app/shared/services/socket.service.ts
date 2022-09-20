@@ -26,7 +26,7 @@ import {
   chatRemoveRoomAction,
   chatAddParticipantAction,
   chatRoomRenamedAction,
-  chatRoomPrivacyChangedAction
+  chatRoomPrivacyChangedAction, chatGetNewMessageAction
 } from "../../store/chat/chat.actions";
 import { SignalRService } from "./signal-r.service";
 
@@ -49,6 +49,22 @@ export class SocketService {
               private signalRService: SignalRService) {
   }
 
+  private newMessageHandler(value?: string){
+    if (value) {
+      const message: IMessage = JSON.parse(value) as IMessage;
+      // message.creator = JSON.parse(JSON.stringify(message.creator) ) as IUser;
+      this.chatService.lastMessageCreatorId = message.creator?._id ?? "";
+      if (message.room === "common") {
+        const messagesInCommon = this.roomService.messagesInCommon.value;
+        this.roomService.messagesInCommon.next([...messagesInCommon, message]);
+      }
+      this.store.dispatch(roomGetNewMessageAction({ message: message, roomId: message.room }));
+      this.store.dispatch(chatGetNewMessageAction({ message: message, me: this.chatService.me, roomId: message.room }));
+      return message;
+    }
+    return null;
+  }
+
   public connect(): void {
     if (!this.isConnected) {
       // @ts-ignore
@@ -63,63 +79,38 @@ export class SocketService {
     this.signalRService.startRoomsConnection();
 
     // this.signalRService.listenMessageEvent("newMessage", (value: { message: IMessage, room: string, creator: string } | null) => {
-    this.signalRService.listenMessageEvent("newMessage", (value: string) => {
-      if (value) {
-        const message: IMessage = JSON.parse(value);
-        console.log("new message", message);
-        this.chatService.lastMessageCreatorId = message.creator?._id ?? "";
-        if (message.room === "common") {
-          const messagesInCommon = this.roomService.messagesInCommon.value;
-          this.roomService.messagesInCommon.next([...messagesInCommon, message]);
-        }
-        this.store.dispatch(roomGetNewMessageAction({ message: message, roomId: message.room }));
-        this.snackBar.openSnackBar("You receive new Message", [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 50,
-        });
-        return message;
-      }
-      return null;
-    });
+    this.signalRService.listenMessageEvent("newMessage", (value) => {this.newMessageHandler(value);});
+    this.signalRService.listenRoomEvent("newMessage", (value) => {this.newMessageHandler(value);});
+
     this.signalRService.listenMessageEvent("messageUpdated", (value: string) => {
       if (value) {
-        const message: IMessage = JSON.parse(value);
+        const message: IMessage = JSON.parse(value) as IMessage;
         console.log(message);
         this.store.dispatch(roomUpdateMessageAction({ messageId: message._id, correction: message.content }));
-        this.snackBar.openSnackBar("Message has been updated", ["Ok"], {
-          horizontalPosition: "center",
-          verticalPosition: "bottom",
-          duration: 500,
-        });
       }
     });
     this.signalRService.listenMessageEvent("messageRead", (value: any) => {
       console.log("Before JSON parsing" + value);
-      value = JSON.parse(value) as { messageId: string, userId: string } | null;
+      const ids: { id: string, user: string } | null = JSON.parse(value) as { id: string, user: string } | null;
       console.log("After JSON parsing" + value);
-      if (value) {
-        this.store.dispatch(roomMessageReadAction({ messageId: value.id, userId: value.user }));
+      if (ids) {
+        this.store.dispatch(roomMessageReadAction({ messageId: ids.id, userId: ids.user }));
       }
     });
     this.signalRService.listenRoomEvent("newRoom", (value: any) => {
-      const room = JSON.parse(value) as IRoom;
+      const room: IRoom = JSON.parse(value) as IRoom;
+      console.log("new Room", room);
       this.store.dispatch(chatGetNewRoomAction({ room }));
-      this.snackBar.openSnackBar("Room has been created", ["Ok"], {
-        horizontalPosition: "center",
-        verticalPosition: "top",
-        duration: 2000,
-      });
     });
     this.signalRService.listenRoomEvent("privacyChanged", (value: any) => {
-      const room = JSON.parse(value) as IRoom;
+      const room: IRoom = JSON.parse(value) as IRoom;
       if (room !== null) {
         const [id, isPublic] = [room._id, room.isPublic];
         this.store.dispatch(chatRoomPrivacyChangedAction({ id, isPublic }));
       }
     });
     this.signalRService.listenRoomEvent("roomRename", (value: any) => {
-      const room = JSON.parse(value) as IRoom;
+      const room: IRoom = JSON.parse(value) as IRoom;
       console.log("room renamed", room);
       if (room !== null) {
         const [roomId, title] = [room._id, room.title];
@@ -127,7 +118,7 @@ export class SocketService {
       }
     });
     this.signalRService.listenRoomEvent("userLeft", (value: any) => {
-      const room = JSON.parse(value) as IRoom;
+      const room: IRoom = JSON.parse(value) as IRoom;
       if (room !== null) {
         if (room.users.length <= 2) {
           this.store.dispatch(chatRemoveRoomAction({ room }));
@@ -138,12 +129,13 @@ export class SocketService {
         if (!room.users.some((user) => user._id === this.chatService.me)) {
           this.router.navigate(["chat", "common"]);
         }
-
-        this.snackBar.openSnackBar(value.user.name + " left the room " + room.title, [], {
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          duration: 1000,
-        });
+      }
+    });
+    this.signalRService.listenRoomEvent("roomDeleted", (value: any) => {
+      const room: IRoom = JSON.parse(value) as IRoom;
+      console.log("room deleted: ", room);
+      if (value) {
+        this.store.dispatch(chatRemoveRoomAction({ room }));
       }
     });
   }
@@ -298,23 +290,23 @@ export class SocketService {
   * @description the following logic describes: If room were deleted then we update the list
   *                                           : effect will navigate user to "common" if one was in the deleted room
   */
-  public listenRoomDeleted(): Observable<any> {
-    return this.listen("roomDeleted").pipe(
-      map((value: { room: IRoom } | null) => {
-        if (value) {
-          const room = value.room;
-          this.store.dispatch(chatRemoveRoomAction({ room }));
-
-          this.snackBar.openSnackBar(value.room.title + " has been deleted", [], {
-            horizontalPosition: "center",
-            verticalPosition: "top",
-            duration: 500,
-          });
-        }
-      }),
-      takeUntil(this.termination$),
-    );
-  }
+  // public listenRoomDeleted(): Observable<any> {
+  //   return this.listen("roomDeleted").pipe(
+  //     map((value: { room: IRoom } | null) => {
+  //       if (value) {
+  //         const room = value.room;
+  //         this.store.dispatch(chatRemoveRoomAction({ room }));
+  //
+  //         this.snackBar.openSnackBar(value.room.title + " has been deleted", [], {
+  //           horizontalPosition: "center",
+  //           verticalPosition: "top",
+  //           duration: 500,
+  //         });
+  //       }
+  //     }),
+  //     takeUntil(this.termination$),
+  //   );
+  // }
 
   /*
   * @description socket event listener that listen Room renamed event from the backend

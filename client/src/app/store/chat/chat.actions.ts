@@ -4,8 +4,8 @@ import { IMessage } from "../../shared/models/IMessage";
 import { IRoom } from "../../shared/models/IRoom";
 
 export const chatGetNewMessageAction = createAction(
-  ActionTypes.ROOM_AND_CHAT_GET_NEW_MESSAGE,
-  props<{ message: IMessage, creator: string, roomId: string }>(),
+  ActionTypes.CHAT_GET_NEW_MESSAGE,
+  props<{ message: IMessage, me: string, roomId: string }>(),
 );
 
 export const chatRemoveRoomAction = createAction(

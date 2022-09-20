@@ -51,21 +51,24 @@ export class ModalsService {
       //If Value is false - then no changes were made
       if (!value) return;
       if (value.delete) {
-        this.signalRService.invokeRoomEvent("DeleteRoom", JSON.stringify({ roomId: value.roomId, creatorId: value.creator._id, }));
+        this.signalRService.invokeRoomEvent("DeleteRoom", JSON.stringify({ roomId: value.roomId, creatorId: value.creatorId, }));
         // this.socketService.emit("roomDelete", { roomId: value.roomId });
         this.router.navigate(["chat", "common"]);
       } else {
         if (value.newRoomTitle !== room.title)
-          this.signalRService.invokeRoomEvent("RenameRoom", JSON.stringify({ roomId: value._id, creatorId: value.creator._id, title: value.newRoomTitle }));
+          this.signalRService.invokeRoomEvent("RenameRoom",
+            JSON.stringify({ roomId: value._id, creatorId: value.creator._id, title: value.newRoomTitle, isPublic: value.newIsPublic }));
           // this.socketService.emit("renameRoom", { roomId: value._id, roomTitle: value.newRoomTitle });
 
         if (value.newIsPublic !== room.isPublic)
-          this.signalRService.invokeRoomEvent("PrivacyChange", JSON.stringify({ roomId: value._id, creatorId: value.creator._id, isPublic: value.newIsPublic }));
+          this.signalRService.invokeRoomEvent("PrivacyChange",
+            JSON.stringify({ roomId: value._id, creatorId: value.creator._id, isPublic: value.newIsPublic }));
           // this.socketService.emit("privacyChange", { roomId: value._id, roomPublicity: value.newIsPublic });
 
         if (value.deletedUsers && value.deletedUsers.length > 0) {
           value.deletedUsers.forEach((user: IUser) => {
-            this.signalRService.invokeRoomEvent("DeleteParticipant", JSON.stringify({ roomId: value._id, creatorId: value.creator._id, userId: user._id }));
+            this.signalRService.invokeRoomEvent("DeleteParticipant",
+              JSON.stringify({ roomId: value._id, creatorId: value.creator._id, userId: user._id, isPublic: value.newIsPublic }));
             // this.socketService.emit("deleteParticipant", { roomId: room._id, deletedUserId: user._id });
           });
         }

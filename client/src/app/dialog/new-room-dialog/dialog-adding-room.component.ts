@@ -5,6 +5,7 @@ import { SocketService } from "../../shared/services/socket.service";
 import { LocalStorageService } from "../../shared/services/local-storage.service";
 import { ThemingService } from "../../shared/services/theming.service";
 import { BehaviorSubject, debounceTime, Subscription } from "rxjs";
+import {ChatService} from "../../shared/services/chat.service";
 
 /*
 * @description This component represents modal window for creating new room
@@ -15,7 +16,7 @@ import { BehaviorSubject, debounceTime, Subscription } from "rxjs";
   styleUrls: ["./dialog-adding-room.component.scss", "../common-dialog-styles.scss"],
 })
 export class DialogAddingRoomComponent implements OnInit, OnDestroy {
-  private me = this.localStorageService.getUser()["id"] as string;
+  private me = this.chatService.me;
 
   public newRoomForm: UntypedFormGroup = this.fb.group({
     title: ["", [
@@ -35,7 +36,7 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
               private fb: UntypedFormBuilder,
               private socketService: SocketService,
               private themingService: ThemingService,
-              private localStorageService: LocalStorageService) {
+              private chatService: ChatService) {
   }
 
   public ngOnInit(): void {
@@ -99,7 +100,7 @@ export class DialogAddingRoomComponent implements OnInit, OnDestroy {
           && this.newRoomForm.get("participants")?.value[this.selectedInput].name === users[0].name) {
           this.userIds[this.selectedInput] = users[0]._id;
         } else {
-          this.searchedUsers = users.filter((user: any) => user._id !== this.me);
+          this.searchedUsers = users?.filter((user: any) => user._id !== this.me);
           if (this.selectedInput !== null)
             this.userIds[this.selectedInput] = false;
         }
