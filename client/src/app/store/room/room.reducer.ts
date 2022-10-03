@@ -10,9 +10,9 @@ import {
   roomLoadMessagesAction,
   roomLoadMessagesFailureAction,
   roomLoadMessagesSuccessAction,
-  roomMessageReadAction,
+  // roomMessageReadAction,
   roomMessageRemoveAction,
-  roomUpdateMessageAction,
+  roomUpdateMessageAction, roomUserConnectedAction, roomUserDisonnectedAction,
 } from "./room.actions";
 import { IMessage } from "../../shared/models/IMessage";
 import { chatRoomSwitchAction } from "../chat/chat.actions";
@@ -77,19 +77,19 @@ export const roomReducer = createReducer(
     } else return ({ ...state });
   }),
 
-  on(roomMessageReadAction, (state, action) => {
-    const newMessagesArr = [...state.messages].map((message: IMessage) => {
-      if (message._id === action.messageId && message.read.indexOf(action.userId) === -1) {
-        message = { ...message, read: [...message.read, action.userId] };
-      }
-      return message;
-    });
-
-    return ({
-      ...state,
-      messages: newMessagesArr,
-    });
-  }),
+  // on(roomMessageReadAction, (user, action) => {
+  //   const newMessagesArr = [...user.messages].map((message: IMessage) => {
+  //     if (message._id === action.messageId && message.read.indexOf(action.userId) === -1) {
+  //       message = { ...message, read: [...message.read, action.userId] };
+  //     }
+  //     return message;
+  //   });
+  //
+  //   return ({
+  //     ...user,
+  //     messages: newMessagesArr,
+  //   });
+  // }),
 
   on(roomLoadMessagesAction, (state) => ({
     ...state,
@@ -97,16 +97,12 @@ export const roomReducer = createReducer(
     offset: state.offset + 50 >= state.totalMessages ? state.totalMessages : state.offset + 50,
   })),
   on(roomLoadMessagesSuccessAction, (state, action) => {
-    if (action.messages[0]._id === state.messages[0]._id)
+    if ( action.messages.length === 0 || action.messages[0]._id === state.messages[0]._id )
       return ({ ...state });
 
     const newState = { ...state, isLoading: false };
     const newMessagesArr = state.messages.slice();
     newMessagesArr.unshift(...action.messages);
-    // } else return ({
-    //   ...newState,
-    //   messages: newMessagesArr,
-    //  });
     return ({
       ...newState,
       messages: newMessagesArr,
@@ -133,9 +129,15 @@ export const roomReducer = createReducer(
   })),
 
   on(roomUpdateMessageAction, (state, action) => {
+    // const newMessages = user.messages.map((message: IMessage) => {
+    //   if (message._id === action.messageId) {
+    //     return { ...message, content: action.correction };
+    //   }
+    //   return message;
+    // });
     const newMessages = state.messages.map((message: IMessage) => {
       if (message._id === action.messageId) {
-        return { ...message, content: action.correction };
+        return { ...action.updatedMessage };
       }
       return message;
     });
@@ -150,4 +152,31 @@ export const roomReducer = createReducer(
       messages: newMessages,
     });
   }),
+
+  on(roomUserConnectedAction, (state, action) => {
+    const newMessages: IMessage[] = state.messages.slice().map((message) => {
+      if (message.creator != null && message.creator?._id === action.userId) {
+        message.creator = { ...message.creator, isOnline: true };
+      }
+      return message;
+    });
+
+    return ({
+      ...state,
+      messages: newMessages,
+    });
+  }),
+  on(roomUserDisonnectedAction, (state, action) => {
+    const newMessages: IMessage[] = state.messages.slice().map((message) => {
+      if (message.creator != null && message.creator?._id === action.userId) {
+        message.creator = { ...message.creator, isOnline: false };
+      }
+      return message;
+    });
+
+    return ({
+      ...state,
+      messages: newMessages,
+    });
+  })
 );

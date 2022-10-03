@@ -29,7 +29,7 @@ export class DialogRoomSettingsComponent{
       Validators.maxLength(20)]],
   });
 
-  public me = this.chatService.me;
+  public me = this.chatService.getMe();
 
   constructor(public dialogRef: MatDialogRef<DialogRoomSettingsComponent>,
               public chatService: ChatService,

@@ -46,6 +46,14 @@ export class SignalRService {
     });
   }
 
+  public stopMessagesConenction() {
+    this.messagesHubConnection.stop()
+      .then(() => console.log("messages Connection Stopped"))
+      .catch((error) => {
+        console.log(`there is an error in messages connection: ${error}`);
+      });
+  }
+
   public startRoomsConnection(){
     this.roomsHubConnection = new HubConnectionBuilder()
       .withUrl("https://localhost:5001/room")
@@ -64,6 +72,14 @@ export class SignalRService {
         .subscribe(res => {
           console.log(res);
         });
+    });
+  }
+
+  public stopRoomsConnection() {
+    this.roomsHubConnection.stop()
+      .then(() => console.log("Room Connection Stopped"))
+      .catch((error) => {
+      console.log(`there is an error in rooms connection: ${error}`);
     });
   }
 
@@ -86,6 +102,14 @@ export class SignalRService {
           console.log(res);
         });
     });
+  }
+
+  public stopUsersConnection() {
+    this.messagesHubConnection.stop()
+      .then(() => console.log("users Connection Stopped"))
+      .catch((error) => {
+        console.log(`there is an error in users connection: ${error}`);
+      });
   }
 
   public invokeMessageEvent(eventName: string, ...args: any){

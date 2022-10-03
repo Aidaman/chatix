@@ -10,7 +10,7 @@
 
   <app-header class="mobile-present"></app-header>
 
-  <div class="search-rooms">
+  <div class="search-rooms" [formGroup]="searchRoomsForm">
     <app-theming></app-theming>
     <div class="add-btn" (click)="createRoom()" matRipple>
       <mat-icon>add</mat-icon>
@@ -18,20 +18,17 @@
     </div>
 
     <input matInput
-           placeholder="Search room..."
-           (input)="searchRooms(searchText)"
-           [(ngModel)]="searchText">
+           formControlName="title"
+           placeholder="Search room...">
     <mat-slide-toggle class="searchToggle"
                       (change)="toggleSearch()">
-      {{(searchCondition | lowercase) === 'public' ? 'Public' : 'Private'}}
+      {{isPublic ? 'Public' : 'Private'}}
     </mat-slide-toggle>
   </div>
   <div class="room-list custom-scroll">
     <mat-list *ngIf="currentRoomId$ | async as currentRoomId">
       <mat-list-item class="room-list-item"
-                     *ngFor="let room of (rooms$ | async) | updateRooms
-                                                 | search: searchText
-                                                 | filterListBy: 'isPublic' : searchCondition === 'public'? 'true' : 'false'"
+                     *ngFor="let room of (rooms$ | async) | updateRooms"
                      (click)="navigateRoom(currentRoomId, room._id)">
         <mat-divider></mat-divider>
         <div class="room-title-wrapper">

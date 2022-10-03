@@ -33,6 +33,7 @@ import { roomReducer } from "./store/room/room.reducer";
 import { RoomEffect } from "./store/room/room.effect";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { chatReducer } from "./store/chat/chat.reducer";
+import { ChatEffect } from "./store/chat/chat.effect";
 
 @NgModule({
   declarations: [
@@ -66,7 +67,7 @@ import { chatReducer } from "./store/chat/chat.reducer";
 
     StoreModule.forRoot({ user: userReducer, room: roomReducer, chat: chatReducer }),
     StoreDevtoolsModule.instrument({}),
-    EffectsModule.forRoot([UserEffect, RoomEffect])
+    EffectsModule.forRoot([UserEffect, RoomEffect, ChatEffect])
   ],
   providers: [
     {

@@ -6,6 +6,8 @@ import { from, mergeAll, tap } from "rxjs";
 import { ThemingService } from "../shared/services/theming.service";
 import { Router } from "@angular/router";
 import { ModalsService } from "../shared/services/modals.service";
+import { Store } from "@ngrx/store";
+import { chatGetAvailableRooms } from "../store/chat/chat.actions";
 
 /*
 * @description This component just wraps another subcomponents
@@ -25,6 +27,7 @@ export class MainComponent implements OnDestroy, OnInit {
               private modalsService: ModalsService,
               private router: Router,
               private themingService: ThemingService,
+              private store: Store,
               private authService: AuthService,
               private socketService: SocketService) {
   }
@@ -32,29 +35,6 @@ export class MainComponent implements OnDestroy, OnInit {
   public ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
       this.socketService.connect();
-
-      from([
-        // this.socketService.listenUserLeft(),
-        // this.socketService.listenPrivacyChanged(),
-        // this.socketService.listenMessageDeleted(),
-        // this.socketService.listenMessageUpdated(),
-        // this.socketService.listenMessageRead(),
-        this.socketService.listenUserJoined(),
-        this.socketService.listenGetAllRooms(),
-        // this.socketService.listenNewMessage(),
-        // this.socketService.listenNewRoom(),
-        // this.socketService.listenRoomDeleted(),
-        // this.socketService.listenRoomRenamed(),
-        this.socketService.listenSearchRoomsResult(),
-
-        this.socketService.listenInvitation().pipe(
-          tap((value: any | null) => {
-            if (value) {
-              this.modalsService.openInvitation(value);
-            }
-          })
-        ),
-      ]).pipe(mergeAll()).subscribe();
     }
     if (this.localStorageService.getUser()["colorTheme"]) {
       this.themingService.theme.next(this.localStorageService.getUser()["colorTheme"] as string);

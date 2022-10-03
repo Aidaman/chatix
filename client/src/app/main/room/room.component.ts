@@ -70,14 +70,18 @@ export class RoomComponent implements OnInit {
       return this.store.select(isAllRoomsHasValue).pipe(
         switchMap((value) => {
           if (!value) {
-            this.socketService.emit("getAllRooms", {});
+            this.store.dispatch(chatGetAvailableRooms({}));
           }
           return this.store.select(roomByIdSelect(id));
         }),
         map((room: IRoom | null) => {
           if (room === null) return;
-          if (room?.users.find((user: IUser) => user._id === this.chatService.me) === undefined) {
-            this.socketService.emit("joinRoom", { roomId: room?._id });
+          if ((id !== "common" || room.title != "favorites") && !room.users.find((user: IUser) => user._id === this.chatService.getMe())) {
+            this.signalRService.invokeRoomEvent("AddParticipant", JSON.stringify({
+              roomId: room._id,
+              userId: this.chatService.getMe(),
+              creatorId: room.creator?._id,
+            }));
             return room;
           }
 
@@ -111,7 +115,7 @@ export class RoomComponent implements OnInit {
         this.chatService.lastMessageCreatorId = messages[messages.length - 1].creator?._id ?? "";
 
       return messages;
-    })
+    }),
   );
 
   public menuItems: IOption[] = [
@@ -161,7 +165,8 @@ export class RoomComponent implements OnInit {
         this.DOMChanges = new MutationObserver((mutations) => {
           if (this.messagesService.messageSent.getValue()) {
             this.scrollService.scrollDown$.next(true);
-          } else this.scrollService.scrollDown$.next(false);
+            console.log("Working");
+          } else  this.scrollService.scrollDown$.next(false);
         });
         this.DOMChanges.observe(element, { childList: true });
       }
@@ -199,7 +204,10 @@ export class RoomComponent implements OnInit {
     if (room._id !== "common") {
       if (event.inView) {
         // this.socketService.emit("readMessage", {messageId: event.id});
-        this.signalRService.invokeMessageEvent("ReadMessage", { userId: this.chatService.me, messageId: event.id });
+        this.signalRService.invokeMessageEvent("ReadMessage", JSON.stringify({
+          userId: this.chatService.getMe(),
+          messageId: event.id
+        }));
         this.currentRoomUnreadCount = this.chatService.calculateUnread(messages);
       }
     }
@@ -210,7 +218,13 @@ export class RoomComponent implements OnInit {
   }
 
   public exitRoom(room: IRoom) {
-    this.socketService.emit("leaveRoom", { roomId: room._id });
+    // this.socketService.emit("leaveRoom", { roomId: room._id });
+    this.signalRService.invokeRoomEvent("DeleteParticipant",
+      JSON.stringify({
+        roomId: room._id,
+        userId: this.chatService.getMe(),
+        creatorId: room.creator?._id,
+      }));
   }
 
   /*

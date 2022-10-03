@@ -26,11 +26,11 @@
                    (focus)="selectedInput = pointIndex"
                    [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let state of searchedUsers"
-                          [value]="state.name"
-                          (click)="pushId(state._id)">
-                <img [src]="state.avatar" alt="" height="23">
-                <span>{{state.name}}</span>
+              <mat-option *ngFor="let user of searchedUsers"
+                          [value]="user.name"
+                          (click)="pushId(user._id)">
+                <img [src]="user.avatar" alt="" height="23">
+                <span>{{user.name}}</span>
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>

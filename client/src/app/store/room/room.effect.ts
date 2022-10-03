@@ -12,10 +12,11 @@ import {
   roomLoadMessagesFailureAction,
   roomLoadMessagesSuccessAction,
 } from "./room.actions";
-import { map, of, switchMap, } from "rxjs";
+import { map, of, switchMap, tap, } from "rxjs";
 import { ChatService } from "../../shared/services/chat.service";
 import { catchError } from "rxjs/operators";
 import { offsetSelector } from "./room.selectors";
+import { ScrollService } from "../../shared/services/scroll.service";
 
 @Injectable()
 export class RoomEffect {
@@ -54,6 +55,7 @@ export class RoomEffect {
 
   constructor(private actions$: Actions,
               private chatService: ChatService,
+              private scrollService: ScrollService,
               private store: Store) {
   }
 }

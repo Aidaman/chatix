@@ -24,13 +24,13 @@ export class AuthService {
     return token ? !!token : false;
   }
 
-  public authenticate(params: Params): void {
-    if (params["token"]){
+  public async authenticate(params: Params): Promise<void> {
+    if (params["token"]) {
       const user = params as IUser;
       this.localStorageService.setUser(JSON.stringify(user));
-      this.socketService.connect();
       this.store.dispatch(userAuthAction());
-      this.router.navigate(["/chat", "common"]);
+      await this.router.navigate(["/chat", "common"]);
+      this.socketService.connect();
     }
   }
 }

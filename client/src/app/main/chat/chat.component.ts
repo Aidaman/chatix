@@ -6,6 +6,7 @@ import { Store } from "@ngrx/store";
 import { userAuthAction } from "../../store/user/user.actions";
 import { ChatService } from "../../shared/services/chat.service";
 import { chatGetAvailableRooms } from "../../store/chat/chat.actions";
+import { SignalRService } from "../../shared/services/signal-r.service";
 
 /*
 * @description This is the component that wraps room and room-list components
@@ -25,16 +26,16 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(private store: Store,
               private chatService: ChatService,
               private socketService: SocketService,
+              private signalRService: SignalRService,
               private themingService: ThemingService,) {
   }
 
   public ngOnInit(): void {
     this.store.dispatch(userAuthAction());
-    this.socketService.emit("getAllRooms", {});
-    // this.store.dispatch(chatGetAvailableRooms());
+    this.store.dispatch(chatGetAvailableRooms({}));
   }
 
   ngOnDestroy(): void {
-    this.socketService.disconnect();
+    this.socketService.destroy();
   }
 }

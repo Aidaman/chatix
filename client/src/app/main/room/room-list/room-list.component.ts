@@ -1,7 +1,7 @@
-import { Component, } from "@angular/core";
+import { Component, OnInit, } from "@angular/core";
 import { IRoom } from "../../../shared/models/IRoom";
 import { SocketService } from "../../../shared/services/socket.service";
-import { Observable, of, switchMap } from "rxjs";
+import { debounceTime, lastValueFrom, Observable, of, switchMap } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogAddingRoomComponent } from "../../../dialog/new-room-dialog/dialog-adding-room.component";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -10,8 +10,9 @@ import { Store } from "@ngrx/store";
 import { ScrollService } from "../../../shared/services/scroll.service";
 import { chatGetAvailableRooms, chatSearchRoomsActions } from "../../../store/chat/chat.actions";
 import { allRoomsSelector, isAllRoomsHasValue } from "../../../store/chat/chat.selectors";
-import {SignalRService} from "../../../shared/services/signal-r.service";
-import {ModalsService} from "../../../shared/services/modals.service";
+import { SignalRService } from "../../../shared/services/signal-r.service";
+import { ModalsService } from "../../../shared/services/modals.service";
+import { FormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 
 /*
 * @description This component is responsible to show the list of rooms available for users
@@ -23,25 +24,18 @@ import {ModalsService} from "../../../shared/services/modals.service";
   templateUrl: "./room-list.component.html",
   styleUrls: ["./room-list.component.scss"]
 })
-export class RoomListComponent {
+export class RoomListComponent implements OnInit {
   public currentRoomId$: Observable<string> = this.activeRoute.params.pipe(
     switchMap(({ id }) => of(String(id))));
+  public rooms$: Observable<IRoom[]> = this.store.select(allRoomsSelector);
+  public searchRoomsForm: UntypedFormGroup = this.fb.group({
+    title: [""],
+  });
 
-  public rooms$: Observable<IRoom[]> = this.store.select(isAllRoomsHasValue).pipe(
-    switchMap((value) => {
-      if (!value) {
-        this.socketService.emit("getAllRooms", {});
-        // this.store.dispatch(chatGetAvailableRooms());
-      }
-      return this.store.select(allRoomsSelector);
-    }),
-  );
-
-  public searchCondition: string = "public";
-
+  public isPublic: boolean = true;
   public overallUnread: Observable<number> = this.chatService.overallUnread;
 
-  public searchText: string = "";
+  // public searchText: string = "";
 
   constructor(private socketService: SocketService,
               private router: Router,
@@ -49,7 +43,21 @@ export class RoomListComponent {
               private chatService: ChatService,
               private scrollService: ScrollService,
               private store: Store,
-              private modalsService: ModalsService) {
+              private fb: FormBuilder,
+              private modalsService: ModalsService,) {
+  }
+
+  async ngOnInit() {
+    this.searchRoomsForm.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(({ title }) => {
+        if (title.trim()) {
+          this.store.dispatch(chatSearchRoomsActions({ title }));
+        } else {
+          console.log("title is empty string");
+          this.store.dispatch(chatGetAvailableRooms({ isPublic: this.isPublic }));
+        }
+      });
   }
 
   /*
@@ -60,17 +68,9 @@ export class RoomListComponent {
   }
 
   public toggleSearch(): void {
-    this.searchCondition = this.searchCondition.toLowerCase() === "public" ? "private" : "public";
-  }
-
-  public searchRooms(searchText: string) {
-    if (this.searchCondition.toLowerCase() === "public" && searchText.trim()){
-      this.socketService.emit("searchRooms", { title: searchText.trim() });
-
-    } else if(!this.searchText.trim() || this.searchCondition !== "public"){
-      this.socketService.emit("getAllRooms", {});
-
-    }
+    // this.searchCondition = this.searchCondition.toLowerCase() === "public" ? "private" : "public";
+    this.isPublic = !this.isPublic;
+    this.store.dispatch(chatGetAvailableRooms({ isPublic: this.isPublic }));
   }
 
   public closeList() {
@@ -79,7 +79,7 @@ export class RoomListComponent {
 
   public navigateRoom(previousRoomId: string, roomId: string) {
     this.closeList();
-    this.scrollService.previousRoomId.next(previousRoomId);
+    // this.scrollService.previousRoomId.next(previousRoomId);
     this.router.navigate(["/chat", roomId]);
   }
 }

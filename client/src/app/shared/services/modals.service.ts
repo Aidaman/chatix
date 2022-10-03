@@ -21,7 +21,8 @@ export class ModalsService {
               private router: Router,
               private chatService: ChatService,
               private signalRService: SignalRService,
-              public dialog: MatDialog) { }
+              public dialog: MatDialog) {
+  }
 
   /*
   * @description the function that opens modal window for invitation to the room
@@ -33,9 +34,17 @@ export class ModalsService {
     const invitationResultSource$ = invitationDialogRef.afterClosed().pipe(tap((response) => {
       if (response) {
         if (response.isAgree)
-          this.socketService.emit("acceptInvitation", { roomId: response.roomId });
+          this.signalRService.invokeRoomEvent("UserJoin", JSON.stringify({
+            roomId: response.roomId,
+            userId: this.chatService.getMe()
+          }));
+        // this.socketService.emit("acceptInvitation", {roomId: response.roomId});
         else
-          this.socketService.emit("leaveRoom", { roomId: response.roomId });
+          this.signalRService.invokeRoomEvent("UserJoin", JSON.stringify({
+            roomId: response.roomId,
+            userId: this.chatService.getMe()
+          }));
+        // this.socketService.emit("leaveRoom", {roomId: response.roomId});
       }
     }));
 
@@ -51,24 +60,41 @@ export class ModalsService {
       //If Value is false - then no changes were made
       if (!value) return;
       if (value.delete) {
-        this.signalRService.invokeRoomEvent("DeleteRoom", JSON.stringify({ roomId: value.roomId, creatorId: value.creatorId, }));
+        this.signalRService.invokeRoomEvent("DeleteRoom", JSON.stringify({
+          roomId: value.roomId,
+          creatorId: value.creatorId,
+        }));
         // this.socketService.emit("roomDelete", { roomId: value.roomId });
         this.router.navigate(["chat", "common"]);
       } else {
         if (value.newRoomTitle !== room.title)
           this.signalRService.invokeRoomEvent("RenameRoom",
-            JSON.stringify({ roomId: value._id, creatorId: value.creator._id, title: value.newRoomTitle, isPublic: value.newIsPublic }));
-          // this.socketService.emit("renameRoom", { roomId: value._id, roomTitle: value.newRoomTitle });
+            JSON.stringify({
+              roomId: value._id,
+              creatorId: value.creator._id,
+              title: value.newRoomTitle,
+              isPublic: value.newIsPublic
+            }));
+        // this.socketService.emit("renameRoom", { roomId: value._id, roomTitle: value.newRoomTitle });
 
         if (value.newIsPublic !== room.isPublic)
           this.signalRService.invokeRoomEvent("PrivacyChange",
-            JSON.stringify({ roomId: value._id, creatorId: value.creator._id, isPublic: value.newIsPublic }));
-          // this.socketService.emit("privacyChange", { roomId: value._id, roomPublicity: value.newIsPublic });
+            JSON.stringify({
+              roomId: value._id,
+              creatorId: value.creator._id,
+              isPublic: value.newIsPublic
+            }));
+        // this.socketService.emit("privacyChange", { roomId: value._id, roomPublicity: value.newIsPublic });
 
         if (value.deletedUsers && value.deletedUsers.length > 0) {
           value.deletedUsers.forEach((user: IUser) => {
             this.signalRService.invokeRoomEvent("DeleteParticipant",
-              JSON.stringify({ roomId: value._id, creatorId: value.creator._id, userId: user._id, isPublic: value.newIsPublic }));
+              JSON.stringify({
+                roomId: value._id,
+                creatorId: value.creator._id,
+                userId: user._id,
+                isPublic: value.newIsPublic
+              }));
             // this.socketService.emit("deleteParticipant", { roomId: room._id, deletedUserId: user._id });
           });
         }
@@ -85,8 +111,13 @@ export class ModalsService {
     const matDialogRef = this.dialog.open(DialogInvitingRoomComponent,
       { data: room });
     const afterClosedSource$ = matDialogRef.afterClosed().pipe(tap((value) => {
-      if (!value) return;
-      else this.socketService.emit("inviteUsers", { roomId: value.roomId, participants: value.participants });
+      return;
+      // if (!value) return;
+      // else this.signalRService.invokeRoomEvent("InviteUsers", JSON.stringify({
+      //   roomId: value.roomId,
+      //   userId: this.chatService.me
+      // }));
+      // else this.socketService.emit("inviteUsers", {roomId: value.roomId, participants: value.participants});
     }));
 
     await lastValueFrom(afterClosedSource$);
@@ -102,11 +133,11 @@ export class ModalsService {
       if (!value) return;
       const newRoom = {
         ...value,
-        participants: [this.chatService.me, ...value.participants],
-        creatorId: this.chatService.me,
+        participants: [this.chatService.getMe(), ...value.participants],
+        creatorId: this.chatService.getMe(),
       };
       this.signalRService.invokeRoomEvent("CreateRoom", JSON.stringify(newRoom));
       // this.socketService.emit("createRoom", newRoom);
     });
   }
-  }
+}

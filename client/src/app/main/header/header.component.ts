@@ -31,9 +31,9 @@ export class HeaderComponent{
                 private localStorageService: LocalStorageService,
                 private themingService: ThemingService) {}
 
-    public logOut(): void {
-        this.localStorageService.logout();
-        this.store.dispatch(userLogoutAction());
-        this.router.navigate(["/auth"]);
+    public async logOut(): Promise<void> {
+      this.localStorageService.logout();
+      this.store.dispatch(userLogoutAction());
+      await this.router.navigate(["/auth"]);
     }
 }

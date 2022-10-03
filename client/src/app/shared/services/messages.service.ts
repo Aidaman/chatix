@@ -32,22 +32,16 @@ export class MessagesService {
   }
 
   public sendMessage(room: IRoom, messageText: string, messageId: string){
-    const newMessage = { messageId: messageId, newContent: messageText, roomId: room._id, userId: this.chatService.me };
+    const newMessage = { messageId: messageId, content: messageText, roomId: room._id, userId: this.chatService.getMe() };
 
     if (messageText) {
       if (room._id === "common" && this.isEditing) {
         this.roomService.editMessageInCommon(messageId, messageText);
-      }
-
-      else if (room._id.toLowerCase() !== "common" && this.isEditing)
+      } else if (room._id.toLowerCase() !== "common" && this.isEditing) {
         this.signalRService.invokeMessageEvent("UpdateMessage", JSON.stringify(newMessage));
-        // this.socketService.emit("updateMessage", newMessage);
-        // this.store.dispatch(roomUpdateMessageAction({ messageId, correction: messageText }));
-
-      else this.signalRService.invokeMessageEvent("CreateMessage", JSON.stringify(newMessage));
-      // else this.signalR.invokeMessageEvent("createMessage", messageText, room._id, this.chatService.me);
-      // else this.signalR.invokeMessageEvent("createMessage", {message: messageText, room: room._id});
-      // else this.socketService.emit("createMessage", { message: messageText, room: room._id, });
+      } else {
+        this.signalRService.invokeMessageEvent("CreateMessage", JSON.stringify(newMessage));
+      }
     }
 
     this.messageSent.next(true);

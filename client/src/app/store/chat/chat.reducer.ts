@@ -8,7 +8,14 @@ import {
   chatMessageReadAction,
   chatGetNewRoomAction,
   chatAddParticipantAction,
-  chatRemoveParticipantAction, chatRemoveRoomAction, chatRoomRenamedAction, chatRoomPrivacyChangedAction
+  chatRemoveParticipantAction,
+  chatRemoveRoomAction,
+  chatRoomRenamedAction,
+  chatRoomPrivacyChangedAction,
+  chatGetAvailableRoomsFailure,
+  chatGetAvailableRoomsSuccess,
+  chatSearchRoomsSuccessActions,
+  chatSearchRoomsFailureActions
 } from "./chat.actions";
 
 export interface IChatState {
@@ -63,10 +70,10 @@ export const chatReducer = createReducer(
     });
   }),
 
-  on(chatMessageReadAction, (state) => {
+  on(chatMessageReadAction, (state, action) => {
     const rooms = [...state.allRooms].map((room: IRoom) => {
-      if (room._id === state.selectedRoom?._id) {
-        room = { ...room, unread: room.unread - 1 > 0 ? room.unread - 1 : 0 };
+      if (room._id === action.roomId) {
+        room = { ...room, unread: room.unread - 1 >= 0 ? room.unread - 1 : 0 };
       }
       return room;
     });
@@ -77,15 +84,31 @@ export const chatReducer = createReducer(
     });
   }),
 
-  on(chatGetAvailableRooms, (state, action) => ({
+  on(chatGetAvailableRooms, (state) => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(chatGetAvailableRoomsSuccess, (state, action) => ({
     ...state,
     allRooms: action.rooms,
+    isLoading: false,
+  })),
+  on(chatGetAvailableRoomsFailure, (state) => ({
+    ...state,
     isLoading: false,
   })),
 
   on(chatSearchRoomsActions, (state, action) => ({
     ...state,
+    isLoading: true,
+  })),
+  on(chatSearchRoomsSuccessActions, (state, action) => ({
+    ...state,
     allRooms: action.rooms,
+    isLoading: false,
+  })),
+  on(chatSearchRoomsFailureActions, (state, action) => ({
+    ...state,
     isLoading: false,
   })),
 
@@ -98,6 +121,7 @@ export const chatReducer = createReducer(
   }),
 
   on(chatRemoveParticipantAction, (state, action) => {
+    console.log("user has left the ", action.room)
     const newRooms = [...state.allRooms].map((room) => {
       if (room._id === action.room._id){
         room = action.room;

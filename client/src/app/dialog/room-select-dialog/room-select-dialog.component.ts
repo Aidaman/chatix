@@ -6,8 +6,10 @@ import { Observable } from "rxjs";
 import { IMessage } from "src/app/shared/models/IMessage";
 import { IRoom } from "src/app/shared/models/IRoom";
 import { SocketService } from "src/app/shared/services/socket.service";
-import { allRoomsSelector} from "src/app/store/chat/chat.selectors";
+import { allRoomsSelector } from "src/app/store/chat/chat.selectors";
 import { DialogRoomSettingsComponent } from "../room-configuration-dialog/dialog-room-settings.component";
+import { SignalRService } from "../../shared/services/signal-r.service";
+import {chatGetAvailableRooms} from "../../store/chat/chat.actions";
 
 /*
 * @description This component describes modal window for select a room where message will be forwarded
@@ -22,20 +24,26 @@ export class RoomSelectDialogComponent  {
 
   public searchText: string = "";
   public isPublicRooms: boolean = false;
-  public searchCondition: string = "public";
 
   constructor(public dialogRef: MatDialogRef<DialogRoomSettingsComponent>,
               private store: Store,
               private router: Router,
               private socketService: SocketService,
+              private signalRService: SignalRService,
               @Inject(MAT_DIALOG_DATA) public data: IMessage) { }
 
   public toggleSearch(){
-    this.searchCondition = this.searchCondition.toLowerCase() === "public" ? "private" : "public";
+    this.isPublicRooms = !this.isPublicRooms;
+    this.store.dispatch(chatGetAvailableRooms({ isPublic: this.isPublicRooms }));
   }
 
   public forwardTo(roomId: string){
-    this.socketService.emit("forwardMessage", { messageId: this.data._id, room: roomId, content: this.data.content });
+    // this.socketService.emit("forwardMessage", { messageId: this.data._id, room: roomId, content: this.data.content });
+    this.signalRService.invokeMessageEvent("CreateMessage", JSON.stringify({
+      messageId: this.data._id,
+      roomId: roomId,
+      isForwarded: true,
+    }));
     this.router.navigate(["/chat", roomId]);
     this.dialogRef.close();
   }

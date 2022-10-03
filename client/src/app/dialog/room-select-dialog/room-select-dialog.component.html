@@ -9,16 +9,14 @@
 
             <mat-slide-toggle class="searchToggle"
                               (change)="toggleSearch()">
-                              {{(searchCondition | lowercase) === 'public' ? 'Public' : 'Private'}}
+                              {{(isPublicRooms ? 'Public' : 'Private')}}
             </mat-slide-toggle>
         </div>
 
         <div class="room-list custom-scroll">
             <mat-list>
                 <mat-list-item  class="room-list-item"
-                                *ngFor="let room of (rooms$ | async) | updateRooms
-                                                                     | search: searchText
-                                                                     | filterListBy: 'isPublic' : searchCondition === 'public'? 'true' : 'false'"
+                                *ngFor="let room of (rooms$ | async) | updateRooms | search: searchText"
                                 (click)="forwardTo(room._id)">
 
                     <mat-divider></mat-divider>

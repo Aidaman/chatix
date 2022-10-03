@@ -16,7 +16,7 @@ export class MessageItemComponent  {
   @Output() viewChange: EventEmitter<{ inView: boolean, id: string }> = new EventEmitter<{ inView: boolean, id: string, }>();
 
   public theme: BehaviorSubject<string> = this.themeService.theme;
-  public me = this.chatService.me;
+  public me = this.chatService.getMe();
   // public currentRoom: Observable<IRoom | undefined> = this.store.select(roomByIdSelect(this.message?._id));
 
   constructor(private chatService: ChatService,

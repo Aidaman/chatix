@@ -21,19 +21,19 @@ export const roomGetNewMessageAction = createAction(
   props<{ message: IMessage, roomId: string }>(),
 );
 
-export const roomMessageReadAction = createAction(
-  ActionTypes.ROOM_AND_CHAT_MESSAGE_READ,
-  props<{ messageId: string, userId: string }>(),
-);
-
-export const roomMessageReadSuccessAction = createAction(
-  ActionTypes.ROOM_AND_CHAT_MESSAGE_READ_SUCCESS,
-  props<{ messageId: string, userId: string }>(),
-);
-
-export const roomMessageReadFailureAction = createAction(
-  ActionTypes.ROOM_AND_CHAT_MESSAGE_READ_FAILURE,
-);
+// export const roomMessageReadAction = createAction(
+//   ActionTypes.ROOM_AND_CHAT_MESSAGE_READ,
+//   props<{ messageId: string, userId: string }>(),
+// );
+//
+// export const roomMessageReadSuccessAction = createAction(
+//   ActionTypes.ROOM_AND_CHAT_MESSAGE_READ_SUCCESS,
+//   props<{ messageId: string, userId: string }>(),
+// );
+//
+// export const roomMessageReadFailureAction = createAction(
+//   ActionTypes.ROOM_AND_CHAT_MESSAGE_READ_FAILURE,
+// );
 
 export const roomLoadMessagesAction = createAction(
   ActionTypes.ROOM_LOAD_MESSAGES,
@@ -65,11 +65,20 @@ export const roomGetAmountOfMessagesFailureAction = createAction(
 
 export const roomUpdateMessageAction = createAction(
   ActionTypes.ROOM_UPDATE_MESSAGE,
-  props<{ messageId: string, correction: string }>()
+  props<{ messageId: string, updatedMessage: IMessage }>()
 );
-
 
 export const roomMessageRemoveAction = createAction(
   ActionTypes.ROOM_REMOVE_MESSAGE,
   props<{ messageId: string }>()
+);
+
+export const roomUserConnectedAction = createAction(
+  ActionTypes.USER_CONNECTED,
+  props<{userId: string}>(),
+);
+
+export const roomUserDisonnectedAction = createAction(
+  ActionTypes.USER_DISCONNECTED,
+  props<{userId: string}>(),
 );

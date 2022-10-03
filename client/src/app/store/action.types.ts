@@ -4,6 +4,9 @@ export enum ActionTypes {
   USER_AUTH_SUCCESS = "[User] authentication success",
   USER_AUTH_FAILURE = "[User] authentication failure",
 
+  USER_CONNECTED = "[User] Connection established",
+  USER_DISCONNECTED = "[User] Connection stopped",
+
   USER_LOG_OUT = "[User] logged out",
 
   //FOR ROOM
@@ -26,18 +29,24 @@ export enum ActionTypes {
   CHAT_ROOM_SWITCH = "[Chat] switch room",
   CHAT_REMOVE_ROOM = "[Chat] remove room",
   CHAT_GET_NEW_ROOM = "[Chat] get new room",
-  CHAT_GET_AVAILABLE_ROOMS = "[Chat] get available rooms",
-  CHAT_SEARCH_ROOMS = "[Chat] search rooms",
   CHAT_REMOVE_PARTICIPANT = "[Chat] participant left a room",
   CHAT_ADD_PARTICIPANT = "[Chat] participant joined a room",
   CHAT_ROOM_RENAMED = "[Room] a room has been renamed",
   CHAT_ROOM_PRIVACY_CHANGED = "[Room] a room\'s privacy has been changed",
+  CHAT_MESSAGE_READ = "[Room & Chat] User read message",
+
+  CHAT_GET_AVAILABLE_ROOMS = "[Chat] get available rooms",
+  CHAT_GET_AVAILABLE_ROOMS_SUCCESS = "[Chat] get available rooms success",
+  CHAT_GET_AVAILABLE_ROOMS_FAILURE = "[Chat] get available rooms failure",
+
+  CHAT_SEARCH_ROOMS = "[Chat] search rooms",
+  CHAT_SEARCH_ROOMS_SUCCESS = "[Chat] search rooms success",
+  CHAT_SEARCH_ROOMS_FAILURE = "[Chat] search rooms failed",
 
   //ROOM & CHAT
   ROOM_GET_NEW_MESSAGE = "[Room] get new messages",
   CHAT_GET_NEW_MESSAGE = "[Chat] get new messages",
 
-  ROOM_AND_CHAT_MESSAGE_READ = "[Room & Chat] User read message",
-  ROOM_AND_CHAT_MESSAGE_READ_SUCCESS = "[Room & Chat] User read message successfully",
-  ROOM_AND_CHAT_MESSAGE_READ_FAILURE = "[Room & Chat] User read message failure",
+  // ROOM_AND_CHAT_MESSAGE_READ_SUCCESS = "[Room & Chat] User read message successfully",
+  // ROOM_AND_CHAT_MESSAGE_READ_FAILURE = "[Room & Chat] User read message failure",
 }

@@ -19,18 +19,36 @@ export const chatGetNewRoomAction = createAction(
 );
 
 export const chatMessageReadAction = createAction(
-  ActionTypes.ROOM_AND_CHAT_MESSAGE_READ,
-  props<{ messageId: string, userId: string }>(),
+  ActionTypes.CHAT_MESSAGE_READ,
+  props<{ roomId: string}>(),
 );
 
 export const chatGetAvailableRooms = createAction(
   ActionTypes.CHAT_GET_AVAILABLE_ROOMS,
+  props<{ isPublic?: boolean }>(),
+);
+
+export const chatGetAvailableRoomsSuccess = createAction(
+  ActionTypes.CHAT_GET_AVAILABLE_ROOMS_SUCCESS,
   props<{ rooms: IRoom[] }>()
+);
+
+export const chatGetAvailableRoomsFailure = createAction(
+  ActionTypes.CHAT_GET_AVAILABLE_ROOMS_FAILURE,
 );
 
 export const chatSearchRoomsActions = createAction(
   ActionTypes.CHAT_SEARCH_ROOMS,
+  props<{ title: string }>(),
+);
+
+export const chatSearchRoomsSuccessActions = createAction(
+  ActionTypes.CHAT_SEARCH_ROOMS_SUCCESS,
   props<{ rooms: IRoom[] }>(),
+);
+
+export const chatSearchRoomsFailureActions = createAction(
+  ActionTypes.CHAT_SEARCH_ROOMS_FAILURE,
 );
 
 export const chatRoomSwitchAction = createAction(
